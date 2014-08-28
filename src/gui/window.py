@@ -100,5 +100,5 @@ class PresFrame(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, -1, "wxPdf Viewer", size=(800,600))
         self.pdfwindow = PDFWindow(self)
-        self.pdfwindow.LoadDocument("/home/ben/presberry/python/Presberry/res/vortrag.pdf")
+        self.pdfwindow.LoadDocument("/home/ben/git/presberry/res//vortrag.pdf")
         self.pdfwindow.SetFocus() # To capture keyboard events

@@ -3,6 +3,7 @@ Created on Aug 28, 2014
 
 @author: ben
 '''
+from __future__ import with_statement
 import cairo
 import poppler
 import wxPython
@@ -11,6 +12,8 @@ import wx.lib.wxcairo as wxcairo
 import sys
 import cherrypy
 import qrcode
+import threading
+
  
 class PDFWindow(wx.ScrolledWindow):
     """ This example class implements a PDF Viewer Window, handling Zoom and Scrolling """
@@ -102,3 +105,16 @@ class PresFrame(wx.Frame):
         self.pdfwindow = PDFWindow(self)
         self.pdfwindow.LoadDocument("/home/ben/git/presberry/res//vortrag.pdf")
         self.pdfwindow.SetFocus() # To capture keyboard events
+        
+class PresWindow(threading.Thread):
+    
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.sync = threading.Condition()
+
+    def run(self):
+        with self.sync:
+            app = wx.App()    
+            f = PresFrame()
+            f.Show()
+            app.MainLoop() 

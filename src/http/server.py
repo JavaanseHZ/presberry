@@ -22,6 +22,7 @@ class HTTPServer(threading.Thread):
         cherrypy.tree.mount(StringGenerator(), '/', None)
         cherrypy.engine.start()
         cherrypy.engine.block()
+        
 
     def stop(self):
         cherrypy.engine.exit()

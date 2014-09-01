@@ -3,8 +3,12 @@ Created on Aug 28, 2014
 
 @author: ben
 '''
+<<<<<<< HEAD
 
 from wx.lib.pubsub import pub
+=======
+import wx.lib.pubsub as pubsub
+>>>>>>> branch 'master' of https://github.com/JavaanseHZ/presberry
 import cairo
 import poppler
 import wxPython
@@ -40,7 +44,12 @@ class PDFWindow(wx.ScrolledWindow):
         self.panel.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
         self.panel.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
         self.panel.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
+<<<<<<< HEAD
         pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
+=======
+        # create a pubsub receiver
+        pubsub.Publisher().subscribe(self.updateDisplay, "update")
+>>>>>>> branch 'master' of https://github.com/JavaanseHZ/presberry
 
     def LoadDocument(self, file):
         self.document = poppler.document_new_from_file("file://" + file, None)
@@ -103,6 +112,10 @@ class PDFWindow(wx.ScrolledWindow):
         self.n_page = next_page
         self.current_page = self.document.get_page(next_page)
         self.Refresh()
+<<<<<<< HEAD
+=======
+
+>>>>>>> branch 'master' of https://github.com/JavaanseHZ/presberry
 
 class PresFrame(wx.Frame):
  
@@ -120,9 +133,16 @@ class PresWindow(threading.Thread):
         self.guiQueue = guiQueue
 
     def run(self):
+<<<<<<< HEAD
         app = wx.App()
         self.f = PresFrame()   
         self.f.Show()
         app.MainLoop()
     
     
+=======
+        app = wx.App()    
+        f = PresFrame()
+        f.Show()
+        app.MainLoop() 
+>>>>>>> branch 'master' of https://github.com/JavaanseHZ/presberry

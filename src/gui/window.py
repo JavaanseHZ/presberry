@@ -15,6 +15,7 @@ import sys
 import cherrypy
 import qrcode
 import threading
+import rsvg
 
  
 class PDFWindow(wx.ScrolledWindow):
@@ -43,7 +44,6 @@ class PDFWindow(wx.ScrolledWindow):
         self.panel.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
         pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
 
-
     def LoadDocument(self, file):
         self.document = poppler.document_new_from_file("file://" + file, None)
         self.n_pages = self.document.get_n_pages()
@@ -66,6 +66,7 @@ class PDFWindow(wx.ScrolledWindow):
 
     def OnRightDown(self, event):
         self._UpdateScale(self.scale - 0.2)
+        self.writeSVG()
 
     def _UpdateScale(self, new_scale):
         if new_scale >= PDFWindow.MIN_SCALE and new_scale <= PDFWindow.MAX_SCALE:
@@ -100,11 +101,59 @@ class PDFWindow(wx.ScrolledWindow):
                 self.n_page = next_page
                 self.current_page = self.document.get_page(next_page)
                 self.Refresh()
+    
     def updateDisplay(self, msg):
         next_page = self.n_page + 1
         self.n_page = next_page
         self.current_page = self.document.get_page(next_page)
         self.Refresh()
+    
+    def writeSVG(self):
+    
+        #fo = file('test.svg', 'w')
+
+        WIDTH, HEIGHT  = 1024, 1024
+        
+        ## Prepare a destination surface -> out to an SVG file!
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH,HEIGHT)#cairo.SVGSurface (fo, WIDTH, HEIGHT)
+        ctx = cairo.Context (surface)
+        ctx.set_source_rgb(1, 1, 1)  # White background
+        if self.scale != 1:
+            ctx.scale(self.scale, self.scale)
+        ctx.rectangle(0, 0, self.width, self.height)
+        ctx.fill()
+        #ctx.set_source_rgb(0.5, 0.5, 0.5)
+        #ctx.fill()
+        #ctx.scale (WIDTH/1.0, HEIGHT/1.0)
+        #self.current_page.render_for_printing(ctx)
+        
+        self.current_page.render(ctx)
+        surface.write_to_png("svg.png")
+        
+        
+        
+        ## draw something - this taken from the web.
+        # Normalizing the canvas
+        '''pat = cairo.LinearGradient (0.0, 0.0, 0.0, 1.0)
+        pat.add_color_stop_rgba (1, 0.7, 0, 0, 0.5) # First stop, 50% opacity
+        pat.add_color_stop_rgba (0, 0.9, 0.7, 0.2, 1) # Last stop, 100% opacity
+        ctx.rectangle (0, 0, 1, 1) # Rectangle(x0, y0, x1, y1)
+        ctx.set_source (pat)
+        ctx.fill ()
+        ctx.translate (0.1, 0.1) # Changing the current transformation matrix
+        ctx.move_to (0, 0)
+        ctx.arc (0.2, 0.1, 0.1, -math.pi/2, 0) # Arc(cx, cy, radius, start_angle, stop_angle)
+        ctx.line_to (0.5, 0.1) # Line to (x,y)
+        ctx.curve_to (0.5, 0.2, 0.5, 0.4, 0.2, 0.8) # Curve(x1, y1, x2, y2, x3, y3)
+        ctx.close_path ()
+        ctx.set_source_rgb (0.3, 0.2, 0.5) # Solid color
+        ctx.set_line_width (0.02)
+        ctx.stroke ()'''
+        
+        ## Do the deed.
+        #surface.finish()
+        #surface.write_to_png()
+        
 
 class PresFrame(wx.Frame):
  

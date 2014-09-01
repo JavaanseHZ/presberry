@@ -3,7 +3,8 @@ Created on Aug 28, 2014
 
 @author: ben
 '''
-from __future__ import with_statement
+
+from wx.lib.pubsub import pub
 import cairo
 import poppler
 import wxPython
@@ -39,6 +40,7 @@ class PDFWindow(wx.ScrolledWindow):
         self.panel.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
         self.panel.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
         self.panel.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
+        pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
 
     def LoadDocument(self, file):
         self.document = poppler.document_new_from_file("file://" + file, None)
@@ -96,25 +98,31 @@ class PDFWindow(wx.ScrolledWindow):
                 self.n_page = next_page
                 self.current_page = self.document.get_page(next_page)
                 self.Refresh()
-
+    def updateDisplay(self, msg):
+        next_page = self.n_page + 1
+        self.n_page = next_page
+        self.current_page = self.document.get_page(next_page)
+        self.Refresh()
 
 class PresFrame(wx.Frame):
  
     def __init__(self):
         wx.Frame.__init__(self, None, -1, "wxPdf Viewer", size=(800,600))
         self.pdfwindow = PDFWindow(self)
-        self.pdfwindow.LoadDocument("/home/ben/git/presberry/res//vortrag.pdf")
+        self.pdfwindow.LoadDocument("/home/ben/git/presberry/res/vortrag.pdf")
         self.pdfwindow.SetFocus() # To capture keyboard events
         
 class PresWindow(threading.Thread):
     
-    def __init__(self):
+    def __init__(self, serverQueue, guiQueue):
         threading.Thread.__init__(self)
-        self.sync = threading.Condition()
+        self.serverQueue = serverQueue
+        self.guiQueue = guiQueue
 
     def run(self):
-        with self.sync:
-            app = wx.App()    
-            f = PresFrame()
-            f.Show()
-            app.MainLoop() 
+        app = wx.App()
+        self.f = PresFrame()   
+        self.f.Show()
+        app.MainLoop()
+    
+    

@@ -16,110 +16,117 @@ import cherrypy
 import qrcode
 import threading
 import rsvg
+import os, os.path
+import urllib
 
  
-class PDFWindow(wx.ScrolledWindow):
+class PDFWindow(wx.Window):
     """ This example class implements a PDF Viewer Window, handling Zoom and Scrolling """
 
-    MAX_SCALE = 2
-    MIN_SCALE = 1
-    SCROLLBAR_UNITS = 20  # pixels per scrollbar unit
+    #MAX_SCALE = 2
+    #MIN_SCALE = 1
+    #SCROLLBAR_UNITS = 20  # pixels per scrollbar unit
 
     def __init__(self, parent):
-        wx.ScrolledWindow.__init__(self, parent, wx.ID_ANY)
+        wx.Window.__init__(self, parent, wx.ID_ANY)
         # Wrap a panel inside
         self.panel = wx.Panel(self)
-        # Initialize variables
-        self.n_page = 0
-        self.scale = 1
-        self.document = None
-        self.n_pages = None
-        self.current_page = None
-        self.width = None
-        self.height = None
         # Connect panel events
         self.panel.Bind(wx.EVT_PAINT, self.OnPaint)
         self.panel.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
-        self.panel.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
-        self.panel.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
+        #self.panel.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
+        #self.panel.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
         pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
 
-    def LoadDocument(self, file):
-        self.document = poppler.document_new_from_file("file://" + file, None)
-        self.n_pages = self.document.get_n_pages()
-        self.current_page = self.document.get_page(self.n_page)
-        self.width, self.height = self.current_page.get_size() 
-        self._UpdateSize()
-
-    def OnPaint(self, event):
+    def load_pdf(self, uri):
+        self.doc = poppler.document_new_from_file(uri, None)
+        # the number of pages in the pdf
+        self.n_pgs = self.doc.get_n_pages()
+        # the current page of the pdf
+        self.curr_pg = 0
+        # the current page being displayed
+        self.curr_pg_disp = self.doc.get_page(self.curr_pg)
+        # the scale of the page
+        self.scale = 1
+        # the document width and height
+        self.doc_width, self.doc_height = self.curr_pg_disp.get_size()
+        self.panel.SetSize((self.doc_width*self.scale, self.doc_height*self.scale))
+        self.Refresh()
+ 
+ 
+    def render_pdf(self):
         dc = wx.PaintDC(self.panel)
         cr = wxcairo.ContextFromDC(dc)
-        cr.set_source_rgb(1, 1, 1)  # White background
-        if self.scale != 1:
-            cr.scale(self.scale, self.scale)
-        cr.rectangle(0, 0, self.width, self.height)
+        cr.set_source_rgb(1, 1, 1)
+        #if self.scale != 1:
+        #    cr.scale(self.scale, self.scale)
+        cr.rectangle(0, 0, self.doc_width, self.doc_height)
         cr.fill()
-        self.current_page.render(cr)
+        self.curr_pg_disp.render(cr)
 
-    def OnLeftDown(self, event):
-        self._UpdateScale(self.scale + 0.2)
+    def OnPaint(self, event):
+        self.render_pdf()
 
-    def OnRightDown(self, event):
-        self._UpdateScale(self.scale - 0.2)
-        self.writeSVG()
+#     def OnLeftDown(self, event):
+#         self._UpdateScale(self.scale + 0.2)
+# 
+#     def OnRightDown(self, event):
+#         self._UpdateScale(self.scale - 0.2)
+#         self.writeSVG()
 
-    def _UpdateScale(self, new_scale):
-        if new_scale >= PDFWindow.MIN_SCALE and new_scale <= PDFWindow.MAX_SCALE:
-            self.scale = new_scale
-            # Obtain the current scroll position
-            prev_position = self.GetViewStart() 
-            # Scroll to the beginning because I'm going to redraw all the panel
-            self.Scroll(0, 0) 
-            # Redraw (calls OnPaint and such)
-            self.Refresh() 
-            # Update panel Size and scrollbar config
-            self._UpdateSize()
-            # Get to the previous scroll position
-            self.Scroll(prev_position[0], prev_position[1]) 
-
-    def _UpdateSize(self):
-        u = PDFWindow.SCROLLBAR_UNITS
-        self.panel.SetSize((self.width*self.scale, self.height*self.scale))
-        self.SetScrollbars(u, u, (self.width*self.scale)/u, (self.height*self.scale)/u)
+#     def _UpdateScale(self, new_scale):
+#         if new_scale >= PDFWindow.MIN_SCALE and new_scale <= PDFWindow.MAX_SCALE:
+#             self.scale = new_scale
+#             # Obtain the current scroll position
+#             prev_position = self.GetViewStart() 
+#             # Scroll to the beginning because I'm going to redraw all the panel
+#             self.Scroll(0, 0) 
+#             # Redraw (calls OnPaint and such)
+#             self.Refresh() 
+#             # Update panel Size and scrollbar config
+#             self._UpdateSize()
+#             # Get to the previous scroll position
+#             self.Scroll(prev_position[0], prev_position[1]) 
+# 
+#     def _UpdateSize(self):
+#         u = PDFWindow.SCROLLBAR_UNITS
+#         self.panel.SetSize((self.width*self.scale, self.height*self.scale))
+#         self.SetScrollbars(u, u, (self.width*self.scale)/u, (self.height*self.scale)/u)
 
     def OnKeyDown(self, event):
-        update = True
         # More keycodes in http://docs.wxwidgets.org/stable/wx_keycodes.html#keycodes
         keycode = event.GetKeyCode() 
-        if keycode in (wx.WXK_PAGEDOWN, wx.WXK_SPACE):
-            next_page = self.n_page + 1
-        elif keycode == wx.WXK_PAGEUP:
-            next_page = self.n_page - 1
-        else:
-            update = False
-        if update and (next_page >= 0) and (next_page < self.n_pages):
-                self.n_page = next_page
-                self.current_page = self.document.get_page(next_page)
+        if keycode == wx.WXK_PAGEDOWN:
+            if self.curr_pg < (self.n_pgs-1):
+                self.curr_pg = self.curr_pg + 1
+                self.curr_pg_disp = self.doc.get_page(self.curr_pg)
                 self.Refresh()
+        elif keycode == wx.WXK_PAGEUP:
+            if self.curr_pg > 0:
+                self.curr_pg = self.curr_pg - 1
+                self.curr_pg_disp = self.doc.get_page(self.curr_pg)
+                self.Refresh()
+        elif keycode == wx.WXK_SPACE:
+            self.writeSVG()
+            self.writePNG()
     
     def updateDisplay(self, msg):
-        next_page = self.n_page + 1
-        self.n_page = next_page
-        self.current_page = self.document.get_page(next_page)
-        self.Refresh()
+        if self.curr_pg < self.n_pgs:
+            self.curr_pg = self.curr_pg + 1
+            self.curr_pg_disp = self.doc.get_page(self.curr_pg)
+            self.Refresh()
     
     def writeSVG(self):
     
-        fo = file('../../res/test.svg', 'w')
+        fo = file('../../res/vortrag.svg', 'w')
 
         WIDTH = 1600
-        page = self.current_page
+        page = self.curr_pg_disp
         page_width, page_height = page.get_size()
         ratio = page_height/page_width
         HEIGHT = round(ratio*WIDTH)
         surface = cairo.SVGSurface (fo, WIDTH, HEIGHT)
-        cr = cairo.Context(surface)
- 
+        cr = cairo.Context(surface) 
         cr.translate(0, 0)
         cr.scale(WIDTH/page_width, HEIGHT/page_height)
         page.render(cr)
@@ -130,10 +137,10 @@ class PDFWindow(wx.ScrolledWindow):
 
     def writePNG(self):
         WIDTH = 1600
-        page = self.current_page
+        page = self.curr_pg_disp
         page_width, page_height = page.get_size()
         ratio = page_height/page_width
-        HEIGHT = round(ratio*WIDTH)
+        HEIGHT = int(round(ratio*WIDTH))
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)
         cr = cairo.Context(surface)
         cr.translate(0, 0)
@@ -142,7 +149,7 @@ class PDFWindow(wx.ScrolledWindow):
         cr.set_operator(cairo.OPERATOR_DEST_OVER)
         cr.set_source_rgb(1, 1, 1)
         cr.paint()
-        surface.write_to_png('../../res/test.png')
+        surface.write_to_png('../../res/vortrag.png')
         
 
 class PresFrame(wx.Frame):
@@ -150,7 +157,8 @@ class PresFrame(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, -1, "wxPdf Viewer", size=(800,600))
         self.pdfwindow = PDFWindow(self)
-        self.pdfwindow.LoadDocument("/home/ben/git/presberry/res/vortrag.pdf")
+        uri = 'file://' + os.path.abspath('../../res/') + '/vortrag.pdf'
+        self.pdfwindow.load_pdf(uri)
         self.pdfwindow.SetFocus() # To capture keyboard events
         
 class PresWindow(threading.Thread):

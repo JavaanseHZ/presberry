@@ -156,10 +156,82 @@ class PresFrame(wx.Frame):
  
     def __init__(self):
         wx.Frame.__init__(self, None, -1, "wxPdf Viewer", size=(800,600))
-        self.pdfwindow = PDFWindow(self)
-        uri = 'file://' + os.path.abspath('../../res/') + '/vortrag.pdf'
-        self.pdfwindow.load_pdf(uri)
-        self.pdfwindow.SetFocus() # To capture keyboard events
+        #self.pdfwindow = PDFWindow(self)
+        #uri = 'file://' + os.path.abspath('../../res/') + '/vortrag.pdf'
+        #self.pdfwindow.load_pdf(uri)
+        #self.pdfwindow.SetFocus() # To capture keyboard events
+        #super(Win, self).__init__(None, wx.ID_ANY)
+        self.p = wx.Panel(self, wx.ID_ANY)
+        self.p.SetSizer(wx.BoxSizer())
+        droidfont = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, False, u'Roboto')
+        # set the minimum size when creating the custom window so that the sizer doesn't "squash" it to 0,0
+        self.rt = RotatedText(self.p, wx.ID_ANY, 'WIFI ACCESS', 90, font=droidfont, size=(120,120))
+        self.p.GetSizer().Add(self.rt)
+        #self.InitUI()
+        
+    def InitUI(self):
+    
+        panel = wx.Panel(self)
+
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+
+        fgs = wx.FlexGridSizer(3, 2, 9, 25)
+
+        title = wx.StaticText(panel, label="Title")
+        author = wx.StaticText(panel, label="Author")
+        review = wx.StaticText(panel, label="Review")
+
+        tc1 = wx.TextCtrl(panel)
+        tc2 = wx.TextCtrl(panel)
+        tc3 = wx.TextCtrl(panel, style=wx.TE_MULTILINE)
+
+        fgs.AddMany([(title), (tc1, 1, wx.EXPAND), (author), 
+            (tc2, 1, wx.EXPAND), (review, 1, wx.EXPAND), (tc3, 1, wx.EXPAND)])
+
+        fgs.AddGrowableRow(2, 1)
+        fgs.AddGrowableCol(1, 1)
+
+        hbox.Add(fgs, proportion=1, flag=wx.ALL|wx.EXPAND, border=15)
+        panel.SetSizer(hbox)
+        
+class StartPanel(wx.Panel):
+    def __init__(self):
+        fgs = wx.FlexGridSizer(2, 3, 0, 0)
+        self.SetSizer(fgs)
+        
+class RotatedText(wx.Window):
+    def __init__(self, parent, id, text, angle, font=None, *args, **kwargs):
+        super(RotatedText, self).__init__(parent, id, *args, **kwargs)
+        self.text = text
+        self.font = font
+        self.angle = angle
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.Bind(wx.EVT_SIZE, self.OnSize)
+
+        # set our minimum size based on the text with
+        dc = wx.MemoryDC()
+        self.text_width, self.text_height= dc.GetTextExtent(self.text)
+        # height and width are reversed since we are drawing text vertically
+        self.SetMinSize((self.text_height,self.text_width))
+        self.SetBackgroundColour(wx.Colour(205,220,57))
+
+    def repaint(self, dc):
+        if self.font:
+            dc.SetFont(self.font)
+        text_width, text_height = dc.GetTextExtent(self.text)
+        dc.SetTextForeground(wx.WHITE)
+        #dc.DrawText(self.text, 0, 0) # change this line to start drawing from bottom to top beginning 60 units from top
+        dc.DrawRotatedText(self.text, 0, self.text_width, self.angle)
+
+    def OnPaint(self, event):
+        dc = wx.PaintDC(self)
+        self.repaint(dc)
+        event.Skip()
+
+    def OnSize(self, event):
+        dc = wx.ClientDC(self)
+        self.repaint(dc)
+        event.Skip()
         
 class PresWindow(threading.Thread):
     
@@ -174,3 +246,17 @@ class PresWindow(threading.Thread):
         self.f = PresFrame()   
         self.f.Show()
         app.MainLoop()
+        
+        
+# Lime
+# 500 #cddc39
+# 50#f9fbe7
+# 100#f0f4c3
+# 200#e6ee9c
+# 300#dce775
+# 400#d4e157
+# 500#cddc39
+# 600#c0ca33
+# 700#afb42b
+# 800#9e9d24
+# 900#827717

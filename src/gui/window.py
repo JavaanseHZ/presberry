@@ -110,49 +110,39 @@ class PDFWindow(wx.ScrolledWindow):
     
     def writeSVG(self):
     
-        #fo = file('test.svg', 'w')
+        fo = file('../../res/test.svg', 'w')
 
-        WIDTH, HEIGHT  = 1024, 1024
-        
-        ## Prepare a destination surface -> out to an SVG file!
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH,HEIGHT)#cairo.SVGSurface (fo, WIDTH, HEIGHT)
-        ctx = cairo.Context (surface)
-        ctx.set_source_rgb(1, 1, 1)  # White background
-        if self.scale != 1:
-            ctx.scale(self.scale, self.scale)
-        ctx.rectangle(0, 0, self.width, self.height)
-        ctx.fill()
-        #ctx.set_source_rgb(0.5, 0.5, 0.5)
-        #ctx.fill()
-        #ctx.scale (WIDTH/1.0, HEIGHT/1.0)
-        #self.current_page.render_for_printing(ctx)
-        
-        self.current_page.render(ctx)
-        surface.write_to_png("svg.png")
-        
-        
-        
-        ## draw something - this taken from the web.
-        # Normalizing the canvas
-        '''pat = cairo.LinearGradient (0.0, 0.0, 0.0, 1.0)
-        pat.add_color_stop_rgba (1, 0.7, 0, 0, 0.5) # First stop, 50% opacity
-        pat.add_color_stop_rgba (0, 0.9, 0.7, 0.2, 1) # Last stop, 100% opacity
-        ctx.rectangle (0, 0, 1, 1) # Rectangle(x0, y0, x1, y1)
-        ctx.set_source (pat)
-        ctx.fill ()
-        ctx.translate (0.1, 0.1) # Changing the current transformation matrix
-        ctx.move_to (0, 0)
-        ctx.arc (0.2, 0.1, 0.1, -math.pi/2, 0) # Arc(cx, cy, radius, start_angle, stop_angle)
-        ctx.line_to (0.5, 0.1) # Line to (x,y)
-        ctx.curve_to (0.5, 0.2, 0.5, 0.4, 0.2, 0.8) # Curve(x1, y1, x2, y2, x3, y3)
-        ctx.close_path ()
-        ctx.set_source_rgb (0.3, 0.2, 0.5) # Solid color
-        ctx.set_line_width (0.02)
-        ctx.stroke ()'''
-        
-        ## Do the deed.
-        #surface.finish()
-        #surface.write_to_png()
+        WIDTH = 1600
+        page = self.current_page
+        page_width, page_height = page.get_size()
+        ratio = page_height/page_width
+        HEIGHT = round(ratio*WIDTH)
+        surface = cairo.SVGSurface (fo, WIDTH, HEIGHT)
+        cr = cairo.Context(surface)
+ 
+        cr.translate(0, 0)
+        cr.scale(WIDTH/page_width, HEIGHT/page_height)
+        page.render(cr)
+        cr.set_operator(cairo.OPERATOR_DEST_OVER)
+        cr.set_source_rgb(1, 1, 1)
+        cr.paint()
+        surface.finish()
+
+    def writePNG(self):
+        WIDTH = 1600
+        page = self.current_page
+        page_width, page_height = page.get_size()
+        ratio = page_height/page_width
+        HEIGHT = round(ratio*WIDTH)
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)
+        cr = cairo.Context(surface)
+        cr.translate(0, 0)
+        cr.scale(WIDTH/page_width, HEIGHT/page_height)
+        page.render(cr)
+        cr.set_operator(cairo.OPERATOR_DEST_OVER)
+        cr.set_source_rgb(1, 1, 1)
+        cr.paint()
+        surface.write_to_png('../../res/test.png')
         
 
 class PresFrame(wx.Frame):

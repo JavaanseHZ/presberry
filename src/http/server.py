@@ -17,7 +17,7 @@ import shutil
 
 MEDIA_DIR = os.path.join(os.path.abspath("../"), u"media")
 RES_DIR = os.path.join(os.path.abspath("../"), u"res")
-config = {
+conf = {
     '/media':
         {'tools.staticdir.on': True,
          'tools.staticdir.dir': MEDIA_DIR
@@ -39,7 +39,7 @@ class HTTPServer(threading.Thread):
         cherrypy.server.socket_port = 8080
         #cherrypy.server.socket_host = optional hostname
         #cherrypy.engine.subscribe('start', open_page)
-        cherrypy.tree.mount(PresWebsite(), '/', config=config)
+        cherrypy.tree.mount(PresWebsite(), '/', config=conf)
         cherrypy.engine.start()
         cherrypy.engine.block()
         

@@ -26,6 +26,7 @@ class PDFWindow(wx.Window):
     #MAX_SCALE = 2
     #MIN_SCALE = 1
     #SCROLLBAR_UNITS = 20  # pixels per scrollbar unit
+    
 
     def __init__(self, parent):
         wx.Window.__init__(self, parent, wx.ID_ANY)
@@ -34,9 +35,11 @@ class PDFWindow(wx.Window):
         # Connect panel events
         self.panel.Bind(wx.EVT_PAINT, self.OnPaint)
         self.panel.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        self.fileUploaded = False;
         #self.panel.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
         #self.panel.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
         pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
+        pub.Publisher.subscribe(self.uploadedPDF, 'uploadedPDF')
 
     def load_pdf(self, uri):
         self.doc = poppler.document_new_from_file(uri, None)
@@ -63,9 +66,11 @@ class PDFWindow(wx.Window):
         cr.rectangle(0, 0, self.doc_width, self.doc_height)
         cr.fill()
         self.curr_pg_disp.render(cr)
+        
 
     def OnPaint(self, event):
-        self.render_pdf()
+        if self.fileUploaded:
+            self.render_pdf()
 
 #     def OnLeftDown(self, event):
 #         self._UpdateScale(self.scale + 0.2)
@@ -116,10 +121,17 @@ class PDFWindow(wx.Window):
             self.curr_pg_disp = self.doc.get_page(self.curr_pg)
             self.Refresh()
     
+    def uploadedPDF(self, data):
+        self.fileUploaded = True;
+        print data
+        uri = 'file://' + os.path.abspath('../../res/') + '/vortrag.pdf'; #'file://' + data#'
+        self.load_pdf(uri)
+        self.SetFocus()
+    
     def writeSVG(self):
     
         fo = file('../../res/vortrag.svg', 'w')
-
+        
         WIDTH = 1600
         page = self.curr_pg_disp
         page_width, page_height = page.get_size()
@@ -156,17 +168,15 @@ class PresFrame(wx.Frame):
  
     def __init__(self):
         wx.Frame.__init__(self, None, -1, "wxPdf Viewer", size=(800,600))
-        #self.pdfwindow = PDFWindow(self)
+        self.pdfwindow = PDFWindow(self)
         #uri = 'file://' + os.path.abspath('../../res/') + '/vortrag.pdf'
         #self.pdfwindow.load_pdf(uri)
         #self.pdfwindow.SetFocus() # To capture keyboard events
         #super(Win, self).__init__(None, wx.ID_ANY)
-        self.p = wx.Panel(self, wx.ID_ANY)
-        self.p.SetSizer(wx.BoxSizer())
-        droidfont = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, False, u'Roboto')
+        #self.p = wx.Panel(self, wx.ID_ANY)
+        #self.p.SetSizer(wx.BoxSizer())
+        #droidfont = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, False, u'Roboto')
         # set the minimum size when creating the custom window so that the sizer doesn't "squash" it to 0,0
-        self.rt = RotatedText(self.p, wx.ID_ANY, 'WIFI ACCESS', 90, font=droidfont, size=(120,120))
-        self.p.GetSizer().Add(self.rt)
         #self.InitUI()
         
     def InitUI(self):
@@ -198,40 +208,7 @@ class StartPanel(wx.Panel):
     def __init__(self):
         fgs = wx.FlexGridSizer(2, 3, 0, 0)
         self.SetSizer(fgs)
-        
-class RotatedText(wx.Window):
-    def __init__(self, parent, id, text, angle, font=None, *args, **kwargs):
-        super(RotatedText, self).__init__(parent, id, *args, **kwargs)
-        self.text = text
-        self.font = font
-        self.angle = angle
-        self.Bind(wx.EVT_PAINT, self.OnPaint)
-        self.Bind(wx.EVT_SIZE, self.OnSize)
 
-        # set our minimum size based on the text with
-        dc = wx.MemoryDC()
-        self.text_width, self.text_height= dc.GetTextExtent(self.text)
-        # height and width are reversed since we are drawing text vertically
-        self.SetMinSize((self.text_height,self.text_width))
-        self.SetBackgroundColour(wx.Colour(205,220,57))
-
-    def repaint(self, dc):
-        if self.font:
-            dc.SetFont(self.font)
-        text_width, text_height = dc.GetTextExtent(self.text)
-        dc.SetTextForeground(wx.WHITE)
-        #dc.DrawText(self.text, 0, 0) # change this line to start drawing from bottom to top beginning 60 units from top
-        dc.DrawRotatedText(self.text, 0, self.text_width, self.angle)
-
-    def OnPaint(self, event):
-        dc = wx.PaintDC(self)
-        self.repaint(dc)
-        event.Skip()
-
-    def OnSize(self, event):
-        dc = wx.ClientDC(self)
-        self.repaint(dc)
-        event.Skip()
         
 class PresWindow(threading.Thread):
     
@@ -241,7 +218,6 @@ class PresWindow(threading.Thread):
         self.guiQueue = guiQueue
 
     def run(self):
-
         app = wx.App()
         self.f = PresFrame()   
         self.f.Show()

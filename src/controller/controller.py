@@ -1,4 +1,3 @@
-import wx
 import Queue
 from gui import window
 from http import server

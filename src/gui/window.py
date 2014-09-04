@@ -48,13 +48,14 @@ class PDFWindow(wx.Window):
         # the current page of the pdf
         self.curr_pg = 0
         # the current page being displayed
-        self.curr_pg_disp = self.doc.get_page(self.curr_pg)
+        self.curr_pg_disp = self.doc.get_page(self.curr_pg)        
         # the scale of the page
         self.scale = 1
         # the document width and height
         self.doc_width, self.doc_height = self.curr_pg_disp.get_size()
         self.panel.SetSize((self.doc_width*self.scale, self.doc_height*self.scale))
         self.Refresh()
+        self.writeSVG()
  
  
     def render_pdf(self):
@@ -66,6 +67,7 @@ class PDFWindow(wx.Window):
         cr.rectangle(0, 0, self.doc_width, self.doc_height)
         cr.fill()
         self.curr_pg_disp.render(cr)
+        
         
 
     def OnPaint(self, event):
@@ -116,10 +118,17 @@ class PDFWindow(wx.Window):
             self.writePNG()
     
     def updateDisplay(self, msg):
-        if self.curr_pg < self.n_pgs:
+        if self.curr_pg < (self.n_pgs-1):
             self.curr_pg = self.curr_pg + 1
             self.curr_pg_disp = self.doc.get_page(self.curr_pg)
             self.Refresh()
+            self.writeSVG()
+        else:
+            self.curr_pg = 0
+            self.curr_pg_disp = self.doc.get_page(self.curr_pg)
+            self.Refresh()
+            self.writeSVG()
+            
     
     def uploadedPDF(self, data):
         self.fileUploaded = True;
@@ -132,7 +141,7 @@ class PDFWindow(wx.Window):
     
         fo = file('../../res/vortrag.svg', 'w')
         
-        WIDTH = 1600
+        WIDTH = 240
         page = self.curr_pg_disp
         page_width, page_height = page.get_size()
         ratio = page_height/page_width

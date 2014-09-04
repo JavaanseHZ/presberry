@@ -1,6 +1,9 @@
 <html>
 <head>
     <title>AJAX with jQuery and cherrypy</title>
+    <link rel="stylesheet" type="text/css" href="/media/jquery.mobile-1.4.3.min.css">
+    <script type="text/javascript" src="/media/jquery.mobile-1.4.3.min.js"></script>
+    <script type="text/javascript" src="/media/jquery-1.11.1.min.js"></script>
 </head>
     <body>
 
@@ -11,7 +14,11 @@
             <br />
             <input type="submit" />
     </form>
-	</div>
+    <form action="/nextPage" method="get">            
+            <input type="submit" value="next" />
+    </form>
+    </div>
+	 
 	<div>    
     <svg id="svgimage" height="800" width="600" 
      xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
@@ -20,3 +27,26 @@
 	</div>
     </body>
 </html>
+<!--
+<script type="text/javascript" src="/media/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="/media/jquery.mobile-1.4.3.min.js"></script>
+	<script type="text/javascript">
+	    //$(function() {
+	    // When the testform is submitted…
+	    //	$("#uploadPDF").submit(function() {
+	    //    	// post the form values via AJAX…
+	    //    	var postdata = {uploadedFile: $('#uploadPDF').val()} ;
+	    //    $.post('/submit', postdata, function(data) {
+	    //        // and set the title with the result
+	    //        //$("#title").html(data['title']) ;
+	    //    	});
+	    //    return false ;
+	    //    });
+	    //});
+	    
+	    //$('#iframe').load(function(){
+    	//	console.log($(this).contents().find('#upload').val());
+		//});
+	    
+	</script>
+-->

@@ -82,6 +82,10 @@ class PresWebsite(object):
             raise cherrypy.HTTPError(400, 'SOME ERROR')       
         return open(os.path.join(MEDIA_DIR, u'index.html'))
     
+    @cherrypy.expose
+    def nextPage(self):
+         pub.Publisher.sendMessage('updateDisplay')
+         return open(os.path.join(MEDIA_DIR, u'index.html'))
 
     @cherrypy.expose
     def submit(self, uploadedFile):

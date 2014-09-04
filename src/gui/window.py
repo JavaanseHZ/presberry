@@ -13,7 +13,7 @@ import wx
 import wx.lib.wxcairo as wxcairo
 import sys
 import cherrypy
-import qrcode
+#import qrcode
 import threading
 import rsvg
 import os, os.path

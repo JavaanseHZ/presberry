@@ -38,7 +38,7 @@ class HTTPServer(threading.Thread):
     def run(self):
         cherrypy.server.socket_port = 8080
         #cherrypy.server.socket_host = optional hostname
-        cherrypy.engine.subscribe('start', open_page)
+        #cherrypy.engine.subscribe('start', open_page)
         cherrypy.tree.mount(PresWebsite(), '/', config=config)
         cherrypy.engine.start()
         cherrypy.engine.block()
@@ -47,8 +47,8 @@ class HTTPServer(threading.Thread):
         cherrypy.engine.exit()
         cherrypy.server.stop()
     
-def open_page():
-    webbrowser.open("http://127.0.0.1:8080/")
+#def open_page():
+#    webbrowser.open("http://127.0.0.1:8080/")
 
 class PresWebsite(object):
     @cherrypy.expose

@@ -133,13 +133,13 @@ class PDFWindow(wx.Window):
     def uploadedPDF(self, data):
         self.fileUploaded = True;
         print data
-        uri = 'file://' + os.path.abspath('../../res/') + '/vortrag.pdf'; #'file://' + data#'
+        uri = 'file://' + os.path.abspath('../res/') + '/vortrag.pdf'; #'file://' + data#'
         self.load_pdf(uri)
         self.SetFocus()
     
     def writeSVG(self):
     
-        fo = file('../../res/vortrag.svg', 'w')
+        fo = file('../res/vortrag.svg', 'w')
         
         WIDTH = 240
         page = self.curr_pg_disp

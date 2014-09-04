@@ -15,8 +15,8 @@ import sys
 import webbrowser
 import shutil
 
-MEDIA_DIR = os.path.join(os.path.abspath("../../"), u"media")
-RES_DIR = os.path.join(os.path.abspath("../../"), u"res")
+MEDIA_DIR = os.path.join(os.path.abspath("../"), u"media")
+RES_DIR = os.path.join(os.path.abspath("../"), u"res")
 config = {
     '/media':
         {'tools.staticdir.on': True,

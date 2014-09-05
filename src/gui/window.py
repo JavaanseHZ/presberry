@@ -217,19 +217,27 @@ class PresWindow(threading.Thread):
         threading.Thread.__init__(self)
         self.serverQueue = serverQueue
         self.guiQueue = guiQueue
+        
+    
+    
+        
 
-    def run(self):
+    def run(self):       
+        
         window = gtk.Window()
-        window.set_default_size(200, 200)
-        window.connect('destroy', gtk.main_quit)
-     
-        label = gtk.Label('Hello World')
-        window.add(label)
-     
-        label.show()
-        window.show()
+        window.set_default_size(800, 600)
+        window.connect("delete-event", gtk.main_quit)
+        #window.connect("expose-event", draw)
+        window.set_app_paintable(True)
+
+        window.show_all()
         gtk.main()
 
+#def draw(widget, surface):
+#        page.render(surface)
+
+#document = poppler.document_new_from_file('file://' + os.path.abspath('../res/') + '/vortrag.pdf', None)
+#page = document.get_page(0)
         
 # Lime
 # 500 #cddc39

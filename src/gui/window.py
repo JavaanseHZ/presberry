@@ -216,9 +216,11 @@ gtk.gdk.threads_init()
 class PresCanvas(gtk.DrawingArea):
     def __init__(self):
         gtk.DrawingArea.__init__(self)
-        self.load_pdf('file://' + os.path.abspath('../res/') + '/vortrag.pdf')
-        self.connect('expose-event', self.redraw)
+        #self.load_pdf('file://' + os.path.abspath('../res/') + '/vortrag.pdf')
+        self.fileUploaded = False;
+        #self.connect('expose-event', self.redraw)
         pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
+        pub.Publisher.subscribe(self.uploadedPDF, 'uploadedPDF')
 
     def load_pdf(self, uri):
         self.doc = poppler.document_new_from_file(uri, None)
@@ -232,17 +234,19 @@ class PresCanvas(gtk.DrawingArea):
         self.scale = 1
         # the document width and height
         self.doc_width, self.doc_height = self.curr_pg_disp.get_size()
-        
-    def redraw(self, widget, event):
         self.renderPDF()
         
+    #def redraw(self, widget, event):
+    #    self.renderPDF()
+        
     def renderPDF(self):
-        cr = self.window.cairo_create()
-        cr.set_source_rgb(1, 1, 1)
-        cr.scale(2.0, 2.0)
-        cr.rectangle(0, 0,  self.doc_width, self.doc_height)
-        cr.fill()
-        self.curr_pg_disp.render(cr)
+        if self.fileUploaded:
+            cr = self.window.cairo_create()
+            cr.set_source_rgb(1, 1, 1)
+            cr.scale(2.0, 2.0)
+            cr.rectangle(0, 0,  self.doc_width, self.doc_height)
+            cr.fill()
+            self.curr_pg_disp.render(cr)
     
     def updateDisplay(self, msg):
         if self.curr_pg < (self.n_pgs-1):
@@ -253,7 +257,11 @@ class PresCanvas(gtk.DrawingArea):
             self.curr_pg = 0
             self.curr_pg_disp = self.doc.get_page(self.curr_pg)
             self.renderPDF()
-
+    
+    def uploadedPDF(self, data):
+        self.fileUploaded = True;
+        uri = 'file://' + os.path.abspath('../res/') + '/vortrag.pdf'; #'file://' + data#'
+        self.load_pdf(uri)
         
 class PresWindow(threading.Thread):
     

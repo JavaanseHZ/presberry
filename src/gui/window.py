@@ -10,7 +10,7 @@ import cairo
 import poppler
 import gtk
 from gtk.gdk import *
-import sys
+import gobject
 #import qrcode
 import threading
 import rsvg
@@ -211,7 +211,7 @@ import urllib
 #         hbox.Add(fgs, proportion=1, flag=wx.ALL|wx.EXPAND, border=15)
 #         panel.SetSizer(hbox)
 
-gtk.gdk.threads_init()
+gobject.threads_init()
 
 class PresCanvas(gtk.DrawingArea):
     def __init__(self):
@@ -234,6 +234,7 @@ class PresCanvas(gtk.DrawingArea):
         self.scale = 1
         # the document width and height
         self.doc_width, self.doc_height = self.curr_pg_disp.get_size()
+        
         self.renderPDF()
         
     #def redraw(self, widget, event):
@@ -241,12 +242,12 @@ class PresCanvas(gtk.DrawingArea):
         
     def renderPDF(self):
         if self.fileUploaded:
-            cr = self.window.cairo_create()
-            cr.set_source_rgb(1, 1, 1)
-            cr.scale(2.0, 2.0)
-            cr.rectangle(0, 0,  self.doc_width, self.doc_height)
-            cr.fill()
-            self.curr_pg_disp.render(cr)
+            self.cr = self.window.cairo_create()
+            self.cr.set_source_rgb(1, 1, 1)
+            self.cr.scale(2.0, 2.0)
+            self.cr.rectangle(0, 0,  self.doc_width, self.doc_height)
+            self.cr.fill()            
+            self.curr_pg_disp.render(self.cr)
     
     def updateDisplay(self, msg):
         if self.curr_pg < (self.n_pgs-1):

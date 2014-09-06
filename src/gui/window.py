@@ -209,18 +209,31 @@ import urllib
 # 
 #         hbox.Add(fgs, proportion=1, flag=wx.ALL|wx.EXPAND, border=15)
 #         panel.SetSizer(hbox)
+
+class PresCanvas(gtk.DrawingArea):
+    def __init__(self):
+        gtk.DrawingArea.__init__(self)
+        document = poppler.document_new_from_file('file://' + os.path.abspath('../res/') + '/vortrag.pdf', None)
+        self.page = document.get_page(3)
+        self.doc_width, self.doc_height = self.page.get_size()
+        self.connect('expose-event', self.redraw)
         
+    def redraw(self, widget, event):
+        cr = widget.window.cairo_create()
+        cr.set_source_rgb(1, 1, 1)
+        cr.scale(2.0, 2.0)
+
+        cr.rectangle(0, 0,  self.doc_width, self.doc_height)
+        cr.fill()
+        self.page.render(cr)
+
         
 class PresWindow(threading.Thread):
     
     def __init__(self, serverQueue, guiQueue):
         threading.Thread.__init__(self)
         self.serverQueue = serverQueue
-        self.guiQueue = guiQueue
-        
-    
-    
-        
+        self.guiQueue = guiQueue       
 
     def run(self):       
         
@@ -229,7 +242,8 @@ class PresWindow(threading.Thread):
         window.connect("delete-event", gtk.main_quit)
         #window.connect("expose-event", draw)
         window.set_app_paintable(True)
-
+        canvas = PresCanvas()
+        window.add(canvas)
         window.show_all()
         gtk.main()
 

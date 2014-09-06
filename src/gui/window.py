@@ -9,6 +9,7 @@ from wx.lib.pubsub import pub
 import cairo
 import poppler
 import gtk
+from gtk.gdk import *
 import sys
 #import qrcode
 import threading
@@ -210,22 +211,48 @@ import urllib
 #         hbox.Add(fgs, proportion=1, flag=wx.ALL|wx.EXPAND, border=15)
 #         panel.SetSizer(hbox)
 
+gtk.gdk.threads_init()
+
 class PresCanvas(gtk.DrawingArea):
     def __init__(self):
         gtk.DrawingArea.__init__(self)
-        document = poppler.document_new_from_file('file://' + os.path.abspath('../res/') + '/vortrag.pdf', None)
-        self.page = document.get_page(3)
-        self.doc_width, self.doc_height = self.page.get_size()
+        self.load_pdf('file://' + os.path.abspath('../res/') + '/vortrag.pdf')
         self.connect('expose-event', self.redraw)
+        pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
+
+    def load_pdf(self, uri):
+        self.doc = poppler.document_new_from_file(uri, None)
+        # the number of pages in the pdf
+        self.n_pgs = self.doc.get_n_pages()
+        # the current page of the pdf
+        self.curr_pg = 0
+        # the current page being displayed
+        self.curr_pg_disp = self.doc.get_page(self.curr_pg)        
+        # the scale of the page
+        self.scale = 1
+        # the document width and height
+        self.doc_width, self.doc_height = self.curr_pg_disp.get_size()
         
     def redraw(self, widget, event):
-        cr = widget.window.cairo_create()
+        self.renderPDF()
+        
+    def renderPDF(self):
+        cr = self.window.cairo_create()
         cr.set_source_rgb(1, 1, 1)
         cr.scale(2.0, 2.0)
-
         cr.rectangle(0, 0,  self.doc_width, self.doc_height)
         cr.fill()
-        self.page.render(cr)
+        self.curr_pg_disp.render(cr)
+    
+    def updateDisplay(self, msg):
+        if self.curr_pg < (self.n_pgs-1):
+            self.curr_pg = self.curr_pg + 1
+            self.curr_pg_disp = self.doc.get_page(self.curr_pg)
+            self.renderPDF()
+        else:
+            self.curr_pg = 0
+            self.curr_pg_disp = self.doc.get_page(self.curr_pg)
+            self.renderPDF()
 
         
 class PresWindow(threading.Thread):
@@ -235,8 +262,7 @@ class PresWindow(threading.Thread):
         self.serverQueue = serverQueue
         self.guiQueue = guiQueue       
 
-    def run(self):       
-        
+    def run(self):
         window = gtk.Window()
         window.set_default_size(800, 600)
         window.connect("delete-event", gtk.main_quit)
@@ -245,7 +271,9 @@ class PresWindow(threading.Thread):
         canvas = PresCanvas()
         window.add(canvas)
         window.show_all()
+        gtk.gdk.threads_enter()
         gtk.main()
+        gtk.gdk.threads_leave()
 
 #def draw(widget, surface):
 #        page.render(surface)

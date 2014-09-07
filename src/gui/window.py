@@ -248,6 +248,7 @@ class PresCanvas(gtk.DrawingArea):
             self.cr.rectangle(0, 0,  self.doc_width, self.doc_height)
             self.cr.fill()            
             self.curr_pg_disp.render(self.cr)
+            self.queue_draw()
     
     def updateDisplay(self, msg):
         if self.curr_pg < (self.n_pgs-1):

@@ -237,6 +237,7 @@ class PresCanvas(gtk.DrawingArea):
         self.hide_all()
         self.show_all()
         
+        
     #def redraw(self, widget, event):
     #    self.renderPDF()
     
@@ -257,9 +258,12 @@ class PresCanvas(gtk.DrawingArea):
             if (self.panel_width/self.panel_height > self.doc_width/self.doc_height):
                 self.scaleFactor = self.panel_height/self.doc_height
                 self.horIdent = (self.panel_width - (self.scaleFactor*self.doc_width))/2
+                #self.set_size_request(int(self.scaleFactor*self.doc_width), p_height)  
+            
             else:
                 self.scaleFactor = self.panel_width/self.doc_width
-                self.verIdent = (self.panel_height - (self.scaleFactor*self.doc_height))/2    
+                self.verIdent = (self.panel_height - (self.scaleFactor*self.doc_height))/2
+                #self.set_size_request(p_width, int(self.scaleFactor*self.doc_width))
                 #cr.scale(self.panel_height/self.doc_height, self.panel_height/self.doc_height)
                 
 #                 #cr.rectangle(self.panel_width-, 0,  self.doc_width, self.doc_height)
@@ -267,18 +271,19 @@ class PresCanvas(gtk.DrawingArea):
             
                 #cr.scale(self.panel_width/self.doc_width, self.panel_width/self.doc_width)
             #   # print self.panel_width/self.doc_width , self.panel_height/self.doc_height , self.panel_width/self.panel_height
-                
             cr.scale(self.scaleFactor, self.scaleFactor)
-            cr.rectangle(0, 0,  p_width, p_height)
-            #cr.rectangle(0, 0,  self.doc_width, self.doc_height)
+            
+            #cr.rectangle(0, 0,  self.scaleFactor*self.doc_width, self.scaleFactor*self.doc_height)
+            cr.rectangle(0, 0,  self.doc_width, self.doc_height)
             
             #cr.rectangle(0,0, p_width, p_height)
             cr.fill()          
             #print cr.region()
                              
             self.curr_pg_disp.render(cr)
+            
             #cr.moveTo()
-            cr.move_to(self.horIdent, self.verIdent)
+            #cr.move_to(self.horIdent, self.verIdent)
             
             
 #     def renderPDF(self):
@@ -329,6 +334,11 @@ class PresCanvas(gtk.DrawingArea):
         self.fileUploaded = True;
         uri = 'file://' + os.path.abspath('../res/') + '/vortrag.pdf'; #'file://' + data#'
         self.load_pdf(uri)
+
+#class PresGTKWindow(gtk.Window):
+#    def __init__(self):
+        
+
         
 class PresWindow(threading.Thread):
     
@@ -347,9 +357,13 @@ class PresWindow(threading.Thread):
         window.connect("delete-event", gtk.main_quit)
         #window.connect("expose-event", draw)
         window.set_app_paintable(True)
+        
         canvas = PresCanvas()
-        #alignment = gtk.Alignment(xalign=0.5, yalign=0.5, xscale=0.0, yscale=0.0)
+        ##canvas.set_size_request(800, 450)
+        #alignment = gtk.Alignment(0.5, 0.5, 0, 0)
+              
         #alignment.add(canvas)
+        
         window.add(canvas)
         window.show_all()
         gtk.threads_enter()

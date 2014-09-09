@@ -230,7 +230,7 @@ class PresCanvas(gtk.DrawingArea):
         # the current page being displayed
         self.curr_pg_disp = self.doc.get_page(self.curr_pg)        
         # the scale of the page
-        self.scale = 1
+        #self.scale = 1
         # the document width and height
         self.doc_width, self.doc_height = self.curr_pg_disp.get_size()
         
@@ -243,11 +243,43 @@ class PresCanvas(gtk.DrawingArea):
     def expose(self, widget, event):
         if self.fileUploaded:
             cr = widget.window.cairo_create()
-            cr.set_source_rgb(1, 1, 1)
-            cr.scale(2.0, 2.0)
-            cr.rectangle(0, 0,  self.doc_width, self.doc_height)
-            cr.fill()            
+            cr.set_source_rgb(0, 0, 0)
+            p_width, p_height = widget.window.get_size()
+            self.panel_width = float(p_width);
+            self.panel_height = float(p_height);
+            self.horIdent = 0;
+            self.verIdent = 0;
+            self.scaleFactor = 0.0
+           
+            #print self.panel_width, self.panel_height
+            #print float(self.panel_width)/float(self.panel_height), self.doc_width/self.doc_height
+            
+            if (self.panel_width/self.panel_height > self.doc_width/self.doc_height):
+                self.scaleFactor = self.panel_height/self.doc_height
+                self.horIdent = (self.panel_width - (self.scaleFactor*self.doc_width))/2
+            else:
+                self.scaleFactor = self.panel_width/self.doc_width
+                self.verIdent = (self.panel_height - (self.scaleFactor*self.doc_height))/2    
+                #cr.scale(self.panel_height/self.doc_height, self.panel_height/self.doc_height)
+                
+#                 #cr.rectangle(self.panel_width-, 0,  self.doc_width, self.doc_height)
+#             #print self.panel_width/self.doc_width , self.panel_height/self.doc_height , self.panel_width/self.panel_height , self.doc_width, self.doc_height
+            
+                #cr.scale(self.panel_width/self.doc_width, self.panel_width/self.doc_width)
+            #   # print self.panel_width/self.doc_width , self.panel_height/self.doc_height , self.panel_width/self.panel_height
+                
+            cr.scale(self.scaleFactor, self.scaleFactor)
+            cr.rectangle(0, 0,  p_width, p_height)
+            #cr.rectangle(0, 0,  self.doc_width, self.doc_height)
+            
+            #cr.rectangle(0,0, p_width, p_height)
+            cr.fill()          
+            #print cr.region()
+                             
             self.curr_pg_disp.render(cr)
+            #cr.moveTo()
+            cr.move_to(self.horIdent, self.verIdent)
+            
             
 #     def renderPDF(self):
 #         if self.fileUploaded:
@@ -291,7 +323,7 @@ class PresCanvas(gtk.DrawingArea):
             self.curr_pg_disp = self.doc.get_page(self.curr_pg)
             self.hide_all()
             self.show_all()
-        self.writeSVG()
+        #self.writeSVG()
     
     def uploadedPDF(self, data):
         self.fileUploaded = True;
@@ -300,18 +332,24 @@ class PresCanvas(gtk.DrawingArea):
         
 class PresWindow(threading.Thread):
     
-    def __init__(self, serverQueue, guiQueue):
+#     def __init__(self, serverQueue, guiQueue):
+#         threading.Thread.__init__(self)
+#         self.serverQueue = serverQueue
+#         self.guiQueue = guiQueue
+    
+    def __init__(self):
         threading.Thread.__init__(self)
-        self.serverQueue = serverQueue
-        self.guiQueue = guiQueue       
 
     def run(self):
         window = gtk.Window()
-        window.set_default_size(800, 600)
+        
+        window.set_default_size(800, 450)
         window.connect("delete-event", gtk.main_quit)
         #window.connect("expose-event", draw)
         window.set_app_paintable(True)
         canvas = PresCanvas()
+        #alignment = gtk.Alignment(xalign=0.5, yalign=0.5, xscale=0.0, yscale=0.0)
+        #alignment.add(canvas)
         window.add(canvas)
         window.show_all()
         gtk.threads_enter()

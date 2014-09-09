@@ -29,10 +29,13 @@ conf = {
     }
 
 class HTTPServer(threading.Thread):
-    def __init__(self, serverQueue, guiQueue):
+#     def __init__(self, serverQueue, guiQueue):
+#         threading.Thread.__init__(self)
+#         self.serverQueue = serverQueue
+#         self.guiQueue = guiQueue
+    
+    def __init__(self):
         threading.Thread.__init__(self)
-        self.serverQueue = serverQueue
-        self.guiQueue = guiQueue
         
 
     def run(self):

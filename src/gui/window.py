@@ -9,7 +9,6 @@ from wx.lib.pubsub import pub
 import cairo
 import poppler
 import gtk
-from gtk.gdk import *
 import gobject
 #import qrcode
 import threading
@@ -211,14 +210,14 @@ import urllib
 #         hbox.Add(fgs, proportion=1, flag=wx.ALL|wx.EXPAND, border=15)
 #         panel.SetSizer(hbox)
 
-gobject.threads_init()
+gtk.threads_init()
 
 class PresCanvas(gtk.DrawingArea):
     def __init__(self):
-        gtk.DrawingArea.__init__(self)
+        super(PresCanvas, self).__init__()
         #self.load_pdf('file://' + os.path.abspath('../res/') + '/vortrag.pdf')
         self.fileUploaded = False;
-        #self.connect('expose-event', self.redraw)
+        self.connect('expose-event', self.expose)
         pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
         pub.Publisher.subscribe(self.uploadedPDF, 'uploadedPDF')
 
@@ -235,30 +234,64 @@ class PresCanvas(gtk.DrawingArea):
         # the document width and height
         self.doc_width, self.doc_height = self.curr_pg_disp.get_size()
         
-        self.renderPDF()
+        self.hide_all()
+        self.show_all()
         
     #def redraw(self, widget, event):
     #    self.renderPDF()
-        
-    def renderPDF(self):
+    
+    def expose(self, widget, event):
         if self.fileUploaded:
-            self.cr = self.window.cairo_create()
-            self.cr.set_source_rgb(1, 1, 1)
-            self.cr.scale(2.0, 2.0)
-            self.cr.rectangle(0, 0,  self.doc_width, self.doc_height)
-            self.cr.fill()            
-            self.curr_pg_disp.render(self.cr)
-            self.queue_draw()
+            cr = widget.window.cairo_create()
+            cr.set_source_rgb(1, 1, 1)
+            cr.scale(2.0, 2.0)
+            cr.rectangle(0, 0,  self.doc_width, self.doc_height)
+            cr.fill()            
+            self.curr_pg_disp.render(cr)
+            
+#     def renderPDF(self):
+#         if self.fileUploaded:
+#             cr = self.window.cairo_create()
+#             cr.set_source_rgb(1, 1, 1)
+#             cr.scale(2.0, 2.0)
+#             cr.rectangle(0, 0,  self.doc_width, self.doc_height)
+#             cr.fill()            
+#             self.curr_pg_disp.render(cr)
+#             #self.queue_draw()
+    
+    def writeSVG(self):
+     
+        fo = file('../res/vortrag.svg', 'w')
+         
+        WIDTH = 800
+        page = self.curr_pg_disp
+        page_width, page_height = page.get_size()
+        ratio = page_height/page_width
+        HEIGHT = round(ratio*WIDTH)
+        surface = cairo.SVGSurface (fo, WIDTH, HEIGHT)
+        cr = cairo.Context(surface) 
+        cr.translate(0, 0)
+        cr.scale(WIDTH/page_width, HEIGHT/page_height)
+        page.render(cr)
+        cr.set_operator(cairo.OPERATOR_DEST_OVER)
+        cr.set_source_rgb(1, 1, 1)
+        cr.paint()
+        surface.finish()
+        print 'svg written'
+
     
     def updateDisplay(self, msg):
         if self.curr_pg < (self.n_pgs-1):
             self.curr_pg = self.curr_pg + 1
             self.curr_pg_disp = self.doc.get_page(self.curr_pg)
-            self.renderPDF()
+            self.hide_all()
+            self.show_all()
         else:
             self.curr_pg = 0
             self.curr_pg_disp = self.doc.get_page(self.curr_pg)
-            self.renderPDF()
+            self.hide_all()
+            self.show_all()
+        self.writeSVG()
     
     def uploadedPDF(self, data):
         self.fileUploaded = True;
@@ -281,9 +314,9 @@ class PresWindow(threading.Thread):
         canvas = PresCanvas()
         window.add(canvas)
         window.show_all()
-        gtk.gdk.threads_enter()
+        gtk.threads_enter()
         gtk.main()
-        gtk.gdk.threads_leave()
+        gtk.threads_leave()
 
 #def draw(widget, surface):
 #        page.render(surface)

@@ -241,9 +241,9 @@ class PDFdocument():
             self.scaleFactor = windowWidth/self.doc_width  
         
 
-class PresCanvas(gtk.DrawingArea):
+class PresPresentationPanel(gtk.DrawingArea):
     def __init__(self, pdfDocument):
-        super(PresCanvas, self).__init__()
+        super(PresPresentationPanel, self).__init__()
         #self.load_pdf('file://' + os.path.abspath('../res/') + '/vortrag.pdf')
         self.pdfDocument = pdfDocument
         self.fileUploaded = False;
@@ -351,12 +351,14 @@ class PresCanvas(gtk.DrawingArea):
             self.show_all()
         
         #self.writeSVG()
-    
+class PresStartPanel(gtk.Table):
+     def __init__(self):
+         super(PresStartPanel, self).__init__()
     
 
-class PresGTKWindow(gtk.Window):
+class PresWindow(gtk.Window):
     def __init__(self):
-        super(PresGTKWindow, self).__init__()
+        super(PresWindow, self).__init__()
         
         pub.Publisher.subscribe(self.uploadedPDF, 'uploadedPDF')
         #pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
@@ -404,7 +406,7 @@ class PresGTKWindow(gtk.Window):
         
         self.pdfDocument = PDFdocument()
         self.pdfDocument.loadPDF(uri, self.windowWidth, self.windowHeight)
-        self.canvas = PresCanvas(self.pdfDocument)
+        self.presPanel = PresPresentationPanel(self.pdfDocument)
         self.canvas.set_size_request(int(self.pdfDocument.doc_width * self.pdfDocument.scaleFactor) , int(self.pdfDocument.doc_height * self.pdfDocument.scaleFactor))
         print int(self.pdfDocument.doc_width * self.pdfDocument.scaleFactor)
         
@@ -423,7 +425,7 @@ class PresGTKWindow(gtk.Window):
         #self.presState.nextState()
 
         
-class PresWindow(threading.Thread):
+class PresGUI(threading.Thread):
     
 #     def __init__(self, serverQueue, guiQueue):
 #         threading.Thread.__init__(self)
@@ -434,7 +436,7 @@ class PresWindow(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        window = PresGTKWindow()
+        window = PresWindow()
         window.connect("delete-event", gtk.main_quit)
         window.show_all()
         gtk.threads_enter()

@@ -359,7 +359,7 @@ class PresGTKWindow(gtk.Window):
         super(PresGTKWindow, self).__init__()
         
         pub.Publisher.subscribe(self.uploadedPDF, 'uploadedPDF')
-        pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
+        #pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
         #self.isFullscreen = False
         self.setWindowSize()
         self.set_app_paintable(True)

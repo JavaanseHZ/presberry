@@ -15,6 +15,7 @@ import threading
 import rsvg
 import os, os.path
 import urllib
+import util.state
 
  
 # class PDFWindow(wx.Window):
@@ -348,6 +349,7 @@ class PresCanvas(gtk.DrawingArea):
             self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
             self.hide_all()
             self.show_all()
+        
         #self.writeSVG()
     
     
@@ -357,11 +359,19 @@ class PresGTKWindow(gtk.Window):
         super(PresGTKWindow, self).__init__()
         
         pub.Publisher.subscribe(self.uploadedPDF, 'uploadedPDF')
+        pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
         #self.isFullscreen = False
         self.setWindowSize()
         self.set_app_paintable(True)
         color = (gtk.gdk).Color(0,0,0)
         self.modify_bg(gtk.STATE_NORMAL, color)
+        
+        
+        self.startState = util.state.StartState(self)
+        self.presentationState = util.state.PresentationState(self)
+        self.uploadState = util.state.UploadState(self)
+        
+        self.presState = self.startState
         
         
         #vbox = gtk.VBox()
@@ -404,10 +414,13 @@ class PresGTKWindow(gtk.Window):
         self.alignment.add(self.canvas)
         self.add(self.alignment)
         self.show_all()
+        self.presState.nextState()
        
         #self.canvas.hide_all()
         #self.canvas.show_all()
         #self.alignment.set(0.5, 0.5, 0, 0)
+    #def updateDisplay(self, msg):
+        #self.presState.nextState()
 
         
 class PresWindow(threading.Thread):

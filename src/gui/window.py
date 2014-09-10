@@ -233,10 +233,11 @@ class PDFdocument():
         #self.scale = 1
         # the document width and height
         self.doc_width, self.doc_height = self.curr_pg_disp.get_size()
+        print windowWidth,windowHeight, (self.doc_width/self.doc_height)
         if (windowWidth/windowHeight > self.doc_width/self.doc_height):
-            self.scaleFactor = windowWidth/self.doc_width            
+            self.scaleFactor = windowHeight/self.doc_height          
         else:            
-            self.scaleFactor = windowHeight/self.doc_height
+            self.scaleFactor = windowWidth/self.doc_width  
         
 
 class PresCanvas(gtk.DrawingArea):
@@ -359,7 +360,7 @@ class PresGTKWindow(gtk.Window):
         #self.isFullscreen = False
         self.setWindowSize()
         self.set_app_paintable(True)
-        color = gtk.gdk.Color(0,0,0)
+        color = (gtk.gdk).Color(0,0,0)
         self.modify_bg(gtk.STATE_NORMAL, color)
         
         
@@ -382,8 +383,8 @@ class PresGTKWindow(gtk.Window):
             #print mg.width, mg.height
         else:
             self.set_default_size(width, height)
-            self.windowWidth = width
-            self.windowHeight = height
+            self.windowWidth = float(width)
+            self.windowHeight = float(height)
             
         
 

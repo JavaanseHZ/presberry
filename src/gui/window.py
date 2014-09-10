@@ -212,16 +212,16 @@ import urllib
 
 gtk.threads_init()
 
-class PresCanvas(gtk.DrawingArea):
-    def __init__(self):
-        super(PresCanvas, self).__init__()
-        #self.load_pdf('file://' + os.path.abspath('../res/') + '/vortrag.pdf')
-        self.fileUploaded = False;
-        self.connect('expose-event', self.expose)
-        pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
-        pub.Publisher.subscribe(self.uploadedPDF, 'uploadedPDF')
-
-    def load_pdf(self, uri):
+class PDFdocument():
+#    def __init__(self):
+#         self.doc
+#         self.n_pgs
+#         self.curr_pg
+#         self.curr_pg_disp
+#         self.doc_width
+#         self.doc_height
+       
+    def loadPDF(self, uri, windowWidth, windowHeight):
         self.doc = poppler.document_new_from_file(uri, None)
         # the number of pages in the pdf
         self.n_pgs = self.doc.get_n_pages()
@@ -233,9 +233,26 @@ class PresCanvas(gtk.DrawingArea):
         #self.scale = 1
         # the document width and height
         self.doc_width, self.doc_height = self.curr_pg_disp.get_size()
+        if (windowWidth/windowHeight > self.doc_width/self.doc_height):
+            self.scaleFactor = windowWidth/self.doc_width            
+        else:            
+            self.scaleFactor = windowHeight/self.doc_height
         
-        self.hide_all()
-        self.show_all()
+
+class PresCanvas(gtk.DrawingArea):
+    def __init__(self, pdfDocument):
+        super(PresCanvas, self).__init__()
+        #self.load_pdf('file://' + os.path.abspath('../res/') + '/vortrag.pdf')
+        self.pdfDocument = pdfDocument
+        self.fileUploaded = False;
+        self.connect('expose-event', self.expose)
+        pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
+
+    #def load_pdf(self, uri):
+        
+        
+    #    self.hide_all()
+    #    self.show_all()
         
         
     #def redraw(self, widget, event):
@@ -245,42 +262,44 @@ class PresCanvas(gtk.DrawingArea):
         if self.fileUploaded:
             cr = widget.window.cairo_create()
             cr.set_source_rgb(0, 0, 0)
-            p_width, p_height = widget.window.get_size()
-            self.panel_width = float(p_width);
-            self.panel_height = float(p_height);
-            self.horIdent = 0;
-            self.verIdent = 0;
-            self.scaleFactor = 0.0
+            cr.scale(self.pdfDocument.scaleFactor, self.pdfDocument.scaleFactor)
+            self.pdfDocument.curr_pg_disp.render(cr)
+            #p_width, p_height = widget.window.get_size()
+            #self.panel_width = float(p_width);
+            #self.panel_height = float(p_height);
+            #self.horIdent = 0;
+            #self.verIdent = 0;
+            #self.scaleFactor = 0.0
            
             #print self.panel_width, self.panel_height
             #print float(self.panel_width)/float(self.panel_height), self.doc_width/self.doc_height
             
-            if (self.panel_width/self.panel_height > self.doc_width/self.doc_height):
-                self.scaleFactor = self.panel_height/self.doc_height
-                self.horIdent = (self.panel_width - (self.scaleFactor*self.doc_width))/2
-                #self.set_size_request(int(self.scaleFactor*self.doc_width), p_height)  
+            #if (self.panel_width/self.panel_height > self.pdfDocument.doc_width/self.pdfDocument.doc_height):
+            #    self.scaleFactor = self.panel_height/self.pdfDocument.doc_height
+                #self.horIdent = (self.panel_width - (self.scaleFactor*self.doc_width))/2
+                #self.set_size_request(int(self.scaleFactor*self.pdfDocument.doc_width), p_height)  
             
-            else:
-                self.scaleFactor = self.panel_width/self.doc_width
-                self.verIdent = (self.panel_height - (self.scaleFactor*self.doc_height))/2
-                #self.set_size_request(p_width, int(self.scaleFactor*self.doc_width))
+            #else:
+            #    self.scaleFactor = self.panel_width/self.pdfDocument.doc_width
+                #self.verIdent = (self.panel_height - (self.scaleFactor*self.doc_height))/2
+                #self.set_size_request(p_width, int(self.scaleFactor*self.pdfDocument.doc_width))
                 #cr.scale(self.panel_height/self.doc_height, self.panel_height/self.doc_height)
                 
 #                 #cr.rectangle(self.panel_width-, 0,  self.doc_width, self.doc_height)
 #             #print self.panel_width/self.doc_width , self.panel_height/self.doc_height , self.panel_width/self.panel_height , self.doc_width, self.doc_height
             
-                #cr.scale(self.panel_width/self.doc_width, self.panel_width/self.doc_width)
+                #cr.scale(self.panel_width/self.dodoc_widthc_width, self.panel_width/self.doc_width)
             #   # print self.panel_width/self.doc_width , self.panel_height/self.doc_height , self.panel_width/self.panel_height
-            cr.scale(self.scaleFactor, self.scaleFactor)
+            
             
             #cr.rectangle(0, 0,  self.scaleFactor*self.doc_width, self.scaleFactor*self.doc_height)
-            cr.rectangle(0, 0,  self.doc_width, self.doc_height)
+            #cr.rectangle(0, 0,  self.pdfDocument.doc_width, self.pdfDocument.doc_height)
             
             #cr.rectangle(0,0, p_width, p_height)
-            cr.fill()          
+            #cr.fill()          
             #print cr.region()
-                             
-            self.curr_pg_disp.render(cr)
+            
+            
             
             #cr.moveTo()
             #cr.move_to(self.horIdent, self.verIdent)
@@ -318,26 +337,76 @@ class PresCanvas(gtk.DrawingArea):
 
     
     def updateDisplay(self, msg):
-        if self.curr_pg < (self.n_pgs-1):
-            self.curr_pg = self.curr_pg + 1
-            self.curr_pg_disp = self.doc.get_page(self.curr_pg)
+        if self.pdfDocument.curr_pg < (self.pdfDocument.n_pgs-1):
+            self.pdfDocument.curr_pg = self.pdfDocument.curr_pg + 1
+            self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
             self.hide_all()
             self.show_all()
         else:
-            self.curr_pg = 0
-            self.curr_pg_disp = self.doc.get_page(self.curr_pg)
+            self.pdfDocument.curr_pg = 0
+            self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
             self.hide_all()
             self.show_all()
         #self.writeSVG()
     
-    def uploadedPDF(self, data):
-        self.fileUploaded = True;
-        uri = 'file://' + os.path.abspath('../res/') + '/vortrag.pdf'; #'file://' + data#'
-        self.load_pdf(uri)
+    
 
-#class PresGTKWindow(gtk.Window):
-#    def __init__(self):
+class PresGTKWindow(gtk.Window):
+    def __init__(self):
+        super(PresGTKWindow, self).__init__()
         
+        pub.Publisher.subscribe(self.uploadedPDF, 'uploadedPDF')
+        #self.isFullscreen = False
+        self.setWindowSize()
+        self.set_app_paintable(True)
+        color = gtk.gdk.Color(0,0,0)
+        self.modify_bg(gtk.STATE_NORMAL, color)
+        
+        
+        #vbox = gtk.VBox()
+       
+        #screen = self.get_screen()
+        #mg = screen.get_monitor_geometry(screen.get_monitor_at_window(screen.get_active_window()))
+        #print "monitor: %d x %d" % (mg.width,mg.height)
+            # current monitor
+        #curmon = screen.get_monitor_at_window(screen.get_active_window())
+        #print screen.get_width(), screen.get_height()
+        
+    def setWindowSize(self, isFullscreen=False, width=800, height=450):
+        if isFullscreen:
+            self.fullscreen()
+            screen = self.get_screen()
+            mg = screen.get_monitor_geometry(screen.get_monitor_at_window(screen.get_active_window()))
+            self.windowWidth = mg.width
+            self.windowHeight = mg.height
+            #print mg.width, mg.height
+        else:
+            self.set_default_size(width, height)
+            self.windowWidth = width
+            self.windowHeight = height
+            
+        
+
+    def uploadedPDF(self, data):
+        
+        uri = 'file://' + os.path.abspath('../res/') + '/vortrag.pdf'; #'file://' + data#'
+        
+        self.pdfDocument = PDFdocument()
+        self.pdfDocument.loadPDF(uri, self.windowWidth, self.windowHeight)
+        self.canvas = PresCanvas(self.pdfDocument)
+        self.canvas.set_size_request(int(self.pdfDocument.doc_width * self.pdfDocument.scaleFactor) , int(self.pdfDocument.doc_height * self.pdfDocument.scaleFactor))
+        print int(self.pdfDocument.doc_width * self.pdfDocument.scaleFactor)
+        
+        #self.canvas.set_size_request(int(self.pdfDocument.doc_width), int(self.pdfDocument.doc_height))
+        self.canvas.fileUploaded = True;
+        self.alignment = gtk.Alignment(0.5, 0.5, 0, 0)
+        self.alignment.add(self.canvas)
+        self.add(self.alignment)
+        self.show_all()
+       
+        #self.canvas.hide_all()
+        #self.canvas.show_all()
+        #self.alignment.set(0.5, 0.5, 0, 0)
 
         
 class PresWindow(threading.Thread):
@@ -351,20 +420,8 @@ class PresWindow(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        window = gtk.Window()
-        
-        window.set_default_size(800, 450)
+        window = PresGTKWindow()
         window.connect("delete-event", gtk.main_quit)
-        #window.connect("expose-event", draw)
-        window.set_app_paintable(True)
-        
-        canvas = PresCanvas()
-        ##canvas.set_size_request(800, 450)
-        #alignment = gtk.Alignment(0.5, 0.5, 0, 0)
-              
-        #alignment.add(canvas)
-        
-        window.add(canvas)
         window.show_all()
         gtk.threads_enter()
         gtk.main()

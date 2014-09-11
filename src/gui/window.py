@@ -396,7 +396,9 @@ class PresStartPanel(gtk.Table):
         wifiImage = gtk.Image()
         wifiImage.set_from_file("../res/sidebar1.png")
         
-        wifiQR = QR(data=u"wifi", pixel_size=19, level='L', margin_size=0 )
+        wifiData=[u"Presberry_AP", u"WPA", u"PresberryIstKlasse" ]
+        
+        wifiQR = QR(data=wifiData, data_type=u"wifi", pixel_size=13, level='L', margin_size=0 )
         wifiQR.encode()
         wifiQRImage = gtk.Image()
         wifiQRImage.set_from_file(wifiQR.filename)
@@ -410,7 +412,7 @@ class PresStartPanel(gtk.Table):
         httpImage = gtk.Image()
         httpImage.set_from_file("../res/sidebar2.png")
         
-        httpQR = QR(data=u"http", pixel_size=19, level='L', margin_size=0)
+        httpQR = QR(data=u"http://presberry.org:8080", pixel_size=15, level='L', margin_size=0)
         httpQR.encode()
         httpQRImage = gtk.Image()
         httpQRImage.set_from_file(httpQR.filename)

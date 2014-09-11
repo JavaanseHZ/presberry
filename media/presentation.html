@@ -1,76 +1,58 @@
 <html>
-<head>
-    <title>Presberry - Presentation</title>
-    <script type="text/javascript">
-    function loadPresSVG() {
-       	var svg = document.getElementById('svgimage');
-       	var svgInner = document.getElementById('svgimageInner');
-    	var bBox = svg.getBBox();
-    	console.log('XxY', bBox.x + 'x' + bBox.y);
-    	console.log('size', bBox.width + 'x' + bBox.height);
-    	var w = window,
-        d = document,
-        e = d.documentElement,
-        g = d.getElementsByTagName('body')[0],
-        windowWidth = w.innerWidth || e.clientWidth || g.clientWidth,
-        windowHeight = w.innerHeight|| e.clientHeight|| g.clientHeight;
-    	var scalefactor;
-    	if (windowWidth/windowHeight >  bBox.width/bBox.height)
-    	{
-            scaleFactor = windowHeight/bBox.height          
-    	}
-    	else
-    	{
-            scaleFactor = windowWidth/bBox.width
-    	}
-    	svg.setAttribute("width", windowWidth);
-    	svg.setAttribute("height", windowHeight);
-    	svgInner.setAttribute("width", windowWidth);
-    	svgInner.setAttribute("height", windowHeight);
-    }
-    </script>
-</head>
+	<head>
+	    <title>Presberry - Presentation</title>
+	    <link rel="stylesheet" href="/media/jquery.mobile-1.4.3.min.css">
+		<script src="/media/jquery-1.11.1.min.js"></script>
+		<script src="/media/jquery.mobile-1.4.3.min.js"></script>
+	    <script type="text/javascript">
+		    function loadPresSVG() {
+		       	var svg = document.getElementById('svgimage');
+		       	var svgInner = document.getElementById('svgimageInner');
+		    	var bBox = svg.getBBox();
+		    	console.log('XxY', bBox.x + 'x' + bBox.y);
+		    	console.log('size', bBox.width + 'x' + bBox.height);
+		    	var w = window,
+		        d = document,
+		        e = d.documentElement,
+		        g = d.getElementsByTagName('body')[0],
+		        windowWidth = w.innerWidth || e.clientWidth || g.clientWidth,
+		        windowHeight = w.innerHeight|| e.clientHeight|| g.clientHeight;
+		    	var scalefactor;
+		    	if (windowWidth/windowHeight >  bBox.width/bBox.height)
+		    	{
+		            scaleFactor = windowHeight/bBox.height          
+		    	}
+		    	else
+		    	{
+		            scaleFactor = windowWidth/bBox.width
+		    	}
+		    	svg.setAttribute("width", windowWidth);
+		    	svg.setAttribute("height", windowHeight);
+		    	svgInner.setAttribute("width", windowWidth);
+		    	svgInner.setAttribute("height", windowHeight);
+		    }
+	    </script>
+	</head>
     <body onLoad="loadPresSVG()">
-    <div>
-    <form action="/presentation" method="post" enctype="application/x-www-form-urlencoded">            
-            <input type="submit" name="presData" value="previous" />
-    </form>
-    <form action="/presentation" method="post" enctype="application/x-www-form-urlencoded">            
-            <input type="submit" name="presData" value="next" />
-    </form>
-    <form action="/presentation" method="post" enctype="application/x-www-form-urlencoded">            
-            <input type="submit" name="presData" value="quit" />
-    </form>
-    </div>
-	 
-	<div>    
-    <svg id="svgimage" height="800" width="600" 
-     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-  		<image id="svgimageInner" x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag.svg" />
-	</svg>
-	</div>
+	    <div data-role="page">
+		  	<div data-role="main" class="ui-content">
+			    <div>
+				    <form action="/presentation" method="post" enctype="application/x-www-form-urlencoded" data-ajax="false">            
+				    	<input type="submit" name="presData" value="previous" />
+				    </form>
+				    <form action="/presentation" method="post" enctype="application/x-www-form-urlencoded" data-ajax="false">            
+				    	<input type="submit" name="presData" value="next" />
+				    </form>
+				    <form action="/presentation" method="post" enctype="application/x-www-form-urlencoded" data-ajax="false">            
+				    	<input type="submit" name="presData" value="quit" />
+				    </form>
+			    </div>			 
+				<div>    
+				    <svg id="svgimage" height="800" width="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+				  		<image id="svgimageInner" x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag.svg" />
+					</svg>
+				</div>
+			</div>
+		</div>
     </body>
 </html>
-<!--
-<script type="text/javascript" src="/media/jquery-1.11.1.min.js"></script>
-	<script type="text/javascript" src="/media/jquery.mobile-1.4.3.min.js"></script>
-	<script type="text/javascript">
-	    //$(function() {
-	    // When the testform is submitted…
-	    //	$("#uploadPDF").submit(function() {
-	    //    	// post the form values via AJAX…
-	    //    	var postdata = {uploadedFile: $('#uploadPDF').val()} ;
-	    //    $.post('/submit', postdata, function(data) {
-	    //        // and set the title with the result
-	    //        //$("#title").html(data['title']) ;
-	    //    	});
-	    //    return false ;
-	    //    });
-	    //});
-	    
-	    //$('#iframe').load(function(){
-    	//	console.log($(this).contents().find('#upload').val());
-		//});
-	    
-	</script>
--->

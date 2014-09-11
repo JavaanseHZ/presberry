@@ -1,13 +1,17 @@
 <html>
-<head>
-    <title>Presberry - Finished</title>
+	<head>
+	    <title>Presberry - Finished</title>
+	    <link rel="stylesheet" href="/media/jquery.mobile-1.4.3.min.css">
+		<script src="/media/jquery-1.11.1.min.js"></script>
+		<script src="/media/jquery.mobile-1.4.3.min.js"></script>
     </head>
     <body>
-
-    <div>
-	<form action="/index" method="get">
-            <input type="submit" value="restart"/>
-    </form>
-    </div>
+		<div data-role="page">
+			<div data-role="main" class="ui-content">
+				<form action="/index" method="get" data-ajax="false">
+			            <input type="submit" value="restart"/>
+			    </form>
+			</div>
+    	</div>
     </body>
 </html>

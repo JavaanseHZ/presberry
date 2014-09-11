@@ -30,7 +30,7 @@
     }
     </script>
 </head>
-    <body onLoad="loadPresSVG()">
+    <body>
     <div>
     <form action="/presentation" method="post" enctype="application/x-www-form-urlencoded">            
             <input type="submit" name="presData" value="previous" />
@@ -43,7 +43,7 @@
     </form>
     </div>
 	 
-	<div>    
+	<div onLoad="loadPresSVG()">    
     <svg id="svgimage" height="800" width="600" 
      xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
   		<image id="svgimageInner" x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag.svg" />

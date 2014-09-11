@@ -353,7 +353,7 @@ class PresDrawingArea(gtk.DrawingArea):
         cr.set_source_rgb(1, 1, 1)
         cr.paint()
         surface.finish()
-        pub.Publisher.sendMessage('presSVGReady')
+        #pub.Publisher.sendMessage('presSVGReady')
         print 'svg written'
 
     

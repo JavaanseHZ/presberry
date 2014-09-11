@@ -8,7 +8,7 @@ from wx.lib.pubsub import pub
 import cherrypy
 import threading
 import os
-import time
+#import time
 #import Queue
 #import webbrowser
 
@@ -58,14 +58,14 @@ class HTTPServer(threading.Thread):
 
 class PresWebsite(object):
     
-    def __init__(self):
-        object.__init__(self)
+    #def __init__(self):
+    #    object.__init__(self)
         #self.serverQueue = Queue.Queue()
-        self.svgReady = False
-        pub.Publisher.subscribe(self.presSVGReady, 'presSVGReady')
+        #self.svgReady = False
+        #pub.Publisher.subscribe(self.presSVGReady, 'presSVGReady')
         
-    def presSVGReady(self, msg):
-        self.svgReady = True
+    #def presSVGReady(self, msg):
+    #    self.svgReady = True
         #self.serverQueue.put('ready')
         
     
@@ -107,15 +107,17 @@ class PresWebsite(object):
         print presData
         if presData == 'previous':
             pub.Publisher.sendMessage('presPrevPage')
-            while not self.svgReady:
-                time.sleep(0.2)
-            self.svgReady = False
+            #while not self.svgReady:
+            #    time.sleep(0.2)
+            #self.svgReady = False
+            print 'return previous'
             return open(os.path.join(MEDIA_DIR, u'presentation.html'))
         elif presData == 'next':
             pub.Publisher.sendMessage('presNextPage')
-            while not self.svgReady:
-                time.sleep(0.2)
-            self.svgReady = False            
+            #while not self.svgReady:
+            #    time.sleep(0.2)
+            #self.svgReady = False
+            print 'return next'            
             return open(os.path.join(MEDIA_DIR, u'presentation.html'))
         elif presData == 'quit':
             pub.Publisher.sendMessage('presQuit')

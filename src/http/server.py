@@ -35,7 +35,8 @@ class HTTPServer(threading.Thread):
 
     def run(self):
         cherrypy.server.socket_port = 8080
-        #cherrypy.server.socket_host = optional hostname
+        #server.socket_host': '0.0.0.0'}
+        cherrypy.server.socket_host = '0.0.0.0'
         #cherrypy.engine.subscribe('start', open_page)
         pub.Publisher.subscribe(self.presExit, 'presExit')
         cherrypy.tree.mount(PresWebsite(), '/', config=conf)

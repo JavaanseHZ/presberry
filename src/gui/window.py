@@ -242,17 +242,15 @@ class PDFdocument():
         
 
 class PresPresentationPanel(gtk.DrawingArea):
-    def __init__(self, pdfDocument):
+    def __init__(self):
         gtk.DrawingArea.__init__(self)
         #self.load_pdf('file://' + os.path.abspath('../res/') + '/vortrag.pdf')
-        self.pdfDocument = pdfDocument
         self.fileUploaded = False;
         self.connect('expose-event', self.expose)
         pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
 
-    #def load_pdf(self, uri):
-        
-        
+    def loadPdfDocument(self, pdfDocument):
+        self.pdfDocument = pdfDocument
     #    self.hide_all()
     #    self.show_all()
         
@@ -322,7 +320,7 @@ class PresPresentationPanel(gtk.DrawingArea):
         fo = file('../res/vortrag.svg', 'w')
          
         WIDTH = 800
-        page = self.curr_pg_disp
+        page = self.pdfDocument.curr_pg_disp
         page_width, page_height = page.get_size()
         ratio = page_height/page_width
         HEIGHT = round(ratio*WIDTH)
@@ -349,11 +347,13 @@ class PresPresentationPanel(gtk.DrawingArea):
             self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
             self.hide_all()
             self.show_all()
+        self.writeSVG()
         
-        #self.writeSVG()
 class PresStartPanel(gtk.Table):
-    def __init__(self, rows=2, columns=2, homogenous=False):
+    def __init__(self, rows=2, columns=3, homogenous=False):
         gtk.Table.__init__(self, rows, columns, homogenous)
+        
+        
         titleImage = gtk.Image()
         titleImage.set_from_file("../res/title.png")
         titleAlign = gtk.Alignment(0.5, 0, 0, 0)
@@ -361,58 +361,109 @@ class PresStartPanel(gtk.Table):
         
         wifiImage = gtk.Image()
         wifiImage.set_from_file("../res/sidebar1.png")
-        wifiAlign = gtk.Alignment(0, 0.5, 0, 0)
-        wifiAlign.add(wifiImage)
         
-        httpImage = gtk.Image()
-        httpImage.set_from_file("../res/sidebar2.png")
-        
-        httpHBox = gtk.HBox()
-        
-        httpAlign = gtk.Alignment(1, 0.5, 0, 0)
-        httpAlign.add(httpImage)
-        
-        #wifiQR = qrcode.make("hallo")
-        
-        wifiQR = QR(data=u"wifi", pixel_size=10, margin_size=0 )
+        wifiQR = QR(data=u"wifi", pixel_size=19, level='L', margin_size=0 )
         wifiQR.encode()
         wifiQRImage = gtk.Image()
         wifiQRImage.set_from_file(wifiQR.filename)
         
+        wifiBox = gtk.HBox()
+        wifiBox.pack_start(wifiImage)
+        wifiBox.pack_start(wifiQRImage)
+        wifiAlign = gtk.Alignment(0, 0.5, 0, 0)
+        wifiAlign.add(wifiBox)        
         
-        httpQR = QR(data=u"http", pixel_size=10, level='L', margin_size=0)
+        httpImage = gtk.Image()
+        httpImage.set_from_file("../res/sidebar2.png")
+        
+        httpQR = QR(data=u"http", pixel_size=19, level='L', margin_size=0)
         httpQR.encode()
         httpQRImage = gtk.Image()
         httpQRImage.set_from_file(httpQR.filename)
-                
         
-        self.attach(titleAlign, 0, 2, 0, 1)
+        httpBox = gtk.HBox()
+        httpBox.pack_start(httpQRImage)
+        httpBox.pack_start(httpImage)
+        httpAlign = gtk.Alignment(1, 0.5, 0, 0)
+        httpAlign.add(httpBox)
+        
+        arrowImage = gtk.Image()
+        arrowImage.set_from_file("../res/arrowImage.png")
+        arrowAlign = gtk.Alignment(0.5, 0.5, 0, 0)
+        arrowAlign.add(arrowImage)       
+        
+        self.attach(titleAlign, 0, 3, 0, 1)
         self.attach(wifiAlign, 0, 1, 1, 2)
-        self.attach(httpAlign, 1, 2, 1, 2)
-        self.attach(wifiQRImage, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=gtk.FILL)
-        self.attach(httpQRImage, 3, 4, 2, 3, xoptions=gtk.FILL, yoptions=gtk.FILL)
-         
-    
+        self.attach(arrowAlign, 1, 2, 1, 2)
+        self.attach(httpAlign, 2, 3, 1, 2)
+        
+class PresUploadPanel(gtk.Table):
+    def __init__(self, rows=2, columns=3, homogenous=False):
+        gtk.Table.__init__(self, rows, columns, homogenous)
+        
+        
+        titleImage = gtk.Image()
+        titleImage.set_from_file("../res/title.png")
+        titleAlign = gtk.Alignment(0.5, 0, 0, 0)
+        titleAlign.add(titleImage)
+        
+        uploadImage = gtk.Image()
+        uploadImage.set_from_file("../res/sidebar3.png")
+        
+        uploadQRImage = gtk.Image()
+        uploadQRImage.set_from_file("../res/uploadImage.png")
+        
+        uploadBox = gtk.HBox()
+        uploadBox.pack_start(uploadImage)
+        uploadBox.pack_start(uploadQRImage)
+        uploadAlign = gtk.Alignment(0, 0.5, 0, 0)
+        uploadAlign.add(uploadBox)
+                
+        startImage = gtk.Image()
+        startImage.set_from_file("../res/sidebar4.png")
+        
+        startQRImage = gtk.Image()
+        startQRImage.set_from_file("../res/startImage.png")
+        
+        arrowImage = gtk.Image()
+        arrowImage.set_from_file("../res/arrowImage.png")
+        arrowAlign = gtk.Alignment(0.5, 0.5, 0, 0)
+        arrowAlign.add(arrowImage)
+       
+        startBox = gtk.HBox()
+        startBox.pack_start(startQRImage)
+        startBox.pack_start(startImage)
+        startAlign = gtk.Alignment(1, 0.5, 0, 0)
+        startAlign.add(startBox)       
+        
+        self.attach(titleAlign, 0, 3, 0, 1)
+        self.attach(uploadAlign, 0, 1, 1, 2)
+        self.attach(arrowAlign, 1, 2, 1, 2)
+        self.attach(startAlign, 2, 3, 1, 2)
 
 class PresWindow(gtk.Window):
     def __init__(self):
         gtk.Window.__init__(self)
         
         pub.Publisher.subscribe(self.uploadedPDF, 'uploadedPDF')
+        pub.Publisher.subscribe(self.presConnect, 'presConnect')
         #pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
         #self.isFullscreen = False
         self.setWindowSize()
         self.set_app_paintable(True)
-        color = (gtk.gdk).Color(0,0,0)
-        self.modify_bg(gtk.STATE_NORMAL, color)
-        
-        
+                
         self.startState = util.state.StartState(self)
         self.presentationState = util.state.PresentationState(self)
         self.uploadState = util.state.UploadState(self)
         
         self.presState = self.startState
+        
         self.startPanel = PresStartPanel()
+        self.uploadPanel = PresUploadPanel()
+        self.presentationPanel = PresPresentationPanel()
+        
+        color = (gtk.gdk).Color(65535, 65535, 65535)
+        self.modify_bg(gtk.STATE_NORMAL, color)
         self.setPanel(self.startPanel)
         #self.add(self.startPanel)
         #self.show_all()
@@ -444,21 +495,26 @@ class PresWindow(gtk.Window):
 
     def uploadedPDF(self, data):
         
-        uri = 'file://' + os.path.abspath('../res/') + '/vortrag.pdf'; #'file://' + data#'
-        
+        uri = 'file://' + data.data#.tostring() #os.path.abspath('../res/') + '/vortrag.pdf'; #'file://' + data#'
+        print data.data
         self.pdfDocument = PDFdocument()
         self.pdfDocument.loadPDF(uri, self.windowWidth, self.windowHeight)
-        self.presPanel = PresPresentationPanel(self.pdfDocument)
-        self.presPanel.set_size_request(int(self.pdfDocument.doc_width * self.pdfDocument.scaleFactor) , int(self.pdfDocument.doc_height * self.pdfDocument.scaleFactor))
-        print int(self.pdfDocument.doc_width * self.pdfDocument.scaleFactor)
+        #self.presPanel = PresPresentationPanel()
+        self.presentationPanel.loadPdfDocument(self.pdfDocument)
+        self.presentationPanel.set_size_request(int(self.pdfDocument.doc_width * self.pdfDocument.scaleFactor) , int(self.pdfDocument.doc_height * self.pdfDocument.scaleFactor))
+        #print int(self.pdfDocument.doc_width * self.pdfDocument.scaleFactor)
         
         #self.canvas.set_size_request(int(self.pdfDocument.doc_width), int(self.pdfDocument.doc_height))
-        self.presPanel.fileUploaded = True;
+        self.presentationPanel.fileUploaded = True;
         self.alignment = gtk.Alignment(0.5, 0.5, 0, 0)
-        self.alignment.add(self.presPanel)
-        self.setPanel(self.alignment)
+        self.alignment.add(self.presentationPanel)
+        
         #self.add(self.alignment)
         #self.show_all()
+        color = (gtk.gdk).Color(0,0,0)
+        self.modify_bg(gtk.STATE_NORMAL, color)
+        
+        self.setPanel(self.alignment)
         self.presState.nextState()
        
         #self.canvas.hide_all()
@@ -466,6 +522,14 @@ class PresWindow(gtk.Window):
         #self.alignment.set(0.5, 0.5, 0, 0)
     #def updateDisplay(self, msg):
         #self.presState.nextState()
+    
+    def presConnect(self, data):
+        color = (gtk.gdk).Color(65535, 65535, 65535)
+        self.modify_bg(gtk.STATE_NORMAL, color)
+        
+        self.setPanel(self.uploadPanel)
+        self.presState.nextState()
+        
     
     def setPanel(self, widget):
         old = self.get_children()

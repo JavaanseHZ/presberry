@@ -61,9 +61,9 @@ class PresWebsite(object):
         
 
     @cherrypy.expose
-    def upload(self, myFile):
+    def upload(self, presFile):
         
-        print 'test:' + myFile.filename
+        print 'filename:' + presFile.filename
         uload_path = RES_DIR
         file_name = 'vortrag.pdf'
     
@@ -72,7 +72,7 @@ class PresWebsite(object):
         size = 0
         all_data = ''
         while True:
-            data = myFile.file.read(8192)
+            data = presFile.file.read(8192)
             all_data += data
             if not data:
                 break
@@ -82,15 +82,26 @@ class PresWebsite(object):
             saved_file=open(uload_path, 'wb') 
             saved_file.write(all_data) 
             saved_file.close()
-            pub.Publisher.sendMessage('uploadedPDF', data=uload_path)
+            pub.Publisher.sendMessage('presUpload', data=uload_path)
         except ValueError:
             raise cherrypy.HTTPError(400, 'SOME ERROR')       
         return open(os.path.join(MEDIA_DIR, u'presentation.html'))
     
     @cherrypy.expose
-    def nextPage(self):
-         pub.Publisher.sendMessage('updateDisplay')
-         return open(os.path.join(MEDIA_DIR, u'presentation.html'))
+    def presentation(self, presData):
+        print presData
+        if presData == 'previous':
+            pub.Publisher.sendMessage('presPrevPage')
+            return open(os.path.join(MEDIA_DIR, u'presentation.html'))
+        elif presData == 'next':
+            pub.Publisher.sendMessage('presNextPage')
+            return open(os.path.join(MEDIA_DIR, u'presentation.html'))
+        elif presData == 'quit':
+            pub.Publisher.sendMessage('presQuit')
+            return open(os.path.join(MEDIA_DIR, u'finished.html'))
+            
+        
+        
 
 #     @cherrypy.expose
 #     def submit(self, name):

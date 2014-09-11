@@ -1,14 +1,20 @@
 <html>
 <head>
-    <title>AJAX with jQuery and cherrypy</title>
+    <title>Presberry - Presentation</title>
     <link rel="stylesheet" type="text/css" href="/media/jquery.mobile-1.4.3.min.css">
     <script type="text/javascript" src="/media/jquery.mobile-1.4.3.min.js"></script>
     <script type="text/javascript" src="/media/jquery-1.11.1.min.js"></script>
 </head>
     <body>
     <div>
-    <form action="/nextPage" method="get">            
-            <input type="submit" value="next" />
+    <form action="/presentation" method="post" enctype="application/x-www-form-urlencoded">            
+            <input type="submit" name="presData" value="previous" />
+    </form>
+    <form action="/presentation" method="post" enctype="application/x-www-form-urlencoded">            
+            <input type="submit" name="presData" value="next" />
+    </form>
+    <form action="/presentation" method="post" enctype="application/x-www-form-urlencoded">            
+            <input type="submit" name="presData" value="quit" />
     </form>
     </div>
 	 

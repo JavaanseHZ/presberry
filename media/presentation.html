@@ -30,7 +30,7 @@
     }
     </script>
 </head>
-    <body>
+    <body onLoad="loadPresSVG()">
     <div>
     <form action="/presentation" method="post" enctype="application/x-www-form-urlencoded">            
             <input type="submit" name="presData" value="previous" />
@@ -43,17 +43,15 @@
     </form>
     </div>
 	 
-	<div>
-	<img src="/res/vortrag.svg" alt="HTML5 Icon" width="128" height="128">   
-    
+	<div>    
+    <svg id="svgimage" height="800" width="600" 
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  		<image id="svgimageInner" x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag.svg" />
+	</svg>
 	</div>
     </body>
 </html>
 <!--
-<svg id="svgimage" height="800" width="600" 
-     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-  		<image id="svgimageInner" x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag.svg" />
-	</svg>
 <script type="text/javascript" src="/media/jquery-1.11.1.min.js"></script>
 	<script type="text/javascript" src="/media/jquery.mobile-1.4.3.min.js"></script>
 	<script type="text/javascript">

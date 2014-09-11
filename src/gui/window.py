@@ -336,37 +336,37 @@ class PresDrawingArea(gtk.DrawingArea):
     
     def writeSVG(self):
      
-#         fo = file('../res/vortrag.svg', 'w')
-#          
-#         WIDTH = 400
-#         page = self.pdfDocument.curr_pg_disp
-#         page_width, page_height = page.get_size()
-#         ratio = page_height/page_width
-#         HEIGHT = round(ratio*WIDTH)
-#         surface = cairo.SVGSurface (fo, WIDTH, HEIGHT)
-#         cr = cairo.Context(surface) 
-#         cr.translate(0, 0)
-#         cr.scale(WIDTH/page_width, HEIGHT/page_height)
-#         page.render(cr)
-#         cr.set_operator(cairo.OPERATOR_DEST_OVER)
-#         cr.set_source_rgb(1, 1, 1)
-#         cr.paint()
-#         surface.finish()
-        #pub.Publisher.sendMessage('presSVGReady')
-        WIDTH = 800
+        fo = file('../res/vortrag.svg', 'w')
+          
+        WIDTH = 400
         page = self.pdfDocument.curr_pg_disp
         page_width, page_height = page.get_size()
         ratio = page_height/page_width
-        HEIGHT = int(round(ratio*WIDTH))
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)
-        cr = cairo.Context(surface)
+        HEIGHT = round(ratio*WIDTH)
+        surface = cairo.SVGSurface (fo, WIDTH, HEIGHT)
+        cr = cairo.Context(surface) 
         cr.translate(0, 0)
         cr.scale(WIDTH/page_width, HEIGHT/page_height)
         page.render(cr)
         cr.set_operator(cairo.OPERATOR_DEST_OVER)
         cr.set_source_rgb(1, 1, 1)
         cr.paint()
-        surface.write_to_png('../res/vortrag.png')
+        surface.finish()
+        #pub.Publisher.sendMessage('presSVGReady')
+#         WIDTH = 800
+#         page = self.pdfDocument.curr_pg_disp
+#         page_width, page_height = page.get_size()
+#         ratio = page_height/page_width
+#         HEIGHT = int(round(ratio*WIDTH))
+#         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)
+#         cr = cairo.Context(surface)
+#         cr.translate(0, 0)
+#         cr.scale(WIDTH/page_width, HEIGHT/page_height)
+#         page.render(cr)
+#         cr.set_operator(cairo.OPERATOR_DEST_OVER)
+#         cr.set_source_rgb(1, 1, 1)
+#         cr.paint()
+#         surface.write_to_png('../res/vortrag.png')
         print 'svg written'
 
     

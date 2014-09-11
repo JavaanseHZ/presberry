@@ -8,6 +8,9 @@ from wx.lib.pubsub import pub
 import cherrypy
 import threading
 import os
+import mimetypes 
+
+
 #import time
 #import Queue
 #import webbrowser
@@ -25,6 +28,7 @@ conf = {
         }
     }
 
+
 class HTTPServer(threading.Thread):
 #     def __init__(self, serverQueue, guiQueue):
 #         threading.Thread.__init__(self)
@@ -41,6 +45,10 @@ class HTTPServer(threading.Thread):
         cherrypy.server.socket_host = '0.0.0.0'
         #cherrypy.engine.subscribe('start', open_page)
         pub.Publisher.subscribe(self.presExit, 'presExit')
+        if not mimetypes.inited:
+            mimetypes.init()
+        mimetypes.add_type('image/svg+xml', '.svg', True)
+        
         cherrypy.tree.mount(PresWebsite(), '/', config=conf)
         cherrypy.engine.start()
         cherrypy.engine.block()

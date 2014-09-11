@@ -1,6 +1,5 @@
-import Queue
-from gui.window import *
-from http.server import *
+from gui.window import PresGUI
+from http.server import HTTPServer
 
 #serverQueue = Queue.Queue()
 #guiQueue = Queue.Queue()

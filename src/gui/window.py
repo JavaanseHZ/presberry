@@ -9,16 +9,12 @@ from wx.lib.pubsub import pub
 import cairo
 import poppler
 import gtk
-import gobject
+#import gobject
 #from qrtools import QR
 import qrencode
 import threading
-import rsvg
-import os, os.path
-import urllib
+
 import util.state
-import numpy
-from qrencode import QR_ECLEVEL_Q, QR_ECLEVEL_M
 
  
 # class PDFWindow(wx.Window):

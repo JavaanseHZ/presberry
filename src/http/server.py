@@ -7,13 +7,8 @@ Created on Aug 28, 2014
 from wx.lib.pubsub import pub
 import cherrypy
 import threading
-import random
-import string
 import os
-import simplejson
-import sys
-import webbrowser
-import shutil
+#import webbrowser
 
 MEDIA_DIR = os.path.join(os.path.abspath("../"), u"media")
 RES_DIR = os.path.join(os.path.abspath("../"), u"res")
@@ -50,8 +45,8 @@ class HTTPServer(threading.Thread):
         cherrypy.engine.exit()
         cherrypy.server.stop()
     
-def open_page():
-    webbrowser.open("http://127.0.0.1:8080/")
+#def open_page():
+#    webbrowser.open("http://127.0.0.1:8080/")
 
 class PresWebsite(object):
     @cherrypy.expose

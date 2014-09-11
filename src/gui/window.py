@@ -353,6 +353,7 @@ class PresDrawingArea(gtk.DrawingArea):
         cr.set_source_rgb(1, 1, 1)
         cr.paint()
         surface.finish()
+        pub.Publisher.sendMessage('presSVGReady')
         print 'svg written'
 
     
@@ -521,7 +522,7 @@ class PresWindow(gtk.Window):
         #curmon = screen.get_monitor_at_window(screen.get_active_window())
         #print screen.get_width(), screen.get_height()
         
-    def setWindowSize(self, isFullscreen=False, width=1200, height=800):
+    def setWindowSize(self, isFullscreen=False, width=1024, height=768):
         if isFullscreen:
             self.fullscreen()
             screen = self.get_screen()

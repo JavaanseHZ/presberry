@@ -8,6 +8,8 @@ from wx.lib.pubsub import pub
 import cherrypy
 import threading
 import os
+import time
+#import Queue
 #import webbrowser
 
 MEDIA_DIR = os.path.join(os.path.abspath("../"), u"media")
@@ -55,6 +57,18 @@ class HTTPServer(threading.Thread):
 #    webbrowser.open("http://127.0.0.1:8080/")
 
 class PresWebsite(object):
+    
+    def __init__(self):
+        object.__init__(self)
+        #self.serverQueue = Queue.Queue()
+        self.svgReady = False
+        pub.Publisher.subscribe(self.presSVGReady, 'presSVGReady')
+        
+    def presSVGReady(self, msg):
+        self.svgReady = True
+        #self.serverQueue.put('ready')
+        
+    
     @cherrypy.expose
     def index(self):
         pub.Publisher.sendMessage('presConnect')
@@ -80,7 +94,7 @@ class PresWebsite(object):
             size += len(data)
      
         try:
-            saved_file=open(uload_path, 'wb') 
+            saved_file=open(uload_path, 'wb')
             saved_file.write(all_data) 
             saved_file.close()
             pub.Publisher.sendMessage('presUpload', data=uload_path)
@@ -93,9 +107,15 @@ class PresWebsite(object):
         print presData
         if presData == 'previous':
             pub.Publisher.sendMessage('presPrevPage')
+            while not self.svgReady:
+                time.sleep(0.2)
+            self.svgReady = False
             return open(os.path.join(MEDIA_DIR, u'presentation.html'))
         elif presData == 'next':
             pub.Publisher.sendMessage('presNextPage')
+            while not self.svgReady:
+                time.sleep(0.2)
+            self.svgReady = False            
             return open(os.path.join(MEDIA_DIR, u'presentation.html'))
         elif presData == 'quit':
             pub.Publisher.sendMessage('presQuit')

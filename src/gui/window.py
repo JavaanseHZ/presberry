@@ -598,11 +598,15 @@ class PresGUI(threading.Thread):
 
     def run(self):
         window = PresWindow()
-        window.connect("delete-event", gtk.main_quit)
+        window.connect("delete-event", self.presExit)
         window.show_all()
         gtk.threads_enter()
         gtk.main()
         gtk.threads_leave()
+    
+    def presExit(self, widget, event):
+        gtk.main_quit(self, widget, event)
+        pub.Publisher.sendMessage('presExit')
 
 #def draw(widget, surface):
 #        page.render(surface)

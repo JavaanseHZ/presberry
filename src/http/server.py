@@ -37,11 +37,16 @@ class HTTPServer(threading.Thread):
         cherrypy.server.socket_port = 8080
         #cherrypy.server.socket_host = optional hostname
         #cherrypy.engine.subscribe('start', open_page)
+        pub.Publisher.subscribe(self.presExit, 'presExit')
         cherrypy.tree.mount(PresWebsite(), '/', config=conf)
         cherrypy.engine.start()
         cherrypy.engine.block()
         
     def stop(self):
+        cherrypy.engine.exit()
+        cherrypy.server.stop()
+        
+    def presExit(self, msg):
         cherrypy.engine.exit()
         cherrypy.server.stop()
     

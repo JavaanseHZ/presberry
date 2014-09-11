@@ -10,12 +10,15 @@ import cairo
 import poppler
 import gtk
 import gobject
-from qrtools import QR
+#from qrtools import QR
+import qrencode
 import threading
 import rsvg
 import os, os.path
 import urllib
 import util.state
+import numpy
+from qrencode import QR_ECLEVEL_Q, QR_ECLEVEL_M
 
  
 # class PDFWindow(wx.Window):
@@ -396,12 +399,16 @@ class PresStartPanel(gtk.Table):
         wifiImage = gtk.Image()
         wifiImage.set_from_file("../res/sidebar1.png")
         
-        wifiData=[u"Presberry_AP", u"WPA", u"PresberryIstKlasse" ]
+         
+        wifiQR = qrencode.encode_scaled('WIFI:T:WPA;S:Pres_AP;P:Pres_AP;;', 400)
+        #wifiData=[u"Presberry_AP", u"WPA", u"PresberryIstKlasse" ]
+        #wifiQR = QR(data=wifiData, data_type=u"wifi", pixel_size=13, level='L', margin_size=0 )
+        #wifiQR.encode()
+        wifiQR[2].save('../res/wifiQR.png')
         
-        wifiQR = QR(data=wifiData, data_type=u"wifi", pixel_size=13, level='L', margin_size=0 )
-        wifiQR.encode()
+        
         wifiQRImage = gtk.Image()
-        wifiQRImage.set_from_file(wifiQR.filename)
+        wifiQRImage.set_from_file('../res/wifiQR.png')
         
         wifiBox = gtk.HBox()
         wifiBox.pack_start(wifiImage)
@@ -412,10 +419,13 @@ class PresStartPanel(gtk.Table):
         httpImage = gtk.Image()
         httpImage.set_from_file("../res/sidebar2.png")
         
-        httpQR = QR(data=u"http://presberry.org:8080", pixel_size=15, level='L', margin_size=0)
-        httpQR.encode()
+        httpQR = qrencode.encode_scaled('http://presberry.org:8080', 400)
+        httpQR[2].save('../res/httpQR.png')
+        #httpQR = QR(data=u"http://presberry.org:8080", pixel_size=15, level='L', margin_size=0)
+        #httpQR.encode()
         httpQRImage = gtk.Image()
-        httpQRImage.set_from_file(httpQR.filename)
+        httpQRImage.set_from_file('../res/httpQR.png')
+        #httpQRImage.set_from_file(httpQR.filename)
         
         httpBox = gtk.HBox()
         httpBox.pack_start(httpQRImage)

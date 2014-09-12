@@ -335,23 +335,9 @@ class PresDrawingArea(gtk.DrawingArea):
 #             #self.queue_draw()
     
     def writeSVG(self):
-     
-        fo = file('../res/vortrag.svg', 'w')
-          
-        WIDTH = 400
-        page = self.pdfDocument.curr_pg_disp
-        page_width, page_height = page.get_size()
-        ratio = page_height/page_width
-        HEIGHT = round(ratio*WIDTH)
-        surface = cairo.SVGSurface (fo, WIDTH, HEIGHT)
-        cr = cairo.Context(surface) 
-        cr.translate(0, 0)
-        cr.scale(WIDTH/page_width, HEIGHT/page_height)
-        page.render(cr)
-        cr.set_operator(cairo.OPERATOR_DEST_OVER)
-        cr.set_source_rgb(1, 1, 1)
-        cr.paint()
-        surface.finish()
+        
+        svgGenerator = SVGGenerator(self.pdfDocument)
+        svgGenerator.start()
         #pub.Publisher.sendMessage('presSVGReady')
 #         WIDTH = 800
 #         page = self.pdfDocument.curr_pg_disp
@@ -381,7 +367,7 @@ class PresDrawingArea(gtk.DrawingArea):
             self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
             self.hide_all()
             self.show_all()
-        self.writeSVG()
+        #self.writeSVG()
     
     def presPrevPage(self, msg):
         if self.pdfDocument.curr_pg > 0:
@@ -394,7 +380,31 @@ class PresDrawingArea(gtk.DrawingArea):
             self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
             self.hide_all()
             self.show_all()
-        self.writeSVG()
+        #self.writeSVG()
+        
+class SVGGenerator(threading.Thread):
+    def __init__(self, pdfDocument, width=400):
+        threading.Thread.__init__(self)
+        self.pdfDocument = pdfDocument
+        self.width = width
+    
+    def run(self):
+        print self.pdfDocument.n_pgs
+        for i in range (0, self.pdfDocument.n_pgs):
+            fo = file('../res/vortrag_' + str(i) + '.svg', 'w')
+            page = self.pdfDocument.doc.get_page(i)
+            page_width, page_height = page.get_size()
+            ratio = page_height/page_width
+            HEIGHT = round(ratio*self.width)
+            surface = cairo.SVGSurface (fo, self.width, HEIGHT)
+            cr = cairo.Context(surface) 
+            cr.translate(0, 0)
+            cr.scale(self.width/page_width, HEIGHT/page_height)
+            page.render(cr)
+            cr.set_operator(cairo.OPERATOR_DEST_OVER)
+            cr.set_source_rgb(1, 1, 1)
+            cr.paint()
+            surface.finish()
         
 class PresStartPanel(gtk.Table):
     def __init__(self, rows=2, columns=3, homogenous=False):
@@ -443,14 +453,14 @@ class PresStartPanel(gtk.Table):
         httpAlign = gtk.Alignment(1, 0.5, 0, 0)
         httpAlign.add(httpBox)
         
-        arrowImage = gtk.Image()
-        arrowImage.set_from_file("../res/arrowImage.png")
-        arrowAlign = gtk.Alignment(0.5, 0.5, 0, 0)
-        arrowAlign.add(arrowImage)       
+        #arrowImage = gtk.Image()
+        #arrowImage.set_from_file("../res/arrowImage.png")
+        #arrowAlign = gtk.Alignment(0.5, 0.5, 0, 0)
+        #arrowAlign.add(arrowImage)       
         
         self.attach(titleAlign, 0, 3, 0, 1)
         self.attach(wifiAlign, 0, 1, 1, 2)
-        self.attach(arrowAlign, 1, 2, 1, 2)
+        #self.attach(arrowAlign, 1, 2, 1, 2)
         self.attach(httpAlign, 2, 3, 1, 2)
         
 class PresUploadPanel(gtk.Table):
@@ -481,10 +491,10 @@ class PresUploadPanel(gtk.Table):
         startQRImage = gtk.Image()
         startQRImage.set_from_file("../res/startImage.png")
         
-        arrowImage = gtk.Image()
-        arrowImage.set_from_file("../res/arrowImage.png")
-        arrowAlign = gtk.Alignment(0.5, 0.5, 0, 0)
-        arrowAlign.add(arrowImage)
+        #arrowImage = gtk.Image()
+        #arrowImage.set_from_file("../res/arrowImage.png")
+        #arrowAlign = gtk.Alignment(0.5, 0.5, 0, 0)
+        #arrowAlign.add(arrowImage)
        
         startBox = gtk.HBox()
         startBox.pack_start(startQRImage)
@@ -494,7 +504,7 @@ class PresUploadPanel(gtk.Table):
         
         self.attach(titleAlign, 0, 3, 0, 1)
         self.attach(uploadAlign, 0, 1, 1, 2)
-        self.attach(arrowAlign, 1, 2, 1, 2)
+        #self.attach(arrowAlign, 1, 2, 1, 2)
         self.attach(startAlign, 2, 3, 1, 2)
 
 class PresWindow(gtk.Window):
@@ -535,7 +545,7 @@ class PresWindow(gtk.Window):
         #curmon = screen.get_monitor_at_window(screen.get_active_window())
         #print screen.get_width(), screen.get_height()
         
-    def setWindowSize(self, isFullscreen=False, width=1024, height=768):
+    def setWindowSize(self, isFullscreen=False, width=1280, height=1024):
         if isFullscreen:
             self.fullscreen()
             screen = self.get_screen()

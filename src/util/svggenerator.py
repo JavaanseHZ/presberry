@@ -7,13 +7,12 @@ import threading
 import cairo
 
 class SVGGenerator(threading.Thread):
-    def __init__(self, pdfDocument, width=400):
+    def __init__(self, pdfDocument, width=200):
         threading.Thread.__init__(self)
         self.pdfDocument = pdfDocument
         self.width = width
     
     def run(self):
-        print self.pdfDocument.n_pgs
         for i in range (0, self.pdfDocument.n_pgs):
             fo = file('../res/vortrag_' + str(i) + '.svg', 'w')
             page = self.pdfDocument.doc.get_page(i)

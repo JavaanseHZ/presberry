@@ -89,7 +89,6 @@ class PresWebsite(object):
 
     @cherrypy.expose
     def upload(self, presFile):
-        print 'filename:' + presFile.filename
         uload_path = RES_DIR
         file_name = 'vortrag.pdf'
     
@@ -124,16 +123,13 @@ class PresWebsite(object):
     @cherrypy.expose
     def startPresentation(self):
         pub.Publisher.sendMessage('presStart')
-        browserWidth = 800
-        browserHeight = 500
-        if (browserWidth/browserHeight > self.pdfDocument.doc_width/self.pdfDocument.doc_height):
-            scaleFactor = browserHeight/self.pdfDocument.doc_height
+        if (self.browserWidth/ self.browserHeight > self.pdfDocument.doc_width/self.pdfDocument.doc_height):
+            scaleFactor = self.browserWidth/self.pdfDocument.doc_width
         else:            
-            scaleFactor = browserWidth/self.pdfDocument.doc_width
+            scaleFactor =  self.browserHeight/self.pdfDocument.doc_height
         w= int(scaleFactor * self.pdfDocument.doc_width)
         h= int(scaleFactor * self.pdfDocument.doc_height)
         presHTMLTemplate = htmlGenerator.generateHTML("presentation.html", numPages=self.pdfDocument.n_pgs, width= w, height = h)
-        print presHTMLTemplate
         return presHTMLTemplate#open(os.path.join(MEDIA_DIR, u'presentation.html'))
       
     @cherrypy.expose
@@ -141,7 +137,15 @@ class PresWebsite(object):
         pub.Publisher.sendMessage('presSetPage', pageNr)
         cherrypy.response.headers['Content-Type'] = 'application/json'
         return simplejson.dumps(dict(page=pageNr))
-        #return body#open(os.path.join(MEDIA_DIR, u'presentation.html'))    
+        #return body#open(os.path.join(MEDIA_DIR, u'presentation.html'))
+    
+    @cherrypy.expose
+    def setSize(self, browserWidth, browserHeight):
+        self.browserWidth = int(browserWidth)
+        self.browserHeight = int(browserHeight)
+        print self.browserHeight
+        cherrypy.response.headers['Content-Type'] = 'application/json'
+        return simplejson.dumps(dict())    
         
         
 

@@ -5,15 +5,11 @@ Created on Aug 28, 2014
 '''
 
 from wx.lib.pubsub import pub
-
-import cairo
-import poppler
 import gtk
 #import gobject
 #from qrtools import QR
 import qrencode
 import threading
-
 import util.state
  
 # class PDFWindow(wx.Window):
@@ -211,33 +207,6 @@ import util.state
 
 gtk.threads_init()
 
-class PDFdocument():
-#    def __init__(self):
-#         self.doc
-#         self.n_pgs
-#         self.curr_pg
-#         self.curr_pg_disp
-#         self.doc_width
-#         self.doc_height
-       
-    def loadPDF(self, uri, windowWidth, windowHeight):
-        self.doc = poppler.document_new_from_file(uri, None)
-        # the number of pages in the pdf
-        self.n_pgs = self.doc.get_n_pages()
-        # the current page of the pdf
-        self.curr_pg = 0
-        # the current page being displayed
-        self.curr_pg_disp = self.doc.get_page(self.curr_pg)        
-        # the scale of the page
-        #self.scale = 1
-        # the document width and height
-        self.doc_width, self.doc_height = self.curr_pg_disp.get_size()
-        print windowWidth,windowHeight, (self.doc_width/self.doc_height)
-        if (windowWidth/windowHeight > self.doc_width/self.doc_height):
-            self.scaleFactor = windowHeight/self.doc_height          
-        else:            
-            self.scaleFactor = windowWidth/self.doc_width  
-
 class PresPresentationPanel(gtk.HBox):
     def __init__(self):
         gtk.HBox.__init__(self)
@@ -266,10 +235,10 @@ class PresDrawingArea(gtk.DrawingArea):
         self.connect('expose-event', self.expose)
         pub.Publisher.subscribe(self.presNextPage, 'presNextPage')        
         pub.Publisher.subscribe(self.presPrevPage, 'presPrevPage')
+        pub.Publisher.subscribe(self.presSetPage, 'presSetPage')
 
     def loadPdfDocument(self, pdfDocument):
-        self.pdfDocument = pdfDocument        
-        self.writeSVG()
+        self.pdfDocument = pdfDocument
     #    self.hide_all()
     #    self.show_all()
         
@@ -283,61 +252,8 @@ class PresDrawingArea(gtk.DrawingArea):
             cr.set_source_rgb(0, 0, 0)
             cr.scale(self.pdfDocument.scaleFactor, self.pdfDocument.scaleFactor)
             self.pdfDocument.curr_pg_disp.render(cr)
-            #p_width, p_height = widget.window.get_size()
-            #self.panel_width = float(p_width);
-            #self.panel_height = float(p_height);
-            #self.horIdent = 0;
-            #self.verIdent = 0;
-            #self.scaleFactor = 0.0
-           
-            #print self.panel_width, self.panel_height
-            #print float(self.panel_width)/float(self.panel_height), self.doc_width/self.doc_height
-            
-            #if (self.panel_width/self.panel_height > self.pdfDocument.doc_width/self.pdfDocument.doc_height):
-            #    self.scaleFactor = self.panel_height/self.pdfDocument.doc_height
-                #self.horIdent = (self.panel_width - (self.scaleFactor*self.doc_width))/2
-                #self.set_size_request(int(self.scaleFactor*self.pdfDocument.doc_width), p_height)  
-            
-            #else:
-            #    self.scaleFactor = self.panel_width/self.pdfDocument.doc_width
-                #self.verIdent = (self.panel_height - (self.scaleFactor*self.doc_height))/2
-                #self.set_size_request(p_width, int(self.scaleFactor*self.pdfDocument.doc_width))
-                #cr.scale(self.panel_height/self.doc_height, self.panel_height/self.doc_height)
-                
-#                 #cr.rectangle(self.panel_width-, 0,  self.doc_width, self.doc_height)
-#             #print self.panel_width/self.doc_width , self.panel_height/self.doc_height , self.panel_width/self.panel_height , self.doc_width, self.doc_height
-            
-                #cr.scale(self.panel_width/self.dodoc_widthc_width, self.panel_width/self.doc_width)
-            #   # print self.panel_width/self.doc_width , self.panel_height/self.doc_height , self.panel_width/self.panel_height
-            
-            
-            #cr.rectangle(0, 0,  self.scaleFactor*self.doc_width, self.scaleFactor*self.doc_height)
-            #cr.rectangle(0, 0,  self.pdfDocument.doc_width, self.pdfDocument.doc_height)
-            
-            #cr.rectangle(0,0, p_width, p_height)
-            #cr.fill()          
-            #print cr.region()
-            
-            
-            
-            #cr.moveTo()
-            #cr.move_to(self.horIdent, self.verIdent)
-            
-            
-#     def renderPDF(self):
-#         if self.fileUploaded:
-#             cr = self.window.cairo_create()
-#             cr.set_source_rgb(1, 1, 1)
-#             cr.scale(2.0, 2.0)
-#             cr.rectangle(0, 0,  self.doc_width, self.doc_height)
-#             cr.fill()            
-#             self.curr_pg_disp.render(cr)
-#             #self.queue_draw()
     
-    def writeSVG(self):
-        
-        svgGenerator = SVGGenerator(self.pdfDocument)
-        svgGenerator.start()
+   
         #pub.Publisher.sendMessage('presSVGReady')
 #         WIDTH = 800
 #         page = self.pdfDocument.curr_pg_disp
@@ -353,7 +269,7 @@ class PresDrawingArea(gtk.DrawingArea):
 #         cr.set_source_rgb(1, 1, 1)
 #         cr.paint()
 #         surface.write_to_png('../res/vortrag.png')
-        print 'svg written'
+        
 
     
     def presNextPage(self, msg):
@@ -381,30 +297,15 @@ class PresDrawingArea(gtk.DrawingArea):
             self.hide_all()
             self.show_all()
         #self.writeSVG()
+     
+    def presSetPage(self, msg):
+        self.pdfDocument.curr_pg = int(msg.data)
+        self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
+        self.hide_all()
+        self.show_all()
+        print 'pageSet'
         
-class SVGGenerator(threading.Thread):
-    def __init__(self, pdfDocument, width=400):
-        threading.Thread.__init__(self)
-        self.pdfDocument = pdfDocument
-        self.width = width
-    
-    def run(self):
-        print self.pdfDocument.n_pgs
-        for i in range (0, self.pdfDocument.n_pgs):
-            fo = file('../res/vortrag_' + str(i) + '.svg', 'w')
-            page = self.pdfDocument.doc.get_page(i)
-            page_width, page_height = page.get_size()
-            ratio = page_height/page_width
-            HEIGHT = round(ratio*self.width)
-            surface = cairo.SVGSurface (fo, self.width, HEIGHT)
-            cr = cairo.Context(surface) 
-            cr.translate(0, 0)
-            cr.scale(self.width/page_width, HEIGHT/page_height)
-            page.render(cr)
-            cr.set_operator(cairo.OPERATOR_DEST_OVER)
-            cr.set_source_rgb(1, 1, 1)
-            cr.paint()
-            surface.finish()
+
         
 class PresStartPanel(gtk.Table):
     def __init__(self, rows=2, columns=3, homogenous=False):
@@ -511,8 +412,9 @@ class PresWindow(gtk.Window):
     def __init__(self):
         gtk.Window.__init__(self)
         
-        pub.Publisher.subscribe(self.presUpload, 'presUpload')
         pub.Publisher.subscribe(self.presConnect, 'presConnect')
+        pub.Publisher.subscribe(self.presUpload, 'presUpload')
+        pub.Publisher.subscribe(self.presStart, 'presStart')
         pub.Publisher.subscribe(self.presQuit, 'presQuit')
         #pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
         #self.isFullscreen = False
@@ -560,23 +462,20 @@ class PresWindow(gtk.Window):
             
         
 
-    def presUpload(self, data):
+    def presUpload(self, msg):
         
-        uri = 'file://' + data.data#.tostring() #os.path.abspath('../res/') + '/vortrag.pdf'; #'file://' + data#'
-        print data.data
-        pdfDocument = PDFdocument()
-        pdfDocument.loadPDF(uri, self.windowWidth, self.windowHeight)
+        #uri = 'file://' + msg.data#.tostring() #os.path.abspath('../res/') + '/vortrag.pdf'; #'file://' + data#'
+        #print msg.data
+        pdfDocument = msg.data
+        pdfDocument.calculateScaleFactor(self.windowWidth, self.windowHeight)
+        #pdfDocument.loadPDF(uri, self.windowWidth, self.windowHeight)
         #self.presPanel = PresPresentationPanel()
         self.presentationPanel.loadPresentation(pdfDocument)
         
         
         #self.add(alignment)
         #self.show_all()
-        color = (gtk.gdk).Color(0,0,0)
-        self.modify_bg(gtk.STATE_NORMAL, color)
         
-        self.setPanel(self.presentationPanel)
-        self.presState.nextState()
        
         #self.canvas.hide_all()
         #self.canvas.show_all()
@@ -584,7 +483,14 @@ class PresWindow(gtk.Window):
     #def updateDisplay(self, msg):
         #self.presState.nextState()
     
-    def presConnect(self, data):
+    def presStart(self, msg):
+        color = (gtk.gdk).Color(0,0,0)
+        self.modify_bg(gtk.STATE_NORMAL, color)
+        
+        self.setPanel(self.presentationPanel)
+        self.presState.nextState()
+    
+    def presConnect(self, msg):
         self.presentationPanel.fileUploaded = False;
         color = (gtk.gdk).Color(65535, 65535, 65535)
         self.modify_bg(gtk.STATE_NORMAL, color)
@@ -592,7 +498,7 @@ class PresWindow(gtk.Window):
         self.setPanel(self.uploadPanel)
         self.presState.nextState()
     
-    def presQuit(self, data):
+    def presQuit(self, msg):
         color = (gtk.gdk).Color(65535, 65535, 65535)
         self.modify_bg(gtk.STATE_NORMAL, color)
         

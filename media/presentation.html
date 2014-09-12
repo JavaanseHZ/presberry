@@ -8,65 +8,35 @@
 		<script defer src="/media/idangerous.swiper.min.js"></script>
 	    <script>
 			window.onload = function() {
-		    	var mySwiper = new Swiper('.swiper-container',{
+				var mySwiper = new Swiper('.swiper-container',{
 					mode : 'horizontal',
 					loop : true,
 					watchActiveIndex : true
 				});
-				mySwiper.addCallback('SlideChangeStart', function(swiper){
+		    	mySwiper.addCallback('SlideChangeStart', function(swiper){
 					var pageIndex = mySwiper.activeLoopIndex;
 					$.post('/setPage', {pageNr: pageIndex});
-				});  
+		    	});
 	    	}
-	    	
 	    </script>
 	</head>
     <body>
 	    <div data-role="page">
 		  	<div data-role="main" class="ui-content">
-			    
 			    <div class="swiper-container">
 					  <div class="swiper-wrapper">
+					  		{% for i in imgCount %}
 						    <div class="swiper-slide"> 
-						      <svg id="svgimage1" height="800" width="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-							  		<image id="svgimageInner1" x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag_0.svg" />
-							  </svg>
-							</div >
-							<div class="swiper-slide"> 
-						      <svg id="svgimage2" height="800" width="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-							  		<image id="svgimageInner2" x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag_1.svg" />
-							  </svg>
-							</div >
-							<div class="swiper-slide"> 
 						      <svg height="800" width="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-							  		<image x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag_2.svg" />
+							  		<image x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag_0.svg" />
 							  </svg>
 							</div >
-							<div class="swiper-slide"> 
-						      <svg height="800" width="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-							  		<image x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag_3.svg" />
-							  </svg>
-							</div >
-							<div class="swiper-slide"> 
-						      <svg height="800" width="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-							  		<image x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag_4.svg" />
-							  </svg>
-							</div >
-							<div class="swiper-slide"> 
-						      <svg height="800" width="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-							  		<image x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag_5.svg" />
-							  </svg>
-							</div >
-							<div class="swiper-slide"> 
-						      <svg height="800" width="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-							  		<image x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag_6.svg" />
-							  </svg>
-							</div >
+							{% endfor %}
 					  </div>
 				</div>
 				<div>
-				    <form action="/presentation" method="post" enctype="application/x-www-form-urlencoded" data-ajax="false">            
-				    	<input type="submit" name="presData" value="quit" />
+				    <form action="/quitPresentation" method="get" data-ajax="false">            
+				    	<input type="submit" value="quit" />
 				    </form>
 			    </div>	 
 
@@ -74,6 +44,10 @@
 		</div>
     </body>
 </html>
+<!-- $( "svg" ).click(function() { -->
+<!-- 					event.preventDefault(); -->
+<!-- 				}); -->
+<!-- 				});  -->
 <!-- 				<div>     -->
 <!-- 				    <svg id="svgimage" height="800" width="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" > -->
 <!-- 				  		<image id="svgimageInner" x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag.svg" /> -->

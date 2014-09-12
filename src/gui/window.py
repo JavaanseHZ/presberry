@@ -318,7 +318,7 @@ class PresStartPanel(gtk.Table):
         wifiImage.set_from_file("../res/sidebar1.png")
         
          
-        wifiQR = qrencode.encode_scaled('WIFI:T:WPA;S:Pres_AP;P:Pres_AP;;', 400)
+        wifiQR = qrencode.encode_scaled('WIFI:T:WPA;S:Pres_AP;P:Presberry;;', 400)
         #wifiData=[u"Presberry_AP", u"WPA", u"PresberryIstKlasse" ]
         #wifiQR = QR(data=wifiData, data_type=u"wifi", pixel_size=13, level='L', margin_size=0 )
         #wifiQR.encode()

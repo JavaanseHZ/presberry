@@ -12,7 +12,7 @@ import mimetypes
 import simplejson
 from util.svggenerator import SVGGenerator
 from document.pdfdocument import PDFdocument
-from http import HTMLGenerator
+from http import htmlGenerator
 
 
 #import time
@@ -72,8 +72,6 @@ class PresWebsite(object):
     
     def __init__(self):
         object.__init__(self)
-        self.windwowWidth = 0
-        self.windwowHeight = 0
         #self.serverQueue = Queue.Queue()
         #self.svgReady = False
         #pub.Publisher.subscribe(self.presSVGReady, 'presSVGReady')
@@ -90,9 +88,7 @@ class PresWebsite(object):
         
 
     @cherrypy.expose
-    def upload(self, presFile, width, height):
-        self.windwowWidth = width
-        self.windwowHeight = height
+    def upload(self, presFile):
         print 'filename:' + presFile.filename
         uload_path = RES_DIR
         file_name = 'vortrag.pdf'
@@ -128,9 +124,17 @@ class PresWebsite(object):
     @cherrypy.expose
     def startPresentation(self):
         pub.Publisher.sendMessage('presStart')
-        jinjaVars = {'numPages' : self.pdfDocument.n_pgs, 'width' : self.pdfDocument.doc_width, 'height' :self.pdfDocument.doc_height}
-        presHTMLTemplate = HTMLGenerator.generateHTML("presentation.html", jinjaVars)
-        return open(os.path.join(MEDIA_DIR, u'presentation.html'))
+        browserWidth = 800
+        browserHeight = 500
+        if (browserWidth/browserHeight > self.pdfDocument.doc_width/self.pdfDocument.doc_height):
+            scaleFactor = browserHeight/self.pdfDocument.doc_height
+        else:            
+            scaleFactor = browserWidth/self.pdfDocument.doc_width
+        w= int(scaleFactor * self.pdfDocument.doc_width)
+        h= int(scaleFactor * self.pdfDocument.doc_height)
+        presHTMLTemplate = htmlGenerator.generateHTML("presentation.html", numPages=self.pdfDocument.n_pgs, width= w, height = h)
+        print presHTMLTemplate
+        return presHTMLTemplate#open(os.path.join(MEDIA_DIR, u'presentation.html'))
       
     @cherrypy.expose
     def setPage(self, pageNr):

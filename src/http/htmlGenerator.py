@@ -6,7 +6,7 @@ Created on Sep 12, 2014
 from jinja2 import Environment, FileSystemLoader
 env = Environment(loader=FileSystemLoader(["../media"]))
 
-def generateHTML(self, uri, jinjaVars):
+def generateHTML(uri, **kwargs):
     template = env.get_template(uri)
-    result = template.render(jinjaVars)
-    print result.encode('utf-8')
+    result = template.render(**kwargs)
+    return result.encode('utf-8')

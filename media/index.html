@@ -4,22 +4,6 @@
 	    <link rel="stylesheet" href="/media/jquery.mobile-1.4.3.min.css">
 		<script src="/media/jquery-1.11.1.min.js"></script>
 		<script src="/media/jquery.mobile-1.4.3.min.js"></script>
-		<script>
-		$( "#uploadForm" ).submit(function( event ) {
-			 event.preventDefault();
-			 var $form = $( this ),
-			    term = $form.find( "input[name='presFile']" ).val(),
-			    url = $form.attr( "action" );
-	    	 var w = window,
- 		        d = document,
- 		        e = d.documentElement,
- 		        g = d.getElementsByTagName('body')[0],
- 		        windowWidth = w.innerWidth || e.clientWidth || g.clientWidth,
- 		        windowHeight = w.innerHeight|| e.clientHeight|| g.clientHeight;
-			 var posting = $.post( url, { presfile: term, height: windowWidth, width:windowHeight } );
-			});
-		$().post('/upload', {pageNr: pageIndex});
-		</script>
     </head>
 	<body>
 		<div data-role="page">

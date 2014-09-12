@@ -303,9 +303,6 @@ class PresDrawingArea(gtk.DrawingArea):
         self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
         self.hide_all()
         self.show_all()
-        print 'pageSet'
-        
-
         
 class PresStartPanel(gtk.Table):
     def __init__(self, rows=2, columns=3, homogenous=False):

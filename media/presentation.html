@@ -19,16 +19,23 @@
 		    	});
 	    	}
 	    </script>
+	    <style type="text/css">
+			.swiper-container {
+				width:{{ width }}px;
+				height:{{ height }}px;
+			}
+		</style>
+			
 	</head>
     <body>
 	    <div data-role="page">
 		  	<div data-role="main" class="ui-content">
 			    <div class="swiper-container">
 					  <div class="swiper-wrapper">
-					  		{% for i in imgCount %}
+					  		{% for i in range (0,numPages) %}
 						    <div class="swiper-slide"> 
-						      <svg height="800" width="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-							  		<image x="0" y="0" height="800" width="600"  xlink:href="/res/vortrag_0.svg" />
+						      <svg height="{{ height }}" width="{{ width }}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+							  		<image x="0" y="0" height="{{ height }}" width="{{ width }}"  xlink:href="/res/vortrag_{{ i }}.svg" />
 							  </svg>
 							</div >
 							{% endfor %}

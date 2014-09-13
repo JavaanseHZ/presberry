@@ -20,7 +20,12 @@ class PDFdocument():
         self.doc_width, self.doc_height = self.curr_pg_disp.get_size()
        
     def calculateScaleFactor(self, windowWidth, windowHeight):
-        if (windowWidth/windowHeight > self.doc_width/self.doc_height):
-            self.scaleFactor = windowWidth/self.doc_width          
-        else:
+        self.scaleFactor = windowWidth/self.doc_width
+        if(windowHeight +1 < (self.doc_height * self.scaleFactor)): #offset for float calculation 
             self.scaleFactor = windowHeight/self.doc_height  
+        
+        
+#         if (windowWidth/windowHeight > self.doc_width/self.doc_height):
+#             self.scaleFactor = windowWidth/self.doc_width          
+#         else:
+#             self.scaleFactor = windowHeight/self.doc_height  

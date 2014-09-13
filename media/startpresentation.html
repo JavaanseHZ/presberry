@@ -12,8 +12,7 @@
 		e = d.documentElement, 
 		g = d.getElementsByTagName('body')[0], 
 		windowWidth = w.innerWidth || e.clientWidth || g.clientWidth,
-		windowHeight = w.innerHeight|| e.clientHeight|| g.clientHeight;
-		
+		windowHeight = w.innerHeight|| e.clientHeight|| g.clientHeight;		
 		//var screenHeight = $.mobile.getScreenHeight();
 		//var screenWidth = $.mobile.getScreenHeight();
 		$.post('/setSize', {browserWidth: windowWidth, browserHeight: windowHeight});
@@ -24,7 +23,6 @@
 <body>
 	<div data-role="page">
 		<div data-role="main" class="ui-content">
-			
  			<form action="/startPresentation" method="post" data-ajax="false"> 
  				<input id="startbutton" type="submit" value="start" />
  				<div class="ui-field-contain">

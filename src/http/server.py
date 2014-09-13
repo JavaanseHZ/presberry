@@ -33,7 +33,6 @@ class HTTPServer(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         
-
     def run(self):
         cherrypy.server.socket_port = 8080
         cherrypy.server.socket_host = '0.0.0.0'
@@ -63,35 +62,33 @@ class PresWebsite(object):
     def index(self):
         pub.Publisher.sendMessage('presConnect')
         return open(os.path.join(MEDIA_DIR, u'index.html'))
-        
 
     @cherrypy.expose
     def upload(self, presFile):
-        uload_path = RES_DIR
-        file_name = 'vortrag.pdf'
-    
-        uload_path = uload_path + os.path.sep + file_name                
-     
-        size = 0
-        all_data = ''
-        while True:
-            data = presFile.file.read(8192)
-            all_data += data
-            if not data:
-                break
-            size += len(data)
-     
-        try:
-            saved_file=open(uload_path, 'wb')
-            saved_file.write(all_data) 
-            saved_file.close()
-            self.pdfDocument = PDFdocument('file://' + uload_path)
-            svgGenerator = SVGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
-            svgGenerator.start()
-            pub.Publisher.sendMessage('presUpload', data=self.pdfDocument)
-        except ValueError:
-            raise cherrypy.HTTPError(400, 'SOME ERROR')       
-        return open(os.path.join(MEDIA_DIR, u'startpresentation.html'))
+        if(presFile.content_type.value == 'application/pdf'):
+            uload_path = RES_DIR
+            file_name = 'vortrag.pdf'
+            uload_path = uload_path + os.path.sep + file_name
+            size = 0
+            all_data = ''
+            while True:
+                data = presFile.file.read(8192)
+                all_data += data
+                if not data:
+                    break
+                size += len(data)            
+            try:
+                saved_file=open(uload_path, 'wb')
+                saved_file.write(all_data) 
+                saved_file.close()
+                self.pdfDocument = PDFdocument('file://' + uload_path)
+                svgGenerator = SVGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
+                svgGenerator.start()
+                pub.Publisher.sendMessage('presUpload', data=self.pdfDocument)
+            except ValueError:
+                raise cherrypy.HTTPError(400, 'SOME ERROR')       
+            return open(os.path.join(MEDIA_DIR, u'startpresentation.html'))
+        return open(os.path.join(MEDIA_DIR, u'index.html')) 
     
     @cherrypy.expose
     def quitPresentation(self):

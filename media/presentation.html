@@ -4,6 +4,7 @@
 	    <link rel="stylesheet" href="/media/idangerous.swiper.css">
 		<script src="/media/jquery-1.11.1.min.js"></script>
 		<script defer src="/media/idangerous.swiper.min.js"></script>
+		<script src="/media/screenfull.min.js"></script>
 	    <script>
 			window.onload = function() {
 				var mySwiper = new Swiper('.swiper-container',{
@@ -18,6 +19,12 @@
 						{% endif %}
 						$.post('/setPage', {pageNr: pageIndex});
 					}
+				});
+				var target = $('#presentation')[0];
+				$('#fullscreen').click(function () {
+				    if (screenfull.enabled) {
+				        screenfull.request(target);
+				    }
 				});
 	    	}
 	    </script>
@@ -39,8 +46,8 @@
 			}			
 			#footer {
 			    z-index: 10;
-			}			
-			#quit {
+			}					
+			.presbutton {
 				-moz-box-shadow:inset 0px 0px 0px 0px #e6ee9c;
 				-webkit-box-shadow:inset 0px 0px 0px 0px #e6ee9c;
 				box-shadow:inset 0px 0px 0px 0px #e6ee9c;
@@ -51,9 +58,9 @@
 				-webkit-border-top-right-radius:0px;
 				-moz-border-radius-topright:0px;
 				border-top-right-radius:0px;
-				-webkit-border-bottom-right-radius:20px;
-				-moz-border-radius-bottomright:20px;
-				border-bottom-right-radius:20px;
+				-webkit-border-bottom-right-radius:0px;
+				-moz-border-radius-bottomright:0px;
+				border-bottom-right-radius:0px;
 				-webkit-border-bottom-left-radius:0px;
 				-moz-border-radius-bottomleft:0px;
 				border-bottom-left-radius:0px;
@@ -69,18 +76,26 @@
 				width:60px;
 				text-decoration:none;
 				text-align:center;
-			}#quit:hover {
+				margin-bottom:2px;
+			}.pressbutton:hover {
 				background-color:#afb42b;
-			}#quit:active {
+			}.pressbutton:active {
 				position:relative;
 				top:1px;
 			}
+			#fullscreen
+			{
+				-webkit-border-bottom-right-radius:20px;
+				-moz-border-radius-bottomright:20px;
+				border-bottom-right-radius:20px;
+				font-size:40px;
+			}	
 		</style>
 	</head>
     <body>
 	    <div data-role="page" id="mainPage">
 		  	<div data-role="main" class="ui-content">
-			    <div class="swiper-container">
+			    <div id="presentation" class="swiper-container">
 					<div class="swiper-wrapper">
 					  	{% if order == 'normal' %}
 				    		{% for i in range (numPages) %}
@@ -119,10 +134,12 @@
 			</div>
 			<div data-role="footer" id="footer">
 				<div>
-					<form action="/quitPresentation" method="get" data-ajax="false">            
-				    	<input type="submit" id="quit" value="x" />				    	
+					<form action="/quitPresentation" method="get" data-ajax="false">
+					    <input type="submit" class="presbutton"id="quit" value="X" />
+					    <br />
+					    <input type="button" class="presbutton" id="fullscreen" value="&#9633;" />			    	
 				    </form>
-			    </div>
+			    </div>			    
 			</div>	 
 		</div>
     </body>

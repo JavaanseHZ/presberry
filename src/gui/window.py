@@ -337,7 +337,7 @@ class PresStartPanel(gtk.Table):
         httpImage = gtk.Image()
         httpImage.set_from_file("../res/sidebar2.png")
         
-        httpQR = qrencode.encode_scaled('http://presberry.org:8080', 400)
+        httpQR = qrencode.encode_scaled('http://192.168.13.1.org:8080', 400)
         httpQR[2].save('../res/httpQR.png')
         #httpQR = QR(data=u"http://presberry.org:8080", pixel_size=15, level='L', margin_size=0)
         #httpQR.encode()
@@ -415,7 +415,7 @@ class PresWindow(gtk.Window):
         pub.Publisher.subscribe(self.presQuit, 'presQuit')
         #pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
         #self.isFullscreen = False
-        self.setWindowSize()
+        self.setWindowSize(True)
         self.set_app_paintable(True)
                 
         self.startState = util.state.StartState(self)

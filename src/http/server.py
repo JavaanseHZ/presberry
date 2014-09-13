@@ -29,6 +29,11 @@ conf = {
     '/res':
         {'tools.staticdir.on': True,
          'tools.staticdir.dir': RES_DIR
+        },
+     '/':
+        {
+        'tools.sessions.on': True,
+        'tools.sessions.timeout' : 600
         }
     }
 

@@ -1,22 +1,24 @@
 <html>
 	<head>
 	    <title>Presberry - Presentation</title>
-	    <link rel="stylesheet" href="/media/jquery.mobile-1.4.3.min.css">
 	    <link rel="stylesheet" href="/media/idangerous.swiper.css">
 		<script src="/media/jquery-1.11.1.min.js"></script>
-		<script src="/media/jquery.mobile-1.4.3.min.js"></script>
 		<script defer src="/media/idangerous.swiper.min.js"></script>
 	    <script>
 			window.onload = function() {
 				var mySwiper = new Swiper('.swiper-container',{
 					mode : 'horizontal',
 					loop : true,
-					watchActiveIndex : true
+					watchActiveIndex : true,
+					{{ mode }} : function() {
+						{% if order == 'notes' %}
+						var pageIndex = mySwiper.activeLoopIndex*2;
+						{% else %}
+						var pageIndex = mySwiper.activeLoopIndex;
+						{% endif %}
+						$.post('/setPage', {pageNr: pageIndex});
+					}
 				});
-		    	mySwiper.addCallback('SlideChangeStart', function(swiper){
-					var pageIndex = mySwiper.activeLoopIndex;
-					$.post('/setPage', {pageNr: pageIndex});
-		    	});
 	    	}
 	    </script>
 	    <style type="text/css">
@@ -30,21 +32,50 @@
 	    <div data-role="page">
 		  	<div data-role="main" class="ui-content">
 			    <div class="swiper-container">
-					  <div class="swiper-wrapper">
-					  		{% for i in range (0,numPages) %}
+					<div class="swiper-wrapper">
+					  	{% if order == 'normal' %}
+				    		{% for i in range (numPages) %}
 						    <div class="swiper-slide"> 
 						      <svg height="{{ height }}" width="{{ width }}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
 							  		<image x="0" y="0" height="{{ height }}" width="{{ width }}"  xlink:href="/res/vortrag_{{ i }}.svg" />
 							  </svg>
 							</div >
 							{% endfor %}
-					  </div>
+						{% endif %}
+						{% if order == 'preview' %}
+				    		{% for i in range (1, numPages) %}
+						    <div class="swiper-slide"> 
+						      <svg height="{{ height }}" width="{{ width }}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+							  		<image x="0" y="0" height="{{ height }}" width="{{ width }}"  xlink:href="/res/vortrag_{{ i }}.svg" />
+							  </svg>
+							</div >
+							{% endfor %}
+							<div class="swiper-slide"> 
+						      <svg height="{{ height }}" width="{{ width }}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+							  		<image x="0" y="0" height="{{ height }}" width="{{ width }}"  xlink:href="/res/vortrag_0.svg" />
+							  </svg>
+							</div >
+						{% endif %}
+						{% if order == 'notes' %}
+				    		{% for i in range (1, numPages, 2) %}
+						    <div class="swiper-slide"> 
+						      <svg height="{{ height }}" width="{{ width }}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+							  		<image x="0" y="0" height="{{ height }}" width="{{ width }}"  xlink:href="/res/vortrag_{{ i }}.svg" />
+							  </svg>
+							</div >
+							{% endfor %}
+						{% endif %}
+					</div>
 				</div>
 			</div>
 			<div data-role="footer">
 				<div>
 					<form action="/quitPresentation" method="get" data-ajax="false">            
 				    	<input type="submit" value="quit" />
+				    	{% if order == 'normal' %}
+				    	normal
+				    	{% endif %}
+				    	
 				    </form>
 			    </div>
 			</div>	 

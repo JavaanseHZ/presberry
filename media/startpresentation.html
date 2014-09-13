@@ -17,15 +17,37 @@
 		//var screenHeight = $.mobile.getScreenHeight();
 		//var screenWidth = $.mobile.getScreenHeight();
 		$.post('/setSize', {browserWidth: windowWidth, browserHeight: windowHeight});
+		
 	});
 </script>
 </head>
 <body>
 	<div data-role="page">
 		<div data-role="main" class="ui-content">
-			<form action="/startPresentation" method="get" data-ajax="false">
-				<input type="submit" value="start" />
-			</form>
+			
+ 			<form action="/startPresentation" method="post" data-ajax="false"> 
+ 				<input id="startbutton" type="submit" value="start" />
+ 				<div class="ui-field-contain">
+			    <fieldset data-role="controlgroup" data-type="horizontal">
+			        <legend>Slide Order</legend>
+			        <input type="radio" name="slideOrder" id="radio-choice-h-1a" value="normal" checked="checked">
+			        <label for="radio-choice-h-1a">normal</label>
+			        <input type="radio" name="slideOrder" id="radio-choice-h-1b" value="preview">
+			        <label for="radio-choice-h-1b">preview</label>
+			        <input type="radio" name="slideOrder" id="radio-choice-h-1c" value="notes">
+			        <label for="radio-choice-h-1c">notes</label>
+			    </fieldset>
+			    </div>
+			    <div class="ui-field-contain">
+			    <fieldset data-role="controlgroup" data-type="horizontal">
+			        <legend>Slide Mode</legend>
+			        <input type="radio" name="slideMode" id="radio-choice-h-2a" value="onSlideChangeStart" checked="checked">
+			        <label for="radio-choice-h-2a">on slide change</label>
+			        <input type="radio" name="slideMode" id="radio-choice-h-2b" value="onSlideClick">
+			        <label for="radio-choice-h-2b">on slide click</label>
+			    </fieldset>
+			    </div>
+ 			</form> 
 		</div>
 	</div>
 </body>

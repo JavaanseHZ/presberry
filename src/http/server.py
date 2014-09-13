@@ -122,7 +122,7 @@ class PresWebsite(object):
         return open(os.path.join(MEDIA_DIR, u'finished.html'))
     
     @cherrypy.expose
-    def startPresentation(self):
+    def startPresentation(self, slideMode, slideOrder):
         pub.Publisher.sendMessage('presStart')
 #         if (self.browserWidth/self.browserHeight > self.pdfDocument.doc_width/self.pdfDocument.doc_height):
 #             h=self.browserHeight
@@ -135,7 +135,12 @@ class PresWebsite(object):
         #    scaleFactor =  self.browserHeight/self.pdfDocument.doc_height
         #w= int(scaleFactor * self.pdfDocument.doc_width)
         #h= int(scaleFactor * self.pdfDocument.doc_height)
-        presHTMLTemplate = htmlGenerator.generateHTML("presentation.html", numPages=self.pdfDocument.n_pgs, width= self.browserWidth, height = self.browserHeight)
+        presHTMLTemplate = htmlGenerator.generateHTML("presentation.html",
+                                                      numPages=self.pdfDocument.n_pgs,
+                                                      width=self.browserWidth,
+                                                      height=self.browserHeight,
+                                                      mode=slideMode,
+                                                      order=slideOrder)
         return presHTMLTemplate#open(os.path.join(MEDIA_DIR, u'presentation.html'))
       
     @cherrypy.expose

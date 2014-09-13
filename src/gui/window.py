@@ -233,8 +233,8 @@ class PresDrawingArea(gtk.DrawingArea):
         #self.load_pdf('file://' + os.path.abspath('../res/') + '/vortrag.pdf')
         
         self.connect('expose-event', self.expose)
-        pub.Publisher.subscribe(self.presNextPage, 'presNextPage')        
-        pub.Publisher.subscribe(self.presPrevPage, 'presPrevPage')
+        #pub.Publisher.subscribe(self.presNextPage, 'presNextPage')        
+        #pub.Publisher.subscribe(self.presPrevPage, 'presPrevPage')
         pub.Publisher.subscribe(self.presSetPage, 'presSetPage')
 
     def loadPdfDocument(self, pdfDocument):
@@ -272,34 +272,34 @@ class PresDrawingArea(gtk.DrawingArea):
         
 
     
-    def presNextPage(self, msg):
-        if self.pdfDocument.curr_pg < (self.pdfDocument.n_pgs-1):
-            self.pdfDocument.curr_pg = self.pdfDocument.curr_pg + 1
-            self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
-            self.hide_all()
-            self.show_all()
-        else:
-            self.pdfDocument.curr_pg = 0
-            self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
-            self.hide_all()
-            self.show_all()
-        #self.writeSVG()
-    
-    def presPrevPage(self, msg):
-        if self.pdfDocument.curr_pg > 0:
-            self.pdfDocument.curr_pg = self.pdfDocument.curr_pg-1
-            self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
-            self.hide_all()
-            self.show_all()
-        else:
-            self.pdfDocument.curr_pg = self.pdfDocument.n_pgs-1
-            self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
-            self.hide_all()
-            self.show_all()
-        #self.writeSVG()
+#     def presNextPage(self, msg):
+#         if self.pdfDocument.curr_pg < (self.pdfDocument.n_pgs-1):
+#             self.pdfDocument.curr_pg = self.pdfDocument.curr_pg + 1
+#             self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
+#             self.hide_all()
+#             self.show_all()
+#         else:
+#             self.pdfDocument.curr_pg = 0
+#             self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
+#             self.hide_all()
+#             self.show_all()
+#         #self.writeSVG()
+#     
+#     def presPrevPage(self, msg):
+#         if self.pdfDocument.curr_pg > 0:
+#             self.pdfDocument.curr_pg = self.pdfDocument.curr_pg-1
+#             self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
+#             self.hide_all()
+#             self.show_all()
+#         else:
+#             self.pdfDocument.curr_pg = self.pdfDocument.n_pgs-1
+#             self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
+#             self.hide_all()
+#             self.show_all()
+#         #self.writeSVG()
      
     def presSetPage(self, msg):
-        self.pdfDocument.curr_pg = int(msg.data)
+        self.pdfDocument.curr_pg = int(msg.data)%self.pdfDocument.n_pgs
         self.pdfDocument.curr_pg_disp = self.pdfDocument.doc.get_page(self.pdfDocument.curr_pg)
         self.hide_all()
         self.show_all()
@@ -415,7 +415,7 @@ class PresWindow(gtk.Window):
         pub.Publisher.subscribe(self.presQuit, 'presQuit')
         #pub.Publisher.subscribe(self.updateDisplay, 'updateDisplay')
         #self.isFullscreen = False
-        self.setWindowSize(True)
+        self.setWindowSize()
         self.set_app_paintable(True)
                 
         self.startState = util.state.StartState(self)

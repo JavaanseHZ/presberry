@@ -52,6 +52,7 @@ class HTTPServer(threading.Thread):
         if not mimetypes.inited:
             mimetypes.init()
         mimetypes.add_type('image/svg+xml', '.svg', True)
+        mimetypes.add_type("image/svg+xml", ".svgz", True)
         
         cherrypy.tree.mount(PresWebsite(), '/', config=conf)
         cherrypy.engine.start()
@@ -123,13 +124,18 @@ class PresWebsite(object):
     @cherrypy.expose
     def startPresentation(self):
         pub.Publisher.sendMessage('presStart')
-        if (self.browserWidth/ self.browserHeight > self.pdfDocument.doc_width/self.pdfDocument.doc_height):
-            scaleFactor = self.browserWidth/self.pdfDocument.doc_width
-        else:            
-            scaleFactor =  self.browserHeight/self.pdfDocument.doc_height
-        w= int(scaleFactor * self.pdfDocument.doc_width)
-        h= int(scaleFactor * self.pdfDocument.doc_height)
-        presHTMLTemplate = htmlGenerator.generateHTML("presentation.html", numPages=self.pdfDocument.n_pgs, width= w, height = h)
+#         if (self.browserWidth/self.browserHeight > self.pdfDocument.doc_width/self.pdfDocument.doc_height):
+#             h=self.browserHeight
+#             w="100%"
+#             #scaleFactor = self.browserWidth/self.pdfDocument.doc_width
+#         else:
+#             h="100%"
+#             w=self.browserWidth
+                     
+        #    scaleFactor =  self.browserHeight/self.pdfDocument.doc_height
+        #w= int(scaleFactor * self.pdfDocument.doc_width)
+        #h= int(scaleFactor * self.pdfDocument.doc_height)
+        presHTMLTemplate = htmlGenerator.generateHTML("presentation.html", numPages=self.pdfDocument.n_pgs, width= self.browserWidth, height = self.browserHeight)
         return presHTMLTemplate#open(os.path.join(MEDIA_DIR, u'presentation.html'))
       
     @cherrypy.expose

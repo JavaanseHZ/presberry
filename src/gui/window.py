@@ -526,6 +526,7 @@ class PresGUI(threading.Thread):
     def run(self):
         window = PresWindow()
         window.connect("delete-event", self.presExit)
+        window.connect("key_press_event", self.presKeyExit)
         window.show_all()
         gtk.threads_enter()
         gtk.main()
@@ -534,7 +535,11 @@ class PresGUI(threading.Thread):
     def presExit(self, widget, event):
         gtk.main_quit(self, widget, event)
         pub.Publisher.sendMessage('presExit')
-
+    
+    def presKeyExit(self, widget, event):
+        if event.keyval == 113:
+            gtk.main_quit(self, widget, event)
+            pub.Publisher.sendMessage('presExit')
 #def draw(widget, surface):
 #        page.render(surface)
 

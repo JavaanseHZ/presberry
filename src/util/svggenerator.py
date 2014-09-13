@@ -15,6 +15,7 @@ class SVGGenerator(threading.Thread):
     def run(self):
         for i in range (0, self.pdfDocument.n_pgs):
             fo = file('../res/vortrag_' + str(i) + '.svg', 'w')
+            
             page = self.pdfDocument.doc.get_page(i)
             page_width, page_height = page.get_size()
             ratio = page_height/page_width

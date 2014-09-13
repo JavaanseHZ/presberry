@@ -13,11 +13,7 @@ import simplejson
 from util.svggenerator import SVGGenerator
 from document.pdfdocument import PDFdocument
 from http import htmlGenerator
-
-
-#import time
-#import Queue
-#import webbrowser
+import util.config as PRES_CONFIG
 
 MEDIA_DIR = os.path.join(os.path.abspath("../"), u"media")
 RES_DIR = os.path.join(os.path.abspath("../"), u"res")
@@ -29,35 +25,22 @@ conf = {
     '/res':
         {'tools.staticdir.on': True,
          'tools.staticdir.dir': RES_DIR
-        },
-     '/':
-        {
-        'tools.sessions.on': True,
-        'tools.sessions.timeout' : 600
         }
     }
 
-
 class HTTPServer(threading.Thread):
-#     def __init__(self, serverQueue, guiQueue):
-#         threading.Thread.__init__(self)
-#         self.serverQueue = serverQueue
-#         self.guiQueue = guiQueue
-    
+
     def __init__(self):
         threading.Thread.__init__(self)
         
 
     def run(self):
         cherrypy.server.socket_port = 8080
-        #server.socket_host': '0.0.0.0'}
         cherrypy.server.socket_host = '0.0.0.0'
-        #cherrypy.engine.subscribe('start', open_page)
         pub.Publisher.subscribe(self.presExit, 'presExit')
         if not mimetypes.inited:
             mimetypes.init()
         mimetypes.add_type('image/svg+xml', '.svg', True)
-        mimetypes.add_type("image/svg+xml", ".svgz", True)
         
         cherrypy.tree.mount(PresWebsite(), '/', config=conf)
         cherrypy.engine.start()
@@ -70,22 +53,11 @@ class HTTPServer(threading.Thread):
     def presExit(self, msg):
         cherrypy.engine.exit()
         cherrypy.server.stop()
-    
-#def open_page():
-#    webbrowser.open("http://127.0.0.1:8080/")
 
 class PresWebsite(object):
     
     def __init__(self):
         object.__init__(self)
-        #self.serverQueue = Queue.Queue()
-        #self.svgReady = False
-        #pub.Publisher.subscribe(self.presSVGReady, 'presSVGReady')
-        
-    #def presSVGReady(self, msg):
-    #    self.svgReady = True
-        #self.serverQueue.put('ready')
-        
     
     @cherrypy.expose
     def index(self):
@@ -114,7 +86,7 @@ class PresWebsite(object):
             saved_file.write(all_data) 
             saved_file.close()
             self.pdfDocument = PDFdocument('file://' + uload_path)
-            svgGenerator = SVGGenerator(self.pdfDocument)
+            svgGenerator = SVGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
             svgGenerator.start()
             pub.Publisher.sendMessage('presUpload', data=self.pdfDocument)
         except ValueError:
@@ -129,31 +101,19 @@ class PresWebsite(object):
     @cherrypy.expose
     def startPresentation(self, slideMode, slideOrder):
         pub.Publisher.sendMessage('presStart')
-#         if (self.browserWidth/self.browserHeight > self.pdfDocument.doc_width/self.pdfDocument.doc_height):
-#             h=self.browserHeight
-#             w="100%"
-#             #scaleFactor = self.browserWidth/self.pdfDocument.doc_width
-#         else:
-#             h="100%"
-#             w=self.browserWidth
-                     
-        #    scaleFactor =  self.browserHeight/self.pdfDocument.doc_height
-        #w= int(scaleFactor * self.pdfDocument.doc_width)
-        #h= int(scaleFactor * self.pdfDocument.doc_height)
         presHTMLTemplate = htmlGenerator.generateHTML("presentation.html",
                                                       numPages=self.pdfDocument.n_pgs,
                                                       width=self.browserWidth,
                                                       height=self.browserHeight,
                                                       mode=slideMode,
                                                       order=slideOrder)
-        return presHTMLTemplate#open(os.path.join(MEDIA_DIR, u'presentation.html'))
+        return presHTMLTemplate
       
     @cherrypy.expose
     def setPage(self, pageNr):
         pub.Publisher.sendMessage('presSetPage', pageNr)
         cherrypy.response.headers['Content-Type'] = 'application/json'
         return simplejson.dumps(dict(page=pageNr))
-        #return body#open(os.path.join(MEDIA_DIR, u'presentation.html'))
     
     @cherrypy.expose
     def setSize(self, browserWidth, browserHeight):
@@ -161,22 +121,4 @@ class PresWebsite(object):
         self.browserHeight = int(browserHeight)
         print self.browserHeight
         cherrypy.response.headers['Content-Type'] = 'application/json'
-        return simplejson.dumps(dict())    
-        
-        
-
-#     @cherrypy.expose
-#     def submit(self, name):
-#         pub.Publisher.sendMessage('updateDisplay')
-#         cherrypy.response.headers['Content-Type'] = 'application/json'
-#         return simplejson.dumps(dict(title="Hello, %s" % name))
-    
-#     @cherrypy.expose
-#     def upload(self, filename):
-#         
-#         pub.Publisher.sendMessage('uploadedPDF', data=filename)
-#         cherrypy.response.headers['Content-Type'] = 'application/json'
-#         return simplejson.dumps(dict(filename="/res/vortrag.svg"))
-    
-    
-
+        return simplejson.dumps(dict())

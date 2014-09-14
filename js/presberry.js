@@ -19,6 +19,9 @@ $( document ).on( "pagecontainerchange", function() {
 });
 
 $(document).on('pageshow', '#presentationPage', function(){
+	$("#presentationWrapper").slick({
+		lazyLoad: 'ondemand'
+	});
 	var screen = $.mobile.getScreenHeight();
 
 	var header = $(".ui-header").hasClass("ui-header-fixed") ? $(".ui-header").outerHeight()  - 1 : $(".ui-header").outerHeight();
@@ -28,15 +31,27 @@ $(document).on('pageshow', '#presentationPage', function(){
 	var contentCurrent = $(".ui-content").outerHeight() - $(".ui-content").height();
 
 	var content = screen - header - footer - contentCurrent;
-
+	
 	$(".ui-content").height(content);
-	$(".car-container").slick({
-		onAfterChange:	function() {			
-			var pageIndex = $('.slides').slickCurrentSlide();
-			$.post('/settings', {pageNr: pageIndex} , function(data) {},'json');
-		}
-    });
+	//$("#presentationWrapper").slickGoTo(0);
+//	$.get('/loadPresentation', 
+//		function(data) {
+//			$("#presentationWrapper").html(data['html']);
+//		},
+//		'json');
+//	$('#presentationPage').trigger('pagecreate');
+//	$(".car-container").slick({
+//		
+//	});
+//	$("#startPresentationButton").show();
+//	$("#presentationWrapper").hide();
+	
 });
+
+//$(document).on('pagehide', '#presentationPage', function(){
+//	
+//	$("#presentationWrapper").hide();
+//});
 
 $("#fullscreenButton").click(function () {
 	var target = $( ".ui-page-active" )[0];
@@ -44,6 +59,17 @@ $("#fullscreenButton").click(function () {
         screenfull.request(target);
     }
 });
+
+//$("#startPresentationButton").click(function () {
+//	$(this).hide();
+//	$("#presentationWrapper").show();
+//});
+
+//$(document).on('pagecreate', '#presentationPage', function(){
+//	$(".car-container").slick({
+//		
+//	});
+//});
 
 $(document).on('pagecreate', '#settingsPage', function(){
 	$("#settingsForm").submit(function(e){		
@@ -56,8 +82,9 @@ $(document).on('pagecreate', '#settingsPage', function(){
 $(document).on('pagecreate', '#uploadPage', function(){
 	$("#uploadForm").submit(function(e){		
 		e.preventDefault();
+		$("#presentationWrapper").unslick();
+		//$("#presentation").hide();
 		var presFile = new FormData(this);
-		alert("hallo");
 		$.ajax({
 		    url: '/upload',
 		    data: presFile,
@@ -66,8 +93,18 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		    processData: false,
 		    type: 'POST',
 		    success: function(data){
-		        alert(data);
+		    	
+		    	$("#presentationWrapper").html(data['html']);
+		    	
+		    	//alert("success");
 		    }
+		}).done(function() {
+//				$("#presentationWrapper").slick({
+//					lazyLoad: 'ondemand'
+//				});
+				//$(".car-container").slickAdd(data['html']);
+				//alert("done");
+			  
 		});
 	});
 });

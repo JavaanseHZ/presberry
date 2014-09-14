@@ -73,6 +73,8 @@ class PresWebsite(object):
     
     def __init__(self):
         object.__init__(self)
+        self.slideMode = "click";
+        self.slideOrder = "normal";
     
     @cherrypy.expose
     def index(self):
@@ -88,7 +90,6 @@ class PresWebsite(object):
 
     @cherrypy.expose
     def upload(self, presFile, upload):
-        print "upload"
         cherrypy.response.headers['Content-Type'] = 'application/json'
         if(presFile.content_type.value == 'application/pdf'):
             uload_path = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION)
@@ -109,12 +110,29 @@ class PresWebsite(object):
                 self.pdfDocument = PDFdocument('file://' + uload_path)
                 svgGenerator = SVGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
                 svgGenerator.start()
-                pub.Publisher.sendMessage('presUpload', data=self.pdfDocument)
+                pub.Publisher.sendMessage('presUpload', data=self.pdfDocument)               
+                htmlTemplate = htmlGenerator.generateHTML('carousel.html',
+                                                      pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
+                                                      numPages=self.pdfDocument.n_pgs,
+                                                      width="100%",
+                                                      height="100%",
+                                                      order=self.slideOrder)                
+                return simplejson.dumps(dict(html=htmlTemplate))
             except ValueError:
                 raise cherrypy.HTTPError(400, 'SOME ERROR')                   
-        return simplejson.dumps(dict())     
+        return simplejson.dumps(dict(html=""))     
             #return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'startpresentation.html'))
-        #return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'index.html'))     
+        #return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'index.html'))
+    @cherrypy.expose
+    def loadPresentation(self):
+        htmlTemplate = htmlGenerator.generateHTML('carousel.html',
+                                                      pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
+                                                      numPages=self.pdfDocument.n_pgs,
+                                                      width="100%",
+                                                      height="100%",
+                                                      order=self.slideOrder)
+        return simplejson.dumps(dict(html=htmlTemplate))
+       
     @cherrypy.expose
     def quitPresentation(self):
         pub.Publisher.sendMessage('presQuit')

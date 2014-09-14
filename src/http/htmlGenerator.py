@@ -8,7 +8,6 @@ from jinja2 import Environment, FileSystemLoader
 env = Environment(loader=FileSystemLoader([PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML)]))
 
 def generateHTML(uri, **kwargs):
-    print uri
     template = env.get_template(uri)
     result = template.render(**kwargs)
     return result.encode('utf-8')

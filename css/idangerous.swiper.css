@@ -89,9 +89,8 @@ sizes, pagination, etc.
 ================================================================*/
 .swiper-container {
 	/* Specify Swiper's Size:  */
-
-	/*width:800px;*/
-	/*height: 600px;*/
+	/*width:800px; */
+	/*height: 600px; */
 }
 .swiper-slide {
 	/* Specify Slides's Size: */

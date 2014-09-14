@@ -4,16 +4,11 @@
 	<title>Presberry</title> 	
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="/{{ jquerymobile_dir }}/jquery.mobile-1.4.4.min.css">
-	<link rel="stylesheet" href="/{{ css_dir }}/idangerous.swiper.css">
-	<script src="/{{ jquerymobile_dir }}/jquery-1.11.1.min.js"></script>
-	<script src="/{{ jquerymobile_dir }}/jquery.mobile-1.4.4.min.js"></script>
-	<script defer src="/{{ js_dir }}/idangerous.swiper.min.js"></script>
-	<script src="/{{ js_dir }}/screenfull.min.js"></script>
-	<script src="/{{ js_dir }}/presberry.js"></script>
+	<link rel="stylesheet" type="text/css" href="/{{ css_dir }}/slick.css"/>
 </head> 
 
 <body>
-	<div data-role="header" data-position="fixed" data-theme="a">
+	<div data-role="header" data-position="fixed" data-theme="b">
 		<h1>Upload</h1>
     </div>
 	
@@ -24,18 +19,48 @@
 	</div>	
 	
 	<div data-role="page" id="settingsPage" data-title="Settings">	
-		<div role="main" class="ui-content jqm-content jqm-fullwidth" >
-			<p>Settings Content</p>
+		<div role="main" class="ui-content jqm-content jqm-fullwidth">
+			<form action="/startPresentation" method="post" data-ajax="false"> 
+ 				<input id="startbutton" type="submit" value="start" />
+ 				<div class="ui-field-contain">
+			    <fieldset data-role="controlgroup" data-type="horizontal">
+			        <legend>Slide Order</legend>
+			        <input type="radio" name="slideOrder" id="radio-choice-h-1a" value="normal" checked="checked">
+			        <label for="radio-choice-h-1a">normal</label>
+			        <input type="radio" name="slideOrder" id="radio-choice-h-1b" value="preview">
+			        <label for="radio-choice-h-1b">preview</label>
+			        <input type="radio" name="slideOrder" id="radio-choice-h-1c" value="notes">
+			        <label for="radio-choice-h-1c">notes</label>
+			    </fieldset>
+			    </div>
+			    <div class="ui-field-contain">
+			    <fieldset data-role="controlgroup" data-type="horizontal">
+			        <legend>Slide Mode</legend>
+			        <input type="radio" name="slideMode" id="radio-choice-h-2a" value="onSlideChangeStart" checked="checked">
+			        <label for="radio-choice-h-2a">on slide change</label>
+			        <input type="radio" name="slideMode" id="radio-choice-h-2b" value="onSlideClick">
+			        <label for="radio-choice-h-2b">on slide click</label>
+			    </fieldset>
+			    </div>
+ 			</form> 
 		</div>	
 	</div>
 	
 	<div data-role="page" id="presentationPage" data-title="Presentation">	
 		<div role="main" class="ui-content jqm-content jqm-fullwidth">
-			<p>Presentation Content</p>
+			<div id="presentation" class="car-container">
+				{% for i in range (5) %}
+				    <div class="car-slide"> 
+				      <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+					  		<image x="0" y="0" height="100%" width="100%"  xlink:href="/{{ pres_dir }}/vortrag_{{ i }}.svg" />
+					  </svg>
+					</div >
+				{% endfor %}
+			</div>
 		</div>	
 	</div>
 	
-	<div data-role="footer" data-position="fixed" data-theme="a">
+	<div data-role="footer" data-position="fixed" data-theme="b">
 		<div data-role="navbar">
 			<ul>
 				<li><a href="#uploadPage" data-prefetch="true" data-transition="none">Upload</a></li>
@@ -43,7 +68,11 @@
 				<li><a href="#presentationPage" data-prefetch="true" data-transition="none">Presentation</a></li>
 			</ul>
 		</div>
-	</div>		
-	
+	</div>
+	<script type="text/javascript" src="/{{ jquerymobile_dir }}/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="/{{ jquerymobile_dir }}/jquery.mobile-1.4.4.min.js"></script>
+	<script type="text/javascript" src="/{{ js_dir }}/slick.min.js"></script>
+	<script type="text/javascript" src="/{{ js_dir }}/screenfull.min.js"></script>
+	<script type="text/javascript" src="/{{ js_dir }}/presberry.js"></script>
 </body>
 </html>

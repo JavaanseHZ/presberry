@@ -78,7 +78,8 @@ class PresWebsite(object):
                                                       html_dir= PRES_CONFIG.DIR_HTML,
                                                       css_dir= PRES_CONFIG.DIR_CSS,
                                                       js_dir= PRES_CONFIG.DIR_JS,
-                                                      jquerymobile_dir= PRES_CONFIG.DIR_JQUERYMOBILE)
+                                                      jquerymobile_dir= PRES_CONFIG.DIR_JQUERYMOBILE,
+                                                      pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION)
         return presHTMLTemplate
 
     @cherrypy.expose

@@ -1,0 +1,49 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+	<title>Presberry</title> 	
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<link rel="stylesheet" href="/{{ jquerymobile_dir }}/jquery.mobile-1.4.4.min.css">
+	<link rel="stylesheet" href="/{{ css_dir }}/idangerous.swiper.css">
+	<script src="/{{ jquerymobile_dir }}/jquery-1.11.1.min.js"></script>
+	<script src="/{{ jquerymobile_dir }}/jquery.mobile-1.4.4.min.js"></script>
+	<script defer src="/{{ js_dir }}/idangerous.swiper.min.js"></script>
+	<script src="/{{ js_dir }}/screenfull.min.js"></script>
+	<script src="/{{ js_dir }}/presberry.js"></script>
+</head> 
+
+<body>
+	<div data-role="header" data-position="fixed" data-theme="a">
+		<h1>Upload</h1>
+    </div>
+	
+	<div data-role="page" id="uploadPage" data-title="Upload">		
+		<div role="main" class="ui-content jqm-content jqm-fullwidth">	
+			<p>Upload Content</p>
+		</div>	
+	</div>	
+	
+	<div data-role="page" id="settingsPage" data-title="Settings">	
+		<div role="main" class="ui-content jqm-content jqm-fullwidth" >
+			<p>Settings Content</p>
+		</div>	
+	</div>
+	
+	<div data-role="page" id="presentationPage" data-title="Presentation">	
+		<div role="main" class="ui-content jqm-content jqm-fullwidth">
+			<p>Presentation Content</p>
+		</div>	
+	</div>
+	
+	<div data-role="footer" data-position="fixed" data-theme="a">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#uploadPage" data-prefetch="true" data-transition="none">Upload</a></li>
+				<li><a href="#settingsPage" data-prefetch="true" data-transition="none">Settings</a></li>
+				<li><a href="#presentationPage" data-prefetch="true" data-transition="none">Presentation</a></li>
+			</ul>
+		</div>
+	</div>		
+	
+</body>
+</html>

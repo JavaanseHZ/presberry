@@ -73,7 +73,13 @@ class PresWebsite(object):
     @cherrypy.expose
     def index(self):
         pub.Publisher.sendMessage('presConnect')
-        return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'index.html'))
+        #htmlTemplate = open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'index.html'))
+        presHTMLTemplate = htmlGenerator.generateHTML('presberry.html',
+                                                      html_dir= PRES_CONFIG.DIR_HTML,
+                                                      css_dir= PRES_CONFIG.DIR_CSS,
+                                                      js_dir= PRES_CONFIG.DIR_JS,
+                                                      jquerymobile_dir= PRES_CONFIG.DIR_JQUERYMOBILE)
+        return presHTMLTemplate
 
     @cherrypy.expose
     def upload(self, presFile):

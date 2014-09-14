@@ -15,17 +15,29 @@ from document.pdfdocument import PDFdocument
 from http import htmlGenerator
 import util.config as PRES_CONFIG
 
-MEDIA_DIR = os.path.join(os.path.abspath("../"), u"media")
-RES_DIR = os.path.join(os.path.abspath("../"), u"res")
+#MEDIA_DIR = os.path.join(os.path.abspath("../"), u"media")
+#RES_DIR = os.path.join(os.path.abspath("../"), u"res")
 conf = {
-    '/media':
+     '/' + PRES_CONFIG.DIR_MEDIA_PRESENTATION:
         {'tools.staticdir.on': True,
-         'tools.staticdir.dir': MEDIA_DIR
+         'tools.staticdir.dir': PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION)
         },          
-    '/res':
+    '/' + PRES_CONFIG.DIR_HTML:
         {'tools.staticdir.on': True,
-         'tools.staticdir.dir': RES_DIR
-        }
+         'tools.staticdir.dir': PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML)
+        },
+    '/' + PRES_CONFIG.DIR_JS:
+        {'tools.staticdir.on': True,
+         'tools.staticdir.dir': PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_JS)
+        },
+    '/' + PRES_CONFIG.DIR_CSS:
+        {'tools.staticdir.on': True,
+         'tools.staticdir.dir': PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_CSS)
+        },
+    '/' + PRES_CONFIG.DIR_JQUERYMOBILE:
+        {'tools.staticdir.on': True,
+         'tools.staticdir.dir': PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_JQUERYMOBILE)
+        },
     }
 
 class HTTPServer(threading.Thread):
@@ -61,12 +73,12 @@ class PresWebsite(object):
     @cherrypy.expose
     def index(self):
         pub.Publisher.sendMessage('presConnect')
-        return open(os.path.join(MEDIA_DIR, u'index.html'))
+        return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'index.html'))
 
     @cherrypy.expose
     def upload(self, presFile):
         if(presFile.content_type.value == 'application/pdf'):
-            uload_path = RES_DIR
+            uload_path = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION)
             file_name = 'vortrag.pdf'
             uload_path = uload_path + os.path.sep + file_name
             size = 0
@@ -87,18 +99,23 @@ class PresWebsite(object):
                 pub.Publisher.sendMessage('presUpload', data=self.pdfDocument)
             except ValueError:
                 raise cherrypy.HTTPError(400, 'SOME ERROR')       
-            return open(os.path.join(MEDIA_DIR, u'startpresentation.html'))
-        return open(os.path.join(MEDIA_DIR, u'index.html')) 
+            return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'startpresentation.html'))
+        return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'index.html')) 
     
     @cherrypy.expose
     def quitPresentation(self):
         pub.Publisher.sendMessage('presQuit')
-        return open(os.path.join(MEDIA_DIR, u'finished.html'))
+        return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'finished.html'))
     
     @cherrypy.expose
     def startPresentation(self, slideMode, slideOrder):
         pub.Publisher.sendMessage('presStart')
-        presHTMLTemplate = htmlGenerator.generateHTML("presentation.html",
+        presHTMLTemplate = htmlGenerator.generateHTML('presentation.html',
+                                                      html_dir= PRES_CONFIG.DIR_HTML,
+                                                      css_dir= PRES_CONFIG.DIR_CSS,
+                                                      js_dir= PRES_CONFIG.DIR_JS,
+                                                      jquerymobile_dir= PRES_CONFIG.DIR_JQUERYMOBILE,
+                                                      pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
                                                       numPages=self.pdfDocument.n_pgs,
                                                       width=self.browserWidth,
                                                       height=self.browserHeight,

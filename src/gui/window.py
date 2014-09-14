@@ -56,17 +56,17 @@ class PresStartPanel(gtk.Table):
         gtk.Table.__init__(self, rows, columns, homogenous)     
         
         titleImage = gtk.Image()
-        titleImage.set_from_file("../res/title.png")
+        titleImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/title.png')
         titleAlign = gtk.Alignment(0.5, 0, 0, 0)
         titleAlign.add(titleImage)
         
         wifiImage = gtk.Image()
-        wifiImage.set_from_file("../res/sidebar1.png")
+        wifiImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/sidebar1.png')
          
         wifiQR = qrencode.encode_scaled('WIFI:T:WPA;S:' + PRES_CONFIG.NW_AP + ';P:' + PRES_CONFIG.NW_PW + ';;', 400)
-        wifiQR[2].save('../res/wifiQR.png')
+        wifiQR[2].save(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/wifiQR.png')
         wifiQRImage = gtk.Image()
-        wifiQRImage.set_from_file('../res/wifiQR.png')
+        wifiQRImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/wifiQR.png')
         
         wifiBox = gtk.HBox()
         wifiBox.pack_start(wifiImage)
@@ -75,12 +75,12 @@ class PresStartPanel(gtk.Table):
         wifiAlign.add(wifiBox)        
         
         httpImage = gtk.Image()
-        httpImage.set_from_file("../res/sidebar2.png")
+        httpImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/sidebar2.png')
         httpQR = qrencode.encode_scaled('http://' + PRES_CONFIG.NW_IP + ':' + PRES_CONFIG.NW_PORT, 400)
-        httpQR[2].save('../res/httpQR.png')
+        httpQR[2].save(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/httpQR.png')
         
         httpQRImage = gtk.Image()
-        httpQRImage.set_from_file('../res/httpQR.png')
+        httpQRImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/httpQR.png')
           
         httpBox = gtk.HBox()
         httpBox.pack_start(httpQRImage)
@@ -97,15 +97,15 @@ class PresUploadPanel(gtk.Table):
         gtk.Table.__init__(self, rows, columns, homogenous)        
         
         titleImage = gtk.Image()
-        titleImage.set_from_file("../res/title.png")
+        titleImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/title.png')
         titleAlign = gtk.Alignment(0.5, 0, 0, 0)
         titleAlign.add(titleImage)
         
         uploadImage = gtk.Image()
-        uploadImage.set_from_file("../res/sidebar3.png")
+        uploadImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/sidebar3.png')
         
         uploadIconImage = gtk.Image()
-        uploadIconImage.set_from_file("../res/uploadImage.png")
+        uploadIconImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/uploadImage.png')
         
         uploadBox = gtk.HBox()
         uploadBox.pack_start(uploadImage)
@@ -114,10 +114,10 @@ class PresUploadPanel(gtk.Table):
         uploadAlign.add(uploadBox)
                 
         startImage = gtk.Image()
-        startImage.set_from_file("../res/sidebar4.png")
+        startImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/sidebar4.png')
         
         startIconImage = gtk.Image()
-        startIconImage.set_from_file("../res/startImage.png")
+        startIconImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/startImage.png')
           
         startBox = gtk.HBox()
         startBox.pack_start(startIconImage)

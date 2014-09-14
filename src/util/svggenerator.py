@@ -5,6 +5,7 @@ Created on Sep 12, 2014
 '''
 import threading
 import cairo
+import util.config as PRES_CONFIG
 
 class SVGGenerator(threading.Thread):
     def __init__(self, pdfDocument, width=200):
@@ -14,7 +15,7 @@ class SVGGenerator(threading.Thread):
     
     def run(self):
         for i in range (0, self.pdfDocument.n_pgs):
-            fo = file('../res/vortrag_' + str(i) + '.svg', 'w')            
+            fo = file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION) + '/vortrag_' + str(i) + '.svg', 'w')            
             page = self.pdfDocument.doc.get_page(i)
             page_width, page_height = page.get_size()
             ratio = page_height/page_width

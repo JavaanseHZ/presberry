@@ -1,10 +1,10 @@
 <html>
 	<head>
 	    <title>Presberry - Presentation</title>
-	    <link rel="stylesheet" href="/media/idangerous.swiper.css">
-		<script src="/media/jquery-1.11.1.min.js"></script>
-		<script defer src="/media/idangerous.swiper.min.js"></script>
-		<script src="/media/screenfull.min.js"></script>
+	    <link rel="stylesheet" href="/{{ css_dir }}/idangerous.swiper.css">
+		<script src="/{{ jquerymobile_dir }}/jquery-1.11.1.min.js"></script>
+		<script defer src="/{{ js_dir }}/idangerous.swiper.min.js"></script>
+		<script src="/{{ js_dir }}/screenfull.min.js"></script>
 	    <script>
 			window.onload = function() {
 				var mySwiper = new Swiper('.swiper-container',{
@@ -101,7 +101,7 @@
 				    		{% for i in range (numPages) %}
 						    <div class="swiper-slide"> 
 						      <svg height="{{ height }}" width="{{ width }}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-							  		<image x="0" y="0" height="{{ height }}" width="{{ width }}"  xlink:href="/res/vortrag_{{ i }}.svg" />
+							  		<image x="0" y="0" height="{{ height }}" width="{{ width }}"  xlink:href="/{{ pres_dir }}/vortrag_{{ i }}.svg" />
 							  </svg>
 							</div >
 							{% endfor %}
@@ -110,13 +110,13 @@
 				    		{% for i in range (1, numPages) %}
 						    <div class="swiper-slide"> 
 						      <svg height="{{ height }}" width="{{ width }}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-							  		<image x="0" y="0" height="{{ height }}" width="{{ width }}"  xlink:href="/res/vortrag_{{ i }}.svg" />
+							  		<image x="0" y="0" height="{{ height }}" width="{{ width }}"  xlink:href="/{{ pres_dir }}/vortrag_{{ i }}.svg" />
 							  </svg>
 							</div >
 							{% endfor %}
 							<div class="swiper-slide"> 
 						      <svg height="{{ height }}" width="{{ width }}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-							  		<image x="0" y="0" height="{{ height }}" width="{{ width }}"  xlink:href="/res/vortrag_0.svg" />
+							  		<image x="0" y="0" height="{{ height }}" width="{{ width }}"  xlink:href="/{{ pres_dir }}/vortrag_0.svg" />
 							  </svg>
 							</div >
 						{% endif %}
@@ -124,7 +124,7 @@
 				    		{% for i in range (1, numPages, 2) %}
 						    <div class="swiper-slide"> 
 						      <svg height="{{ height }}" width="{{ width }}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-							  		<image x="0" y="0" height="{{ height }}" width="{{ width }}"  xlink:href="/res/vortrag_{{ i }}.svg" />
+							  		<image x="0" y="0" height="{{ height }}" width="{{ width }}"  xlink:href="/{{ pres_dir }}/vortrag_{{ i }}.svg" />
 							  </svg>
 							</div >
 							{% endfor %}

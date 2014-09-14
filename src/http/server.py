@@ -34,6 +34,10 @@ conf = {
         {'tools.staticdir.on': True,
          'tools.staticdir.dir': PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_CSS)
         },
+    '/' + PRES_CONFIG.DIR_CSS + '/fonts':
+        {'tools.staticdir.on': True,
+         'tools.staticdir.dir': PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_CSS + '/fonts')
+        },
     '/' + PRES_CONFIG.DIR_JQUERYMOBILE:
         {'tools.staticdir.on': True,
          'tools.staticdir.dir': PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_JQUERYMOBILE)
@@ -83,7 +87,9 @@ class PresWebsite(object):
         return presHTMLTemplate
 
     @cherrypy.expose
-    def upload(self, presFile):
+    def upload(self, presFile, upload):
+        print "upload"
+        cherrypy.response.headers['Content-Type'] = 'application/json'
         if(presFile.content_type.value == 'application/pdf'):
             uload_path = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION)
             file_name = 'vortrag.pdf'
@@ -105,10 +111,10 @@ class PresWebsite(object):
                 svgGenerator.start()
                 pub.Publisher.sendMessage('presUpload', data=self.pdfDocument)
             except ValueError:
-                raise cherrypy.HTTPError(400, 'SOME ERROR')       
-            return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'startpresentation.html'))
-        return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'index.html')) 
-    
+                raise cherrypy.HTTPError(400, 'SOME ERROR')                   
+        return simplejson.dumps(dict())     
+            #return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'startpresentation.html'))
+        #return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'index.html'))     
     @cherrypy.expose
     def quitPresentation(self):
         pub.Publisher.sendMessage('presQuit')
@@ -129,6 +135,14 @@ class PresWebsite(object):
                                                       mode=slideMode,
                                                       order=slideOrder)
         return presHTMLTemplate
+    
+    @cherrypy.expose
+    def settings(self, slideMode, slideOrder):
+        self.slideMode = slideMode;
+        self.slideOrder = slideOrder;
+        cherrypy.response.headers['Content-Type'] = 'application/json'       
+        return simplejson.dumps(dict())
+        
       
     @cherrypy.expose
     def setPage(self, pageNr):

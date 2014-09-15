@@ -18,19 +18,41 @@ $( document ).on( "pagecontainerchange", function() {
     });
 });
 
+function getSlideIndexNormal()
+{
+	return $("#presentationWrapper").slickCurrentSlide();
+}
+
+function getSlideIndexPreview()
+{
+	return $("#presentationWrapper").slickCurrentSlide() - 1;
+}
+
+function getSlideIndexNotes()
+{
+	return $("#presentationWrapper").slickCurrentSlide() * 2;
+}
+
 $(document).on('pageshow', '#presentationPage', function(){
 	$("#presentationWrapper").unslick();
 	$.get('/startPresentation', function(data) {
 		var mode = data['mode'];
 		var order = data['order'];
 		
+		if(order == "normal")
+			cbFunction = getSlideIndexNormal;
+		else if(order == "preview")
+			cbFunction = getSlideIndexPreview;
+		else if(order == "notes")
+			cbFunction = getSlideIndexNotes;
+				
 		if(mode == "click")
 		{
 			$("#presentationWrapper").slick({
 				lazyLoad: 'ondemand'
 			});
 			$('#presentationWrapper').on('click', '.car-slide', function(){
-				var pageIndex = $("#presentationWrapper").slickCurrentSlide();
+				var pageIndex = cbFunction();
 				$.post('/setPage', {pageNr: pageIndex}, function(data) {},'json');				
 			});
 		}
@@ -39,7 +61,7 @@ $(document).on('pageshow', '#presentationPage', function(){
 			$("#presentationWrapper").slick({
 				lazyLoad: 'ondemand',
 				onAfterChange : function(){
-					var pageIndex = $("#presentationWrapper").slickCurrentSlide();
+					var pageIndex = cbFunction();
 					$.post('/setPage', {pageNr: pageIndex}, function(data) {},'json');			
 				}
 			});
@@ -47,9 +69,20 @@ $(document).on('pageshow', '#presentationPage', function(){
 		}
 		
 	},'json');
+	//$.post('/setPage', {pageNr: 0}, function(data) {},'json');
 		
+//	if(order == "notes")
+//		$('#presentationWrapper').slickFilter(':even');
+//	
 	
-	//$('#presentationWrapper').slickFilter(':even');
+//	
+//	if(order == "normal")
+//		$("#presentationWrapper").slickGoTo(0);
+//	else if(order == "preview")
+//		$("#presentationWrapper").slickGoTo(1);
+//	else if(order == "notes")
+//		$("#presentationWrapper").slickGoTo(0);
+	
 	var screen = $.mobile.getScreenHeight();
 
 	var header = $(".ui-header").hasClass("ui-header-fixed") ? $(".ui-header").outerHeight()  - 1 : $(".ui-header").outerHeight();

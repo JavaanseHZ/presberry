@@ -19,9 +19,37 @@ $( document ).on( "pagecontainerchange", function() {
 });
 
 $(document).on('pageshow', '#presentationPage', function(){
-	$("#presentationWrapper").slick({
-		lazyLoad: 'ondemand'
-	});
+	$("#presentationWrapper").unslick();
+	$.get('/startPresentation', function(data) {
+		var mode = data['mode'];
+		var order = data['order'];
+		
+		if(mode == "click")
+		{
+			$("#presentationWrapper").slick({
+				lazyLoad: 'ondemand'
+			});
+			$('#presentationWrapper').on('click', '.car-slide', function(){
+				var pageIndex = $("#presentationWrapper").slickCurrentSlide();
+				$.post('/setPage', {pageNr: pageIndex}, function(data) {},'json');				
+			});
+		}
+		else if(mode == "change")
+		{
+			$("#presentationWrapper").slick({
+				lazyLoad: 'ondemand',
+				onAfterChange : function(){
+					var pageIndex = $("#presentationWrapper").slickCurrentSlide();
+					$.post('/setPage', {pageNr: pageIndex}, function(data) {},'json');			
+				}
+			});
+			$('#presentationWrapper').on('click', '.car-slide', function(){});
+		}
+		
+	},'json');
+		
+	
+	//$('#presentationWrapper').slickFilter(':even');
 	var screen = $.mobile.getScreenHeight();
 
 	var header = $(".ui-header").hasClass("ui-header-fixed") ? $(".ui-header").outerHeight()  - 1 : $(".ui-header").outerHeight();
@@ -33,6 +61,7 @@ $(document).on('pageshow', '#presentationPage', function(){
 	var content = screen - header - footer - contentCurrent;
 	
 	$(".ui-content").height(content);
+	
 	//$("#presentationWrapper").slickGoTo(0);
 //	$.get('/loadPresentation', 
 //		function(data) {
@@ -95,10 +124,12 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		    success: function(data){
 		    	
 		    	$("#presentationWrapper").html(data['html']);
-		    	
-		    	//alert("success");
+		    	$("#previewUpload").html(data['preview']);
 		    }
 		}).done(function() {
+			alert(data['preview']);
+			//$("#previewUpload").html(data['preview']);
+			
 //				$("#presentationWrapper").slick({
 //					lazyLoad: 'ondemand'
 //				});

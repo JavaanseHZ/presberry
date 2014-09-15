@@ -73,7 +73,7 @@ class PresWebsite(object):
     
     def __init__(self):
         object.__init__(self)
-        self.slideMode = "click";
+        self.slideMode = "change";
         self.slideOrder = "normal";
     
     @cherrypy.expose
@@ -116,43 +116,22 @@ class PresWebsite(object):
                                                       numPages=self.pdfDocument.n_pgs,
                                                       width="100%",
                                                       height="100%",
-                                                      order=self.slideOrder)                
-                return simplejson.dumps(dict(html=htmlTemplate))
+                                                      order=self.slideOrder)
+                previewImage =  htmlGenerator.generateHTML('previewElement.html',
+                                                      pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
+                                                      width="50%",
+                                                      height="50%")
+                return simplejson.dumps(dict(html=htmlTemplate, preview=previewImage))
             except ValueError:
                 raise cherrypy.HTTPError(400, 'SOME ERROR')                   
         return simplejson.dumps(dict(html=""))     
             #return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'startpresentation.html'))
         #return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'index.html'))
     @cherrypy.expose
-    def loadPresentation(self):
-        htmlTemplate = htmlGenerator.generateHTML('carousel.html',
-                                                      pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
-                                                      numPages=self.pdfDocument.n_pgs,
-                                                      width="100%",
-                                                      height="100%",
-                                                      order=self.slideOrder)
-        return simplejson.dumps(dict(html=htmlTemplate))
-       
-    @cherrypy.expose
-    def quitPresentation(self):
-        pub.Publisher.sendMessage('presQuit')
-        return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'finished.html'))
-    
-    @cherrypy.expose
-    def startPresentation(self, slideMode, slideOrder):
+    def startPresentation(self, **kwargs):
+        cherrypy.response.headers['Content-Type'] = 'application/json'
         pub.Publisher.sendMessage('presStart')
-        presHTMLTemplate = htmlGenerator.generateHTML('presentation.html',
-                                                      html_dir= PRES_CONFIG.DIR_HTML,
-                                                      css_dir= PRES_CONFIG.DIR_CSS,
-                                                      js_dir= PRES_CONFIG.DIR_JS,
-                                                      jquerymobile_dir= PRES_CONFIG.DIR_JQUERYMOBILE,
-                                                      pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
-                                                      numPages=self.pdfDocument.n_pgs,
-                                                      width=self.browserWidth,
-                                                      height=self.browserHeight,
-                                                      mode=slideMode,
-                                                      order=slideOrder)
-        return presHTMLTemplate
+        return simplejson.dumps(dict(mode=self.slideMode, order=self.slideOrder))
     
     @cherrypy.expose
     def settings(self, slideMode, slideOrder):
@@ -160,18 +139,53 @@ class PresWebsite(object):
         self.slideOrder = slideOrder;
         cherrypy.response.headers['Content-Type'] = 'application/json'       
         return simplejson.dumps(dict())
-        
-      
+    
     @cherrypy.expose
     def setPage(self, pageNr):
         pub.Publisher.sendMessage('presSetPage', pageNr)
         cherrypy.response.headers['Content-Type'] = 'application/json'
         return simplejson.dumps(dict(page=pageNr))
     
-    @cherrypy.expose
-    def setSize(self, browserWidth, browserHeight):
-        self.browserWidth = int(browserWidth)
-        self.browserHeight = int(browserHeight)
-        print self.browserHeight
-        cherrypy.response.headers['Content-Type'] = 'application/json'
-        return simplejson.dumps(dict())
+#     @cherrypy.expose
+#     def loadPresentation(self):
+#         htmlTemplate = htmlGenerator.generateHTML('carousel.html',
+#                                                       pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
+#                                                       numPages=self.pdfDocument.n_pgs,
+#                                                       width="100%",
+#                                                       height="100%",
+#                                                       order=self.slideOrder)
+#         return simplejson.dumps(dict(html=htmlTemplate))
+#        
+#     @cherrypy.expose
+#     def quitPresentation(self):
+#         pub.Publisher.sendMessage('presQuit')
+#         return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'finished.html'))
+#     
+#     @cherrypy.expose
+#     def startPresentation(self, slideMode, slideOrder):
+#         pub.Publisher.sendMessage('presStart')
+#         presHTMLTemplate = htmlGenerator.generateHTML('presentation.html',
+#                                                       html_dir= PRES_CONFIG.DIR_HTML,
+#                                                       css_dir= PRES_CONFIG.DIR_CSS,
+#                                                       js_dir= PRES_CONFIG.DIR_JS,
+#                                                       jquerymobile_dir= PRES_CONFIG.DIR_JQUERYMOBILE,
+#                                                       pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
+#                                                       numPages=self.pdfDocument.n_pgs,
+#                                                       width=self.browserWidth,
+#                                                       height=self.browserHeight,
+#                                                       mode=slideMode,
+#                                                       order=slideOrder)
+#         return presHTMLTemplate
+    
+    
+        
+      
+   
+    
+#     @cherrypy.expose
+#     def setSize(self, browserWidth, browserHeight):
+#         self.browserWidth = int(browserWidth)
+#         self.browserHeight = int(browserHeight)
+#         print self.browserHeight
+#         cherrypy.response.headers['Content-Type'] = 'application/json'
+#         return simplejson.dumps(dict())

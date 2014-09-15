@@ -1,5 +1,5 @@
 <!-- <div class="car-container" id="benni"> -->
-	{% if order == 'normal' %}
+<!-- 	{% if order == 'normal' %} -->
    		{% for i in range (numPages) %}
 <!-- 	    <div class="car-slide">  -->
 <!-- 	      <svg height="{{ height }}" width="{{ width }}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" > -->
@@ -10,22 +10,22 @@
 	      		<img height="{{ height }}" width="{{ width }}"  data-lazy="/{{ pres_dir }}/vortrag_{{ i }}.svg" />
 		</div >
 		{% endfor %}
-	{% endif %}
-	{% if order == 'preview' %}
-   		{% for i in range (1, numPages) %}
-	    <div class="car-slide">
-	      		<img height="{{ height }}" width="{{ width }}"  data-lazy="/{{ pres_dir }}/vortrag_{{ i }}.svg" />
-		</div >
-		{% endfor %}
-		<div class="car-slide">
-	      		<img height="{{ height }}" width="{{ width }}"  data-lazy="/{{ pres_dir }}/vortrag_0.svg" />
-		</div >
-	{% endif %}
-	{% if order == 'notes' %}
-   		{% for i in range (1, numPages, 2) %}
-	    <div class="car-slide">
-	      		<img height="{{ height }}" width="{{ width }}"  data-lazy="/{{ pres_dir }}/vortrag_{{ i }}.svg" />
-		</div >
-		{% endfor %}
-	{% endif %}
+<!-- 	{% endif %} -->
+<!-- 	{% if order == 'preview' %} -->
+<!--    		{% for i in range (1, numPages) %} -->
+<!-- 	    <div class="car-slide"> -->
+<!-- 	      		<img height="{{ height }}" width="{{ width }}"  data-lazy="/{{ pres_dir }}/vortrag_{{ i }}.svg" /> -->
+<!-- 		</div > -->
+<!-- 		{% endfor %} -->
+<!-- 		<div class="car-slide"> -->
+<!-- 	      		<img height="{{ height }}" width="{{ width }}"  data-lazy="/{{ pres_dir }}/vortrag_0.svg" /> -->
+<!-- 		</div > -->
+<!-- 	{% endif %} -->
+<!-- 	{% if order == 'notes' %} -->
+<!--    		{% for i in range (1, numPages, 2) %} -->
+<!-- 	    <div class="car-slide"> -->
+<!-- 	      		<img height="{{ height }}" width="{{ width }}"  data-lazy="/{{ pres_dir }}/vortrag_{{ i }}.svg" /> -->
+<!-- 		</div > -->
+<!-- 		{% endfor %} -->
+<!-- 	{% endif %} -->
 <!-- </div> -->

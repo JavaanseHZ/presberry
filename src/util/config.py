@@ -23,6 +23,7 @@ W_HEIGHT = configParser.getint('WINDOW', 'height')
 
 DIR_MEDIA_GUI =  configParser.get('DIRECTORIES', 'gui')
 DIR_MEDIA_PRESENTATION =  configParser.get('DIRECTORIES', 'presentation')
+DIR_MEDIA_TEMP =  configParser.get('DIRECTORIES', 'temp')
 DIR_HTML = configParser.get('DIRECTORIES', 'html')
 DIR_JS =  configParser.get('DIRECTORIES', 'javascript')
 DIR_CSS =  configParser.get('DIRECTORIES', 'css')

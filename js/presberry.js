@@ -129,26 +129,46 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		    contentType: false,
 		    processData: false,
 		    type: 'POST',
-		    success: function(data){
-		    	
-		    	$("#presentationWrapper").html(data['html']);
-		    	$("#previewUpload").html(data['preview']);
+		    success: function(data){		    	
+		    	//$("#presentationWrapper").html(data['carousel']);
+		    	$("#fileList").prepend(data['fileListItem']);
+		    	var control = $("#uploadFileInput");
+		    	control.replaceWith( control = control.clone( true ) ) 
 		    }
-		}).done(function() {
-			alert(data['preview']);
-			//$("#previewUpload").html(data['preview']);
-			
-//				$("#presentationWrapper").slick({
-//					lazyLoad: 'ondemand'
-//				});
-				//$(".car-container").slickAdd(data['html']);
-				//alert("done");
-			  
-		});
+		})
+	});
+	$("#fileList").on('click', ".presFileItem", function(e){
+		var fileName = $(this).find(".presFileName:first").text();
+		var fileID = $(this).attr('id');
+		$.post('/setupPresentation', {filenameHTML:fileName, timestampID:fileID}, function(data) {
+			$("#presentationWrapper").html(data['carousel']);
+		},'json');
+		//$('#fileList a').attr("data-theme", "c").removeClass("ui-btn-up-b").removeClass('ui-btn-hover-b').addClass("ui-btn-up-c").addClass('ui-btn-hover-c');
+		//$(this).attr("data-theme", "b").removeClass("ui-btn-up-c").removeClass('ui-btn-hover-c').addClass("ui-btn-up-b").addClass('ui-btn-hover-b');
+		//alert($(this).attr('id'));
+		//alert($(this).find(".presFileName:first").text());
 	});
 });
 
-
+//.done(function() {	
+//	$("img[class='ui-li-thumb']").load(function() {
+//	    $(this).css('padding-top',((80-this.height)/2));
+//	    $(this).css('padding-left',((80-this.width)/2));
+//	});
+//	var value = $("#"+data['fileListItemID']).children("p").val();
+//	alert(value);
+//	value = value.replace(".", "\");
+//	value = value.replace(".", "&#32;");
+//	$(".timestamp")[0].val();
+//	$("#fileList").refresh();
+//	alert(data['preview']);
+//	$("#previewUpload").html(data['preview']);	
+//		$("#presentationWrapper").slick({
+//			lazyLoad: 'ondemand'
+//		});
+//		$(".car-container").slickAdd(data['html']);
+//		alert("done");	  
+//});
 
 //$(document).on("pagecreate","#presentationPage",function(){
 //	var mySwiper = new Swiper('.swiper-container',{

@@ -6,8 +6,9 @@ Created on Sep 12, 2014
 import poppler
 
 class PDFdocument():
-    def __init__(self, uri, filename):
+    def __init__(self, uri, filename, timestamp):
         self.doc = poppler.document_new_from_file(uri, None)
+        self.timestamp = timestamp
         self.n_pgs = self.doc.get_n_pages()
         self.filename = filename
         self.curr_pg = 0

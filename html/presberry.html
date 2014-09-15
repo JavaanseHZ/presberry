@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="/{{ jquerymobile_dir }}/jquery.mobile-1.4.4.min.css">
 	<link rel="stylesheet" type="text/css" href="/{{ css_dir }}/slick.css"/>
+	<link rel="stylesheet" type="text/css" href="/{{ css_dir }}/pressberry.css"/>
 </head> 
 
 <body>
@@ -17,12 +18,11 @@
 		<div role="main" class="ui-content jqm-content jqm-fullwidth">	
 			<form id="uploadForm" action="upload" method="post" enctype="multipart/form-data" data-ajax="false">
 				<div class="ui-field-contain">
-			    	<input type="file" id="uploadFileInput" accept="application/pdf" name="presFile" />
-			    </div>
-			    <input type="submit" name="upload" id="uploadSubmit" value="Upload">
+			    	<input type="file" id="uploadFileInput" accept="application/pdf" name="presFile" /><input type="submit" name="upload" id="uploadSubmit" value="Upload">
+			    </div>			    
 			 </form>
-			 <div id="previewUpload">
-			 </div>
+			<ul data-role="listview" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow" id="fileList">
+			</ul>
 		</div>	
 	</div>	
 	

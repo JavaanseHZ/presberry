@@ -10,7 +10,9 @@ import threading
 import os
 import mimetypes
 import simplejson
-from util.svggenerator import SVGGenerator
+from datetime import datetime
+
+from util.svggenerator import SVGGenerator, SVGGeneratorPreview
 from document.pdfdocument import PDFdocument
 from http import htmlGenerator
 import util.config as PRES_CONFIG
@@ -36,7 +38,7 @@ conf = {
         },
     '/' + PRES_CONFIG.DIR_CSS + '/fonts':
         {'tools.staticdir.on': True,
-         'tools.staticdir.dir': PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_CSS + '/fonts')
+         'tools.staticdir.dir': PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_CSS + os.path.sep + 'fonts')
         },
     '/' + PRES_CONFIG.DIR_JQUERYMOBILE:
         {'tools.staticdir.on': True,
@@ -92,7 +94,8 @@ class PresWebsite(object):
     def upload(self, presFile, upload):
         cherrypy.response.headers['Content-Type'] = 'application/json'
         if(presFile.content_type.value == 'application/pdf'):
-            uload_path = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION) + os.path.sep + presFile.filename;
+            timestampID = datetime.now().strftime('%Y-%m-%dT%H-%M-%S_')
+            uload_path = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION) + os.path.sep + timestampID + presFile.filename;
             size = 0
             all_data = ''
             while True:
@@ -105,28 +108,42 @@ class PresWebsite(object):
                 saved_file=open(uload_path, 'wb')
                 saved_file.write(all_data) 
                 saved_file.close()
-                self.pdfDocument = PDFdocument('file://' + uload_path, presFile.filename)
-                svgGenerator = SVGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
-                svgGenerator.start()
-                pub.Publisher.sendMessage('presUpload', data=self.pdfDocument)               
-                htmlTemplate = htmlGenerator.generateHTML('carousel.html',
+                svgGeneratorPreview = SVGGeneratorPreview(uload_path)
+                svgGeneratorPreview.start()
+                
+                timestampHTML = self.getTimestampHTML(timestampID)
+                fileListItemHTML =  htmlGenerator.generateHTML('previewElement.html',
                                                       pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
-                                                      numPages=self.pdfDocument.n_pgs,
-                                                      filename=self.pdfDocument.filename,
-                                                      width="100%",
-                                                      height="100%",
-                                                      order=self.slideOrder)
-                previewImage =  htmlGenerator.generateHTML('previewElement.html',
-                                                      pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
-                                                      filename=self.pdfDocument.filename,
+                                                      filename= presFile.filename,
+                                                      timestamp=timestampID,
+                                                      pTimestamp = timestampHTML,
                                                       width="50%",
                                                       height="50%")
-                return simplejson.dumps(dict(html=htmlTemplate, preview=previewImage))
+                return simplejson.dumps(dict(fileListItem=fileListItemHTML))
             except ValueError:
-                raise cherrypy.HTTPError(400, 'SOME ERROR')                   
+                raise cherrypy.HTTPError(400, 'SOME ERROR')
         return simplejson.dumps(dict(html=""))     
             #return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'startpresentation.html'))
         #return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'index.html'))
+    
+    @cherrypy.expose
+    def setupPresentation(self, timestampID, filenameHTML):
+        uload_path = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION) + os.path.sep + timestampID + filenameHTML;
+        print uload_path
+        self.pdfDocument = PDFdocument('file://' + uload_path, filenameHTML, timestampID)
+        svgGenerator = SVGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
+        svgGenerator.start()
+        pub.Publisher.sendMessage('presSetup', data=self.pdfDocument)               
+        carouselHTML = htmlGenerator.generateHTML('carousel.html',
+                                              pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
+                                              numPages=self.pdfDocument.n_pgs,
+                                              filename = filenameHTML,
+                                              timestamp = timestampID,
+                                              width="100%",
+                                              height="100%",
+                                              order=self.slideOrder)
+        return simplejson.dumps(dict(carousel=carouselHTML))
+    
     @cherrypy.expose
     def startPresentation(self, **kwargs):
         cherrypy.response.headers['Content-Type'] = 'application/json'
@@ -151,6 +168,14 @@ class PresWebsite(object):
         pub.Publisher.sendMessage('presSetPage', pageNr)
         cherrypy.response.headers['Content-Type'] = 'application/json'
         return simplejson.dumps(dict(page=pageNr))
+    
+    def getTimestampHTML(self, timestamp):
+        i = timestamp.replace("-", "/", 2)
+        i = i.replace("-", ":", 2)
+        i = i.replace("_", "")
+        i = i.replace("T", "&#32;&#32;&#32;", 2)
+        return i;
+        
     
 #     @cherrypy.expose
 #     def loadPresentation(self):

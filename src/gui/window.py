@@ -134,7 +134,7 @@ class PresWindow(gtk.Window):
         gtk.Window.__init__(self)
         
         pub.Publisher.subscribe(self.presConnect, 'presConnect')
-        pub.Publisher.subscribe(self.presUpload, 'presUpload')
+        pub.Publisher.subscribe(self.presSetup, 'presSetup')
         pub.Publisher.subscribe(self.presStart, 'presStart')
         pub.Publisher.subscribe(self.presQuit, 'presQuit')
         self.setWindowSize(PRES_CONFIG.W_FULLSCREEN, PRES_CONFIG.W_WIDTH, PRES_CONFIG.W_HEIGHT)
@@ -160,7 +160,7 @@ class PresWindow(gtk.Window):
             self.windowWidth = float(width)
             self.windowHeight = float(height)
 
-    def presUpload(self, msg):
+    def presSetup(self, msg):
         pdfDocument = msg.data
         pdfDocument.calculateScaleFactor(self.windowWidth, self.windowHeight)
         self.presentationPanel.loadPresentation(pdfDocument)

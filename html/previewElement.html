@@ -1,1 +1,7 @@
-<img height="{{ height }}" width="{{ width }}"  src="/{{ pres_dir }}/vortrag_0.svg" />
+<li class="ui-li-has-thumb presFileItem" id="{{ timestamp }}">
+	<a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+		<img src="/{{ pres_dir }}/{{ timestamp }}{{ filename }}0.svg" class="hoverZoomLink">
+   		<h2 class="presFileName">{{ filename }}</h2>
+		<p >{{ pTimestamp }}</p>
+	</a>
+</li>

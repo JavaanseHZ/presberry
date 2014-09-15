@@ -92,9 +92,7 @@ class PresWebsite(object):
     def upload(self, presFile, upload):
         cherrypy.response.headers['Content-Type'] = 'application/json'
         if(presFile.content_type.value == 'application/pdf'):
-            uload_path = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION)
-            file_name = 'vortrag.pdf'
-            uload_path = uload_path + os.path.sep + file_name
+            uload_path = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION) + os.path.sep + presFile.filename;
             size = 0
             all_data = ''
             while True:
@@ -107,18 +105,20 @@ class PresWebsite(object):
                 saved_file=open(uload_path, 'wb')
                 saved_file.write(all_data) 
                 saved_file.close()
-                self.pdfDocument = PDFdocument('file://' + uload_path)
+                self.pdfDocument = PDFdocument('file://' + uload_path, presFile.filename)
                 svgGenerator = SVGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
                 svgGenerator.start()
                 pub.Publisher.sendMessage('presUpload', data=self.pdfDocument)               
                 htmlTemplate = htmlGenerator.generateHTML('carousel.html',
                                                       pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
                                                       numPages=self.pdfDocument.n_pgs,
+                                                      filename=self.pdfDocument.filename,
                                                       width="100%",
                                                       height="100%",
                                                       order=self.slideOrder)
                 previewImage =  htmlGenerator.generateHTML('previewElement.html',
                                                       pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
+                                                      filename=self.pdfDocument.filename,
                                                       width="50%",
                                                       height="50%")
                 return simplejson.dumps(dict(html=htmlTemplate, preview=previewImage))

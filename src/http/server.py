@@ -12,7 +12,7 @@ import mimetypes
 import simplejson
 from datetime import datetime
 
-from util.svggenerator import SVGGenerator, SVGGeneratorPreview
+from http.svggenerator import SVGGenerator, SVGGeneratorPreview
 from document.pdfdocument import PDFdocument
 from http import htmlGenerator
 import util.config as PRES_CONFIG

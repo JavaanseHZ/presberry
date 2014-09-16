@@ -87,7 +87,7 @@ $(document).on('pagehide', '#presentationPage', function(){
 	$.get('/quitPresentation', function(data) {},'json');
 });
 
-$("#fullscreenButton").click(function () {
+$("#fullscreenButton").on('tap', function () {
 	var target = $( ".ui-page-active" )[0];
     if (screenfull.enabled) {
         screenfull.request(target);
@@ -121,7 +121,7 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		    }
 		})
 	});
-	$("#fileList").on('click', ".presFileItem", function(e){
+	$("#fileList").on('tap', ".presFileItem", function(e){
 		var fileName = $(this).find(".presFileName:first").text();
 		var fileID = $(this).attr('id');
 		$.post('/setupPresentation', {filenameHTML:fileName, timestampID:fileID}, function(data) {

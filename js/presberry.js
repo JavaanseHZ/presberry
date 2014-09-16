@@ -54,7 +54,7 @@ $(document).on('pageshow', '#presentationPage', function(){
 				lazyLoad: 'ondemand',
 				onAfterChange : null
 			});
-			$('#presentationWrapper').on('click', '.car-slide', function(){
+			$('#presentationWrapper').on('tap', '.car-slide', function(){
 				var pageIndex = cbFunction();
 				$.post('/setPage', {pageNr: pageIndex}, function(data) {},'json');				
 			});
@@ -68,13 +68,12 @@ $(document).on('pageshow', '#presentationPage', function(){
 					$.post('/setPage', {pageNr: pageIndex}, function(data) {},'json');			
 				}
 			});
-			$('#presentationWrapper').off('click', '.car-slide');
+			$('#presentationWrapper').off('tap', '.car-slide');
 		}
 		if(order == "notes")
 			$('#presentationWrapper').slickFilter(':odd');
 					
 	},'json');
-	//$.post('/setPage', {pageNr: 0}, function(data) {},'json');
 	
 	var screen = $.mobile.getScreenHeight();
 	var header = $(".ui-header").outerHeight()  - 1;
@@ -86,8 +85,6 @@ $(document).on('pageshow', '#presentationPage', function(){
 
 $(document).on('pagehide', '#presentationPage', function(){
 	$.get('/quitPresentation', function(data) {},'json');
-	
-	//$("#presentationWrapper").hide();
 });
 
 $("#fullscreenButton").click(function () {
@@ -97,21 +94,10 @@ $("#fullscreenButton").click(function () {
     }
 });
 
-//$("#startPresentationButton").click(function () {
-//	$(this).hide();
-//	$("#presentationWrapper").show();
-//});
-
-//$(document).on('pagecreate', '#presentationPage', function(){
-//	$(".car-container").slick({
-//		
-//	});
-//});
-
 $(document).on('pagecreate', '#settingsPage', function(){
 	$("#settingsForm").submit(function(e){		
 		e.preventDefault();		
-		var postdata = $("#settingsForm").serializeArray();//{slideMode:$("#name").val(), slideOrder: $("#name").val()};
+		var postdata = $("#settingsForm").serializeArray();
 		$.post('/settings', postdata, function(data) {},'json');
 	});
 });
@@ -120,7 +106,6 @@ $(document).on('pagecreate', '#uploadPage', function(){
 	$("#uploadForm").submit(function(e){		
 		e.preventDefault();
 		$("#presentationWrapper").unslick();
-		//$("#presentation").hide();
 		var presFile = new FormData(this);
 		$.ajax({
 		    url: '/upload',
@@ -129,8 +114,7 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		    contentType: false,
 		    processData: false,
 		    type: 'POST',
-		    success: function(data){		    	
-		    	//$("#presentationWrapper").html(data['carousel']);
+		    success: function(data){
 		    	$("#fileList").prepend(data['fileListItem']);
 		    	var control = $("#uploadFileInput");
 		    	control.replaceWith( control = control.clone( true ) ) 
@@ -143,52 +127,5 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		$.post('/setupPresentation', {filenameHTML:fileName, timestampID:fileID}, function(data) {
 			$("#presentationWrapper").html(data['carousel']);
 		},'json');
-		//$('#fileList a').attr("data-theme", "c").removeClass("ui-btn-up-b").removeClass('ui-btn-hover-b').addClass("ui-btn-up-c").addClass('ui-btn-hover-c');
-		//$(this).attr("data-theme", "b").removeClass("ui-btn-up-c").removeClass('ui-btn-hover-c').addClass("ui-btn-up-b").addClass('ui-btn-hover-b');
-		//alert($(this).attr('id'));
-		//alert($(this).find(".presFileName:first").text());
 	});
 });
-
-//.done(function() {	
-//	$("img[class='ui-li-thumb']").load(function() {
-//	    $(this).css('padding-top',((80-this.height)/2));
-//	    $(this).css('padding-left',((80-this.width)/2));
-//	});
-//	var value = $("#"+data['fileListItemID']).children("p").val();
-//	alert(value);
-//	value = value.replace(".", "\");
-//	value = value.replace(".", "&#32;");
-//	$(".timestamp")[0].val();
-//	$("#fileList").refresh();
-//	alert(data['preview']);
-//	$("#previewUpload").html(data['preview']);	
-//		$("#presentationWrapper").slick({
-//			lazyLoad: 'ondemand'
-//		});
-//		$(".car-container").slickAdd(data['html']);
-//		alert("done");	  
-//});
-
-//$(document).on("pagecreate","#presentationPage",function(){
-//	var mySwiper = new Swiper('.swiper-container',{
-//	mode : 'horizontal',
-//	loop : true,
-//	watchActiveIndex : true
-//	});
-//});  
-//jQuery( "#presentationPage" ).on( "pagecreate", function( event ) {
-//	alert('hallo');
-//	var mySwiper = new Swiper('.swiper-container',{
-//		mode : 'horizontal',
-//		loop : true,
-//		watchActiveIndex : true
-//		}
-//	});
-//	var target = $('#presentation')[0];
-//	$('#fullscreen').click(function () {
-//	    if (screenfull.enabled) {
-//	        screenfull.request(target);
-//	    }
-//	});
-//});

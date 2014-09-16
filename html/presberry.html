@@ -6,14 +6,12 @@
 	<link rel="stylesheet" href="/{{ jquerymobile_dir }}/jquery.mobile-1.4.4.min.css">
 	<link rel="stylesheet" type="text/css" href="/{{ css_dir }}/slick.css"/>
 	<link rel="stylesheet" type="text/css" href="/{{ css_dir }}/pressberry.css"/>
-</head> 
-
+</head>
 <body>
 	<div data-role="header" data-position="fixed" data-theme="b" class="ui-header ui-header-fixed">
 		<h1>Upload</h1>
 		<a href="#" class="ui-btn-right ui-btn ui-btn-inline ui-icon-action ui-btn-icon-notext ui-corner-all" id="fullscreenButton">fullscreen</a>
-	</div>
-	
+	</div>	
 	<div data-role="page" id="uploadPage" data-title="Upload">		
 		<div role="main" class="ui-content jqm-content jqm-fullwidth">	
 			<form id="uploadForm" action="upload" method="post" enctype="multipart/form-data" data-ajax="false">
@@ -33,7 +31,7 @@
 			{% endfor %}
 			</ul>
 		</div>	
-	</div>	
+	</div>
 	
 	<div data-role="page" id="settingsPage" data-title="Settings">	
 		<div role="main" class="ui-content jqm-content jqm-fullwidth">
@@ -63,17 +61,14 @@
 			    <input type="submit" name="submit" id="submitSettings" value="Submit">
  			</form> 
 		</div>	
-	</div>
-	
+	</div>	
 	<div data-role="page" id="presentationPage" data-title="Presentation">	
 		<div role="main" class="ui-content jqm-content jqm-fullwidth">
-<!-- 			<input id="startPresentationButton" type="button" value="Start Presentation"> -->
 			<div id="presentationWrapper" >
 				<p>no presentation loaded</p>
 			</div>			 
 		</div>	
-	</div>
-	
+	</div>	
 	<div data-role="footer" data-position="fixed" data-theme="b" class="ui-footer ui-footer-fixed">
 		<div data-role="navbar">
 			<ul>

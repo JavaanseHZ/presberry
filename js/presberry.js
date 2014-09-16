@@ -87,7 +87,8 @@ $(document).on('pagehide', '#presentationPage', function(){
 	$.get('/quitPresentation', function(data) {},'json');
 });
 
-$("#fullscreenButton").on('tap', function () {
+$("#fullscreenButton").on('tap', function (e) {
+	e.preventDefault();
 	var target = $( ".ui-page-active" )[0];
     if (screenfull.enabled) {
         screenfull.request(target);

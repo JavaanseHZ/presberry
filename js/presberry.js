@@ -76,11 +76,11 @@ $(document).on('pageshow', '#presentationPage', function(){
 	},'json');
 	
 	var screen = $.mobile.getScreenHeight();
-	var header = $(".ui-header").outerHeight()  - 1;
+	var header = $(".ui-header").outerHeight() - 1;
 	var footer = $(".ui-footer").outerHeight() - 1 ;
 	var contentCurrent = $(".ui-content").outerHeight() - $(".ui-content").height();
 	var content = screen - header - footer - contentCurrent;
-	$(".ui-content").height(content);
+	$("#presentationWrapper").height(content);
 });
 
 $(document).on('pagehide', '#presentationPage', function(){
@@ -89,10 +89,29 @@ $(document).on('pagehide', '#presentationPage', function(){
 
 $("#fullscreenButton").on('tap', function (e) {
 	e.preventDefault();
-	var target = $( ".ui-page-active" )[0];
+	var target = $( ".ui-content" )[0];
     if (screenfull.enabled) {
-        screenfull.request(target);
+        screenfull.request(target);        
     }
+});
+
+$(document).on(screenfull.raw.fullscreenchange, function (e) {
+	if($(".ui-content").isFullscreen)
+	{
+		//var screen = $.mobile.getScreenHeight();
+    	//$("#presentationWrapper").height(screen);
+    	$("#fullscreenButton").hide(); 
+	}
+	else
+	{
+//		var screen = $.mobile.getScreenHeight();
+//		var header = $(".ui-header").outerHeight() - 1;
+//		var footer = $(".ui-footer").outerHeight() - 1 ;
+//		//var contentCurrent = $(".ui-content").outerHeight() - $(".ui-content").height();
+//		var content = screen - header - footer;// - contentCurrent;
+//		$("#presentationWrapper").height(content);
+		$("#fullscreenButton").show(); 
+	}
 });
 
 $(document).on('pagecreate', '#settingsPage', function(){

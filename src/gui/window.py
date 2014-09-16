@@ -15,6 +15,7 @@ gtk.threads_init()
 class PresPresentationPanel(gtk.HBox):
     def __init__(self):
         gtk.HBox.__init__(self)
+        self.fileUploaded = False;
     
     def loadPresentation(self, pdfDocument):
         old = self.get_children()
@@ -92,42 +93,42 @@ class PresStartPanel(gtk.Table):
         self.attach(wifiAlign, 0, 1, 1, 2)
         self.attach(httpAlign, 2, 3, 1, 2)
         
-class PresUploadPanel(gtk.Table):
-    def __init__(self, rows=2, columns=3, homogenous=False):
-        gtk.Table.__init__(self, rows, columns, homogenous)        
-        
-        titleImage = gtk.Image()
-        titleImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/title.png')
-        titleAlign = gtk.Alignment(0.5, 0, 0, 0)
-        titleAlign.add(titleImage)
-        
-        uploadImage = gtk.Image()
-        uploadImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/sidebar3.png')
-        
-        uploadIconImage = gtk.Image()
-        uploadIconImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/uploadImage.png')
-        
-        uploadBox = gtk.HBox()
-        uploadBox.pack_start(uploadImage)
-        uploadBox.pack_start(uploadIconImage)
-        uploadAlign = gtk.Alignment(0, 0.5, 0, 0)
-        uploadAlign.add(uploadBox)
-                
-        startImage = gtk.Image()
-        startImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/sidebar4.png')
-        
-        startIconImage = gtk.Image()
-        startIconImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/startImage.png')
-          
-        startBox = gtk.HBox()
-        startBox.pack_start(startIconImage)
-        startBox.pack_start(startImage)
-        startAlign = gtk.Alignment(1, 0.5, 0, 0)
-        startAlign.add(startBox)       
-        
-        self.attach(titleAlign, 0, 3, 0, 1)
-        self.attach(uploadAlign, 0, 1, 1, 2)
-        self.attach(startAlign, 2, 3, 1, 2)
+# class PresUploadPanel(gtk.Table):
+#     def __init__(self, rows=2, columns=3, homogenous=False):
+#         gtk.Table.__init__(self, rows, columns, homogenous)        
+#         
+#         titleImage = gtk.Image()
+#         titleImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/title.png')
+#         titleAlign = gtk.Alignment(0.5, 0, 0, 0)
+#         titleAlign.add(titleImage)
+#         
+#         uploadImage = gtk.Image()
+#         uploadImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/sidebar3.png')
+#         
+#         uploadIconImage = gtk.Image()
+#         uploadIconImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/uploadImage.png')
+#         
+#         uploadBox = gtk.HBox()
+#         uploadBox.pack_start(uploadImage)
+#         uploadBox.pack_start(uploadIconImage)
+#         uploadAlign = gtk.Alignment(0, 0.5, 0, 0)
+#         uploadAlign.add(uploadBox)
+#                 
+#         startImage = gtk.Image()
+#         startImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/sidebar4.png')
+#         
+#         startIconImage = gtk.Image()
+#         startIconImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/startImage.png')
+#           
+#         startBox = gtk.HBox()
+#         startBox.pack_start(startIconImage)
+#         startBox.pack_start(startImage)
+#         startAlign = gtk.Alignment(1, 0.5, 0, 0)
+#         startAlign.add(startBox)       
+#         
+#         self.attach(titleAlign, 0, 3, 0, 1)
+#         self.attach(uploadAlign, 0, 1, 1, 2)
+#         self.attach(startAlign, 2, 3, 1, 2)
 
 class PresWindow(gtk.Window):
     def __init__(self):
@@ -141,7 +142,7 @@ class PresWindow(gtk.Window):
         self.set_app_paintable(True)
           
         self.startPanel = PresStartPanel()
-        self.uploadPanel = PresUploadPanel()
+        #self.uploadPanel = PresUploadPanel()
         self.presentationPanel = PresPresentationPanel()
         
         color = (gtk.gdk).Color(65535, 65535, 65535)
@@ -166,17 +167,18 @@ class PresWindow(gtk.Window):
         self.presentationPanel.loadPresentation(pdfDocument)
         
     def presStart(self, msg):
+        self.presentationPanel.fileUploaded = True;
         color = (gtk.gdk).Color(0,0,0)
         self.modify_bg(gtk.STATE_NORMAL, color)        
         self.setPanel(self.presentationPanel)
     
     def presConnect(self, msg):
-        self.presentationPanel.fileUploaded = False;
         color = (gtk.gdk).Color(65535, 65535, 65535)
         self.modify_bg(gtk.STATE_NORMAL, color)        
-        self.setPanel(self.uploadPanel)
+        #self.setPanel(self.uploadPanel)
     
     def presQuit(self, msg):
+        self.presentationPanel.fileUploaded = False;
         color = (gtk.gdk).Color(65535, 65535, 65535)
         self.modify_bg(gtk.STATE_NORMAL, color)        
         self.setPanel(self.startPanel)        

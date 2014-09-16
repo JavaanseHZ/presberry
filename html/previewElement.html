@@ -1,7 +1,8 @@
-<li class="ui-li-has-thumb presFileItem" id="{{ timestamp }}">
-	<a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+<li class="ui-li-has-alt ui-li-has-thumb">
+	<a href="#" class="ui-btn presFileItem" id="{{ timestamp }}">
 		<img src="/{{ pres_dir }}/{{ timestamp }}{{ filename }}0.svg" class="hoverZoomLink">
    		<h2 class="presFileName">{{ filename }}</h2>
 		<p >{{ pTimestamp }}</p>
 	</a>
+	<a href="#" class="ui-btn ui-btn-icon-notext ui-icon-delete ui-btn-a presFileItemDelete" id="del{{ timestamp }}">{{ filename }}</a>
 </li>

@@ -51,10 +51,10 @@ $(document).on('pagecreate', '#uploadPage', function(){
 	$("#uploadForm").submit(function(e){		
 		e.preventDefault();
 		$("#presentationWrapper").unslick();
-		var presFile = new FormData(this);
+		var presFileName = new FormData(this);
 		$.ajax({
 		    url: '/upload',
-		    data: presFile,
+		    data: presFileName,
 		    cache: false,
 		    contentType: false,
 		    processData: false,
@@ -67,13 +67,24 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		})
 	});
 	$("#fileList").on('tap', ".presFileItem", function(e){
-		var fileName = $(this).find(".presFileName:first").text();
+		e.preventDefault();
+		var fileName = $(this).children(".presFileName:first").text();
 		var fileID = $(this).attr('id');
 		$.post('/setupPresentation', {filenameHTML:fileName, timestampID:fileID}, function(data) {
 			$("#presentationWrapper").html(data['carousel']);
 		},'json');
-		$( ".presFileItem").children("a:first").removeClass( "ui-btn-active" );
-		$(this).children("a:first").addClass( "ui-btn-active" );
+		$("#fileList").find("a").removeClass( "ui-btn-active" );
+		$(this).parent().find("a").addClass( "ui-btn-active" );
+	});
+	$("#fileList").on('tap', ".presFileItemDelete", function(e){
+		e.preventDefault();
+		var delFileName = $(this).text();
+		var delFileID = $(this).attr('id');
+		$.post('/deletePresentation', {filenameHTML:delFileName, delTimestampID:delFileID}, function(data) {
+				var fileListItem = "#" + data['delFileID'];
+				$(fileListItem).parent().remove();
+			},
+			'json');		
 	});
 });
 

@@ -17,6 +17,7 @@ from document.pdfdocument import PDFdocument
 from http import htmlGenerator
 import util.config as PRES_CONFIG
 import util.presString as presString
+import util.presFile as presFile
 
 conf = {
      '/' + PRES_CONFIG.DIR_MEDIA_PRESENTATION:
@@ -132,6 +133,7 @@ class PresWebsite(object):
     
     @cherrypy.expose
     def setupPresentation(self, timestampID, filenameHTML):
+        presFile.resetTempFolder()
         uload_path = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION) + os.path.sep + timestampID + filenameHTML;
         self.pdfDocument = PDFdocument('file://' + uload_path, filenameHTML, timestampID)
         svgGenerator = SVGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
@@ -171,6 +173,13 @@ class PresWebsite(object):
         pub.Publisher.sendMessage('presSetPage', pageNr)
         cherrypy.response.headers['Content-Type'] = 'application/json'
         return simplejson.dumps(dict(page=pageNr))
+    
+    @cherrypy.expose
+    def deletePresentation(self, delTimestampID, filenameHTML):
+        #pub.Publisher.sendMessage('presSetPage', pageNr)
+        presFile.deletePresFile(delTimestampID[3:] + filenameHTML);
+        cherrypy.response.headers['Content-Type'] = 'application/json'
+        return simplejson.dumps(dict(delFileID=delTimestampID))
     
    
         

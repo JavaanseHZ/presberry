@@ -13,11 +13,12 @@ class SVGGenerator(threading.Thread):
     def __init__(self, pdfDocument, width=200):
         threading.Thread.__init__(self)
         self.pdfDocument = pdfDocument
+        self.path = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_TEMP) + os.path.sep + self.pdfDocument.timestamp + self.pdfDocument.filename
         self.width = width
     
     def run(self):
         for i in range (0, self.pdfDocument.n_pgs):
-            fo = file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION) + os.path.sep + self.pdfDocument.timestamp + self.pdfDocument.filename + str(i) + '.svg', 'w')            
+            fo = file(self.path + str(i) + '.svg', 'w')            
             page = self.pdfDocument.doc.get_page(i)
             page_width, page_height = page.get_size()
             ratio = page_height/page_width

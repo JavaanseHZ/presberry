@@ -16,14 +16,17 @@ from util.svggenerator import SVGGenerator, SVGGeneratorPreview
 from document.pdfdocument import PDFdocument
 from http import htmlGenerator
 import util.config as PRES_CONFIG
+import util.presString as presString
 
-#MEDIA_DIR = os.path.join(os.path.abspath("../"), u"media")
-#RES_DIR = os.path.join(os.path.abspath("../"), u"res")
 conf = {
      '/' + PRES_CONFIG.DIR_MEDIA_PRESENTATION:
         {'tools.staticdir.on': True,
          'tools.staticdir.dir': PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION)
-        },          
+        },
+    '/' + PRES_CONFIG.DIR_MEDIA_TEMP:
+        {'tools.staticdir.on': True,
+         'tools.staticdir.dir': PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_TEMP)
+        },            
     '/' + PRES_CONFIG.DIR_HTML:
         {'tools.staticdir.on': True,
          'tools.staticdir.dir': PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML)
@@ -81,12 +84,15 @@ class PresWebsite(object):
     @cherrypy.expose
     def index(self):
         pub.Publisher.sendMessage('presConnect')
+        folderList = os.listdir(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION));
+        presFileData = presString.reduceFolderList(folderList)
         #htmlTemplate = open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'index.html'))
         presHTMLTemplate = htmlGenerator.generateHTML('presberry.html',
                                                       html_dir= PRES_CONFIG.DIR_HTML,
                                                       css_dir= PRES_CONFIG.DIR_CSS,
                                                       js_dir= PRES_CONFIG.DIR_JS,
                                                       jquerymobile_dir= PRES_CONFIG.DIR_JQUERYMOBILE,
+                                                      filedata= presFileData,
                                                       pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION)
         return presHTMLTemplate
 
@@ -111,14 +117,12 @@ class PresWebsite(object):
                 svgGeneratorPreview = SVGGeneratorPreview(uload_path)
                 svgGeneratorPreview.start()
                 
-                timestampHTML = self.getTimestampHTML(timestampID)
+                timestampHTML = presString.getTimestampHTML(timestampID)
                 fileListItemHTML =  htmlGenerator.generateHTML('previewElement.html',
                                                       pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
                                                       filename= presFile.filename,
                                                       timestamp=timestampID,
-                                                      pTimestamp = timestampHTML,
-                                                      width="50%",
-                                                      height="50%")
+                                                      pTimestamp = timestampHTML)
                 return simplejson.dumps(dict(fileListItem=fileListItemHTML))
             except ValueError:
                 raise cherrypy.HTTPError(400, 'SOME ERROR')
@@ -129,13 +133,12 @@ class PresWebsite(object):
     @cherrypy.expose
     def setupPresentation(self, timestampID, filenameHTML):
         uload_path = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION) + os.path.sep + timestampID + filenameHTML;
-        print uload_path
         self.pdfDocument = PDFdocument('file://' + uload_path, filenameHTML, timestampID)
         svgGenerator = SVGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
         svgGenerator.start()
         pub.Publisher.sendMessage('presSetup', data=self.pdfDocument)               
         carouselHTML = htmlGenerator.generateHTML('carousel.html',
-                                              pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
+                                              temp_dir= PRES_CONFIG.DIR_MEDIA_TEMP,
                                               numPages=self.pdfDocument.n_pgs,
                                               filename = filenameHTML,
                                               timestamp = timestampID,
@@ -169,12 +172,7 @@ class PresWebsite(object):
         cherrypy.response.headers['Content-Type'] = 'application/json'
         return simplejson.dumps(dict(page=pageNr))
     
-    def getTimestampHTML(self, timestamp):
-        i = timestamp.replace("-", "/", 2)
-        i = i.replace("-", ":", 2)
-        i = i.replace("_", "")
-        i = i.replace("T", "&#32;&#32;&#32;", 2)
-        return i;
+   
         
     
 #     @cherrypy.expose

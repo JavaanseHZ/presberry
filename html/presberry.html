@@ -22,6 +22,15 @@
 			    </div>			    
 			 </form>
 			<ul data-role="listview" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow" id="fileList">
+			{% for timestamp, seperator, filename, pTimestamp in filedata %}
+				<li class="ui-li-has-thumb presFileItem" id="{{ timestamp }}{{seperator}}">
+					<a href="#" class="ui-btn ui-btn-icon-right ui-icon-carat-r">
+						<img src="/{{ pres_dir }}/{{ timestamp }}{{seperator}}{{ filename }}0.svg" class="hoverZoomLink">
+				   		<h2 class="presFileName">{{ filename }}</h2>
+						<p >{{ pTimestamp }}</p>
+					</a>
+				</li>
+			{% endfor %}
 			</ul>
 		</div>	
 	</div>	

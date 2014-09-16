@@ -162,11 +162,16 @@ class PresWebsite(object):
         return simplejson.dumps(dict())
     
     @cherrypy.expose
-    def settings(self, slideMode, slideOrder):
+    def setSettings(self, slideMode, slideOrder):
         self.slideMode = slideMode;
         self.slideOrder = slideOrder;
         cherrypy.response.headers['Content-Type'] = 'application/json'       
         return simplejson.dumps(dict())
+    
+    @cherrypy.expose
+    def getSettings(self, **kwargs):
+        cherrypy.response.headers['Content-Type'] = 'application/json'       
+        return simplejson.dumps(dict(mode=self.slideMode, order=self.slideOrder))
     
     @cherrypy.expose
     def setPage(self, pageNr):

@@ -43,12 +43,27 @@ $(document).on('pagecreate', '#settingsPage', function(){
 	$("#settingsForm").submit(function(e){		
 		e.preventDefault();		
 		var postdata = $("#settingsForm").serializeArray();
-		$.post('/settings', postdata, function(data) {},'json');
+		$.post('/setSettings', postdata, function(data) {},'json');
 	});
 });
 
+$(document).on('pageshow', '#settingsPage', function(){
+	$.get('/getSettings', function(data) {
+		$( 'input:radio[name="slideMode"]' ).prop( 'checked', false ).checkboxradio( 'refresh' );
+		$( 'input:radio[name="slideOrder"]' ).prop( 'checked', false ).checkboxradio( 'refresh' );		
+		$( 'input:radio[name="slideMode"]' )
+			.filter( '[value="' + data['mode'] + '"]' )
+			.prop( 'checked', true )
+			.checkboxradio( 'refresh' );
+		$( 'input:radio[name="slideOrder"]' )
+			.filter( '[value="' + data['order'] + '"]' )
+			.prop( 'checked', true )
+			.checkboxradio( 'refresh' );
+		},'json');
+});
+
 $(document).on('pagecreate', '#uploadPage', function(){
-	$("#uploadForm").submit(function(e){		
+	$("#uploadForm").submit(function(e){
 		e.preventDefault();
 		$("#presentationWrapper").unslick();
 		var presFileName = new FormData(this);

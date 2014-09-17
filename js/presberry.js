@@ -95,7 +95,11 @@ $(document).on('pageshow', '#settingsPage', function(){
 $(document).on('pagecreate', '#uploadPage', function(){
 	$("#uploadForm").submit(function(e){
 		e.preventDefault();
-		$.mobile.loading( "show");
+		$.mobile.loading( "show", {
+			  text: "uploading file...",
+			  textVisible: true,
+			  html: ""
+			});
 		$("#presentationWrapper").unslick();
 		var presFileName = new FormData(this);
 		$.ajax({
@@ -116,7 +120,11 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		e.preventDefault();
 		$("#fileList").find("a").removeClass( "ui-btn-active" );
 		$(this).parent().find("a").addClass( "ui-btn-active" );
-		$.mobile.loading( "show");
+		$.mobile.loading( "show", {
+			  text: "loading presentation...",
+			  textVisible: true,
+			  html: ""
+			});
 		var fileName = $(this).children(".presFileName:first").text();
 		var fileID = $(this).attr('id');
 		$.post('/setupPresentation', {filenameHTML:fileName, timestampID:fileID}, function(data) {
@@ -158,13 +166,11 @@ function getSlideIndexNotes()
 
 function loadPresentation(fullscreen)
 {
-	$.mobile.loading( "show");
 	if($('#presentationWrapper').getSlick() != undefined)
 	{
 		$('#presentationWrapper').slickUnfilter();
 		$("#presentationWrapper").unslick();
-	}
-	
+	}	
 	$(".ui-content").height(content);
 	$.get('/startPresentation', function(data) {
 		var mode = data['mode'];
@@ -201,7 +207,6 @@ function loadPresentation(fullscreen)
 			$('#presentationWrapper').slickFilter(':odd');
 					
 	},'json');
-	$.mobile.loading( "hide");
 	if(fullscreen)
 	{
 		var content = $.mobile.getScreenHeight();

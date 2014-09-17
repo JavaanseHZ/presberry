@@ -98,7 +98,6 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		$.mobile.loading( "show", {
 			  text: "uploading file...",
 			  textVisible: true,
-			  theme: "a",
 			  html: ""
 			});
 		$("#presentationWrapper").unslick();
@@ -113,8 +112,7 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		    success: function(data){
 		    	$("#fileList").prepend(data['fileListItem']);
 		    	var control = $("#uploadFileInput");
-		    	control.replaceWith( control = control.clone( true ) );
-		    	$.mobile.loading( "hide");
+		    	$.mobile.loading( "hide");		    	
 		    }
 		})
 	});
@@ -126,7 +124,6 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		$.mobile.loading( "show", {
 			  text: "loading presentation...",
 			  textVisible: true,
-			  theme: "a",
 			  html: ""
 			});
 		var fileName = $(this).children(".presFileName:first").text();

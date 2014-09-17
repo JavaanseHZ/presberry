@@ -53,45 +53,83 @@ class PresDrawingArea(gtk.DrawingArea):
         self.show_all()
         
 class PresStartPanel(gtk.Table):
-    def __init__(self, rows=2, columns=3, homogenous=False):
-        gtk.Table.__init__(self, rows, columns, homogenous)     
+    def __init__(self, h, w, rows=3, columns=4, homogenous=False):
+        gtk.Table.__init__(self, rows, columns, homogenous)
         
+        titlesvg = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/labeltitle.svg'
+        titlepixbuf = gtk.gdk.pixbuf_new_from_file_at_size(titlesvg, width= int(w), height=-1)
         titleImage = gtk.Image()
-        titleImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/title.png')
+        titleImage.set_from_pixbuf(titlepixbuf) 
         titleAlign = gtk.Alignment(0.5, 0, 0, 0)
         titleAlign.add(titleImage)
         
+        wifisvg = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/labelwifi.svg'
+        wifipixbuf = gtk.gdk.pixbuf_new_from_file_at_size(wifisvg, width= int(w/4), height=-1)
         wifiImage = gtk.Image()
-        wifiImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/sidebar1.png')
+        wifiImage.set_from_pixbuf(wifipixbuf) 
+        wifiAlign = gtk.Alignment(0.5, 1, 0, 0)
+        wifiAlign.add(wifiImage)
          
-        wifiQR = qrencode.encode_scaled('WIFI:T:WPA;S:' + PRES_CONFIG.NW_AP + ';P:' + PRES_CONFIG.NW_PW + ';;', 400)
+        connectsvg = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/labelconnect.svg'
+        connectpixbuf = gtk.gdk.pixbuf_new_from_file_at_size(connectsvg, width= int(w/4), height=-1)
+        connectImage = gtk.Image()
+        connectImage.set_from_pixbuf(connectpixbuf) 
+        connectAlign = gtk.Alignment(0.5, 1, 0, 0)
+        connectAlign.add(connectImage)
+         
+        uploadsvg = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/labelupload.svg'
+        uploadpixbuf = gtk.gdk.pixbuf_new_from_file_at_size(uploadsvg, width= int(w/4), height=-1)
+        uploadImage = gtk.Image()
+        uploadImage.set_from_pixbuf(uploadpixbuf) 
+        uploadAlign = gtk.Alignment(0.5, 1, 0, 0)
+        uploadAlign.add(uploadImage)
+         
+        startsvg = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/labelstart.svg'
+        startpixbuf = gtk.gdk.pixbuf_new_from_file_at_size(startsvg, width= int(w/4), height=-1)
+        startImage = gtk.Image()
+        startImage.set_from_pixbuf(startpixbuf) 
+        startAlign = gtk.Alignment(0.5, 1, 0, 0)
+        startAlign.add(startImage)
+         
+        wifiQR = qrencode.encode_scaled('WIFI:T:WPA;S:' + PRES_CONFIG.NW_AP + ';P:' + PRES_CONFIG.NW_PW + ';;', int(w/4)-80)
         wifiQR[2].save(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/wifiQR.png')
         wifiQRImage = gtk.Image()
         wifiQRImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/wifiQR.png')
-        
-        wifiBox = gtk.HBox()
-        wifiBox.pack_start(wifiImage)
-        wifiBox.pack_start(wifiQRImage)
-        wifiAlign = gtk.Alignment(0, 0.5, 0, 0)
-        wifiAlign.add(wifiBox)        
-        
-        httpImage = gtk.Image()
-        httpImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/sidebar2.png')
-        httpQR = qrencode.encode_scaled('http://' + PRES_CONFIG.NW_IP + ':' + PRES_CONFIG.NW_PORT, 400)
-        httpQR[2].save(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/httpQR.png')
-        
-        httpQRImage = gtk.Image()
-        httpQRImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/httpQR.png')
-          
-        httpBox = gtk.HBox()
-        httpBox.pack_start(httpQRImage)
-        httpBox.pack_start(httpImage)
-        httpAlign = gtk.Alignment(1, 0.5, 0, 0)
-        httpAlign.add(httpBox)
+        wifiQRAlign = gtk.Alignment(0.5, 1, 0, 0)
+        wifiQRAlign.add(wifiQRImage)        
          
-        self.attach(titleAlign, 0, 3, 0, 1)
-        self.attach(wifiAlign, 0, 1, 1, 2)
-        self.attach(httpAlign, 2, 3, 1, 2)
+        connectQR = qrencode.encode_scaled('http://' + PRES_CONFIG.NW_IP + ':' + PRES_CONFIG.NW_PORT, int(w/4)-80)
+        connectQR[2].save(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/httpQR.png')
+        connectQRImage = gtk.Image()
+        connectQRImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/httpQR.png')
+        connectQRAlign = gtk.Alignment(0.5, 1, 0, 0)
+        connectQRAlign.add(connectQRImage)
+         
+        uploadimagesvg = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/imageupload.svg'
+        uploadimagepixbuf = gtk.gdk.pixbuf_new_from_file_at_size(uploadimagesvg, width= int(w/4)-50, height=-1)
+        uploadimageImage = gtk.Image()
+        uploadimageImage.set_from_pixbuf(uploadimagepixbuf) 
+        uploadimageAlign = gtk.Alignment(0.5, 1, 0, 0)
+        uploadimageAlign.add(uploadimageImage)
+         
+        startimagesvg = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/imagestart.svg'
+        startimagepixbuf = gtk.gdk.pixbuf_new_from_file_at_size(startimagesvg, width= int(w/4)-50, height=-1)
+        startimageImage = gtk.Image()
+        startimageImage.set_from_pixbuf(startimagepixbuf) 
+        startimageAlign = gtk.Alignment(0.5, 1, 0, 0)
+        startimageAlign.add(startimageImage) 
+         
+        self.attach(titleAlign, 0, 4, 0, 1)
+         
+        self.attach(wifiAlign, 0, 1, 2, 3)
+        self.attach(connectAlign, 1, 2, 2, 3)
+        self.attach(uploadAlign, 2, 3, 2, 3)
+        self.attach(startAlign, 3, 4, 2, 3)
+         
+        self.attach(wifiQRAlign, 0, 1, 1, 2)
+        self.attach(connectQRAlign, 1, 2, 1, 2)
+        self.attach(uploadimageAlign, 2, 3, 1, 2)
+        self.attach(startimageAlign, 3, 4, 1, 2)
         
 # class PresUploadPanel(gtk.Table):
 #     def __init__(self, rows=2, columns=3, homogenous=False):
@@ -141,7 +179,7 @@ class PresWindow(gtk.Window):
         self.setWindowSize(PRES_CONFIG.W_FULLSCREEN, PRES_CONFIG.W_WIDTH, PRES_CONFIG.W_HEIGHT)
         self.set_app_paintable(True)
           
-        self.startPanel = PresStartPanel()
+        self.startPanel = PresStartPanel(h= self.windowHeight, w=self.windowWidth)
         #self.uploadPanel = PresUploadPanel()
         self.presentationPanel = PresPresentationPanel()
         

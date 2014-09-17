@@ -112,15 +112,25 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		})
 	});
 	$("#fileList").on('tap', ".presFileItem", function(e){
+		
 		e.preventDefault();
+		$("#fileList").find("a").removeClass( "ui-btn-active" );
+		$(this).parent().find("a").addClass( "ui-btn-active" );
+		$.mobile.loading( "show", {
+			  text: "loading presentation...",
+			  textVisible: true,
+			  theme: "z",
+			  html: ""
+			});
 		var fileName = $(this).children(".presFileName:first").text();
 		var fileID = $(this).attr('id');
 		$.post('/setupPresentation', {filenameHTML:fileName, timestampID:fileID}, function(data) {
-			$("#presentationWrapper").html(data['carousel']);
+			$("#presentationWrapper").html(data['carousel']);			
 			$.mobile.pageContainer.pagecontainer("change", $("#presentationPage"));
+			$.mobile.loading( "hide");
+			$("#fileList").find("a").removeClass( "ui-btn-active" );
 		},'json');
-		//$("#fileList").find("a").removeClass( "ui-btn-active" );
-		//$(this).parent().find("a").addClass( "ui-btn-active" );
+		
 		
 		
 	});

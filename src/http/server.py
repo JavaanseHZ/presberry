@@ -79,8 +79,9 @@ class PresWebsite(object):
     
     def __init__(self):
         object.__init__(self)
-        self.slideMode = "change";
-        self.slideOrder = "normal";
+        self.slideMode = "change"
+        self.slideOrder = "normal"
+        self.presInProgress = "false"
     
     @cherrypy.expose
     def index(self):

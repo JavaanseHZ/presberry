@@ -27,8 +27,7 @@ class PresPresentationPanel(gtk.HBox):
         presDrawingArea.fileUploaded = True;
         alignment = gtk.Alignment(0.5, 0.5, 0, 0)
         alignment.add(presDrawingArea)
-        self.pack_start(alignment)
-              
+        self.pack_start(alignment)              
 
 class PresDrawingArea(gtk.DrawingArea):
     def __init__(self):
@@ -95,28 +94,28 @@ class PresStartPanel(gtk.Table):
         wifiQR[2].save(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/wifiQR.png')
         wifiQRImage = gtk.Image()
         wifiQRImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/wifiQR.png')
-        wifiQRAlign = gtk.Alignment(0.5, 1, 0, 0)
+        wifiQRAlign = gtk.Alignment(0.5, 0.5, 0, 0)
         wifiQRAlign.add(wifiQRImage)        
          
         connectQR = qrencode.encode_scaled('http://' + PRES_CONFIG.NW_IP + ':' + PRES_CONFIG.NW_PORT, int(w/4)-80)
         connectQR[2].save(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/httpQR.png')
         connectQRImage = gtk.Image()
         connectQRImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/httpQR.png')
-        connectQRAlign = gtk.Alignment(0.5, 1, 0, 0)
+        connectQRAlign = gtk.Alignment(0.5, 0.5, 0, 0)
         connectQRAlign.add(connectQRImage)
          
         uploadimagesvg = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/imageupload.svg'
-        uploadimagepixbuf = gtk.gdk.pixbuf_new_from_file_at_size(uploadimagesvg, width= int(w/4)-50, height=-1)
+        uploadimagepixbuf = gtk.gdk.pixbuf_new_from_file_at_size(uploadimagesvg, width= int(w/4)-80, height=-1)
         uploadimageImage = gtk.Image()
         uploadimageImage.set_from_pixbuf(uploadimagepixbuf) 
-        uploadimageAlign = gtk.Alignment(0.5, 1, 0, 0)
+        uploadimageAlign = gtk.Alignment(0.5, 0.5, 0, 0)
         uploadimageAlign.add(uploadimageImage)
          
         startimagesvg = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/imagestart.svg'
-        startimagepixbuf = gtk.gdk.pixbuf_new_from_file_at_size(startimagesvg, width= int(w/4)-50, height=-1)
+        startimagepixbuf = gtk.gdk.pixbuf_new_from_file_at_size(startimagesvg, width= int(w/4)-80, height=-1)
         startimageImage = gtk.Image()
         startimageImage.set_from_pixbuf(startimagepixbuf) 
-        startimageAlign = gtk.Alignment(0.5, 1, 0, 0)
+        startimageAlign = gtk.Alignment(0.5, 0.5, 0, 0)
         startimageAlign.add(startimageImage) 
          
         self.attach(titleAlign, 0, 4, 0, 1)
@@ -130,43 +129,6 @@ class PresStartPanel(gtk.Table):
         self.attach(connectQRAlign, 1, 2, 1, 2)
         self.attach(uploadimageAlign, 2, 3, 1, 2)
         self.attach(startimageAlign, 3, 4, 1, 2)
-        
-# class PresUploadPanel(gtk.Table):
-#     def __init__(self, rows=2, columns=3, homogenous=False):
-#         gtk.Table.__init__(self, rows, columns, homogenous)        
-#         
-#         titleImage = gtk.Image()
-#         titleImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/title.png')
-#         titleAlign = gtk.Alignment(0.5, 0, 0, 0)
-#         titleAlign.add(titleImage)
-#         
-#         uploadImage = gtk.Image()
-#         uploadImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/sidebar3.png')
-#         
-#         uploadIconImage = gtk.Image()
-#         uploadIconImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/uploadImage.png')
-#         
-#         uploadBox = gtk.HBox()
-#         uploadBox.pack_start(uploadImage)
-#         uploadBox.pack_start(uploadIconImage)
-#         uploadAlign = gtk.Alignment(0, 0.5, 0, 0)
-#         uploadAlign.add(uploadBox)
-#                 
-#         startImage = gtk.Image()
-#         startImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/sidebar4.png')
-#         
-#         startIconImage = gtk.Image()
-#         startIconImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/startImage.png')
-#           
-#         startBox = gtk.HBox()
-#         startBox.pack_start(startIconImage)
-#         startBox.pack_start(startImage)
-#         startAlign = gtk.Alignment(1, 0.5, 0, 0)
-#         startAlign.add(startBox)       
-#         
-#         self.attach(titleAlign, 0, 3, 0, 1)
-#         self.attach(uploadAlign, 0, 1, 1, 2)
-#         self.attach(startAlign, 2, 3, 1, 2)
 
 class PresWindow(gtk.Window):
     def __init__(self):
@@ -180,7 +142,6 @@ class PresWindow(gtk.Window):
         self.set_app_paintable(True)
           
         self.startPanel = PresStartPanel(h= self.windowHeight, w=self.windowWidth)
-        #self.uploadPanel = PresUploadPanel()
         self.presentationPanel = PresPresentationPanel()
         
         color = (gtk.gdk).Color(65535, 65535, 65535)
@@ -253,13 +214,13 @@ class PresGUI(threading.Thread):
         
 # Lime
 # 500 #cddc39
-# 50#f9fbe7
-# 100#f0f4c3
-# 200#e6ee9c
+# 50#f9fbe7 249 251 231
+# 100#f0f4c3 240 244 195
+# 200#e6ee9c 230 238 156
 # 300#dce775
 # 400#d4e157
-# 500#cddc39
-# 600#c0ca33
-# 700#afb42b
-# 800#9e9d24
-# 900#827717
+# 500#cddc39 205 220 57
+# 600#c0ca33 192 202 51
+# 700#afb42b 175 180 43
+# 800#9e9d24 158 157 36
+# 900#827717 130 119 23

@@ -14,25 +14,36 @@
 //    });
 //});
 
-$(document).on('pageshow', '#presentationPage', function(){loadPresentation(false);});
+$(document).on('pageshow', '#presentationPage', function(){
+	loadPresentation(false);
+});
 
 $(document).on('pagehide', '#presentationPage', function(){
 	$.get('/quitPresentation', function(data) {},'json');
+	$("#presentationHeader").css({ opacity: 0.9 });
 });
 
-$("#fullscreenButton").on('tap', function (e) {
-	e.preventDefault();	
-	var target = $( "#presentationPage" )[0];
-    if (screenfull.enabled) {
-        screenfull.request(target);        
-    }
+$(function(){
+	$(".fullscreenButton").on('tap', function (e) {
+		var target = $.mobile.pageContainer.pagecontainer( "getActivePage" )[0];
+	    if (screenfull.enabled) {
+	        screenfull.request(target);        
+	    }
+	});
 });
 
-$(document).on(screenfull.raw.fullscreenchange, function (e) {
+//$( window ).on( "orientationchange", function( event ) {
 //	if(screenfull.isFullscreen)
 //		loadPresentation(true);
 //	else
 //		loadPresentation(false);
+//});
+
+$(document).on(screenfull.raw.fullscreenchange, function (e) {
+	if(screenfull.isFullscreen)
+		$(".fullscreenButton").hide();
+	else
+		$(".fullscreenButton").show();
 });
 
 $(document).on('pagecreate', '#settingsPage', function(){
@@ -43,7 +54,20 @@ $(document).on('pagecreate', '#settingsPage', function(){
 	});
 });
 
-$("[name=slideMode]").change(function() {
+$("#presentationHeader").on('tap', function(){
+	
+	if ($(this).css("opacity").valueOf() > 0.2)
+		$(this).css({ opacity: 0.1 });
+	else
+		$(this).css({ opacity: 0.9 });
+});
+
+$("[name=slideMode]").change(function(){
+	var postdata = $("#settingsForm").serializeArray();
+	$.post('/setSettings', postdata, function(data) {},'json');
+});
+
+$("[name=slideOrder]").change(function(){
 	var postdata = $("#settingsForm").serializeArray();
 	$.post('/setSettings', postdata, function(data) {},'json');
 });
@@ -95,8 +119,8 @@ $(document).on('pagecreate', '#uploadPage', function(){
 			$("#presentationWrapper").html(data['carousel']);
 			$.mobile.pageContainer.pagecontainer("change", $("#presentationPage"));
 		},'json');
-		$("#fileList").find("a").removeClass( "ui-btn-active" );
-		$(this).parent().find("a").addClass( "ui-btn-active" );
+		//$("#fileList").find("a").removeClass( "ui-btn-active" );
+		//$(this).parent().find("a").addClass( "ui-btn-active" );
 		
 		
 	});
@@ -129,7 +153,6 @@ function getSlideIndexNotes()
 
 function loadPresentation(fullscreen)
 {
-
 	if($('#presentationWrapper').getSlick() != undefined)
 	{
 		$('#presentationWrapper').slickUnfilter();

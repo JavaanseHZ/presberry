@@ -1,22 +1,18 @@
-$(function() {
-    $( "[data-role='navbar']" ).navbar();
-    $( "[data-role='header'], [data-role='footer']" ).toolbar();
-});
-$( document ).on( "pagecontainerchange", function() {
-    var current = $( ".ui-page-active" ).jqmData( "title" );
-    if (current === "Presentation") {
-    	$("#fullscreenButton").show();    	
-	} else {
-		$("#fullscreenButton").hide();
-    }
-    $( "[data-role='header'] h1" ).text( current );
-    $( "[data-role='navbar'] a.ui-btn-active" ).removeClass( "ui-btn-active" );
-    $( "[data-role='navbar'] a" ).each(function() {
-        if ( $( this ).text() === current ) {
-            $( this ).addClass( "ui-btn-active" );
-        }
-    });
-});
+//$( document ).on( "pagecontainerchange", function() {
+//    var current = $( ".ui-page-active" ).jqmData( "title" );
+//    if (current === "Presentation") {
+//    	$("#fullscreenButton").show();    	
+//	} else {
+//		$("#fullscreenButton").hide();
+//    }
+//    $( "[data-role='header'] h1" ).text( current );
+//    $( "[data-role='navbar'] a.ui-btn-active" ).removeClass( "ui-btn-active" );
+//    $( "[data-role='navbar'] a" ).each(function() {
+//        if ( $( this ).text() === current ) {
+//            $( this ).addClass( "ui-btn-active" );
+//        }
+//    });
+//});
 
 $(document).on('pageshow', '#presentationPage', function(){loadPresentation(false);});
 
@@ -26,17 +22,17 @@ $(document).on('pagehide', '#presentationPage', function(){
 
 $("#fullscreenButton").on('tap', function (e) {
 	e.preventDefault();	
-	var target = $( ".ui-page-active" )[0];
+	var target = $( "#presentationPage" )[0];
     if (screenfull.enabled) {
         screenfull.request(target);        
     }
 });
 
 $(document).on(screenfull.raw.fullscreenchange, function (e) {
-	if(screenfull.isFullscreen)
-		loadPresentation(true);
-	else
-		loadPresentation(false);
+//	if(screenfull.isFullscreen)
+//		loadPresentation(true);
+//	else
+//		loadPresentation(false);
 });
 
 $(document).on('pagecreate', '#settingsPage', function(){
@@ -45,6 +41,11 @@ $(document).on('pagecreate', '#settingsPage', function(){
 		var postdata = $("#settingsForm").serializeArray();
 		$.post('/setSettings', postdata, function(data) {},'json');
 	});
+});
+
+$("[name=slideMode]").change(function() {
+	var postdata = $("#settingsForm").serializeArray();
+	$.post('/setSettings', postdata, function(data) {},'json');
 });
 
 $(document).on('pageshow', '#settingsPage', function(){
@@ -60,6 +61,11 @@ $(document).on('pageshow', '#settingsPage', function(){
 			.prop( 'checked', true )
 			.checkboxradio( 'refresh' );
 		},'json');
+		$('#settingsPage').on('change', 'input', function(){
+			e.preventDefault();		
+			var postdata = $("#settingsForm").serializeArray();
+			$.post('/setSettings', postdata, function(data) {},'json');			
+		});	
 });
 
 $(document).on('pagecreate', '#uploadPage', function(){
@@ -87,9 +93,12 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		var fileID = $(this).attr('id');
 		$.post('/setupPresentation', {filenameHTML:fileName, timestampID:fileID}, function(data) {
 			$("#presentationWrapper").html(data['carousel']);
+			$.mobile.pageContainer.pagecontainer("change", $("#presentationPage"));
 		},'json');
 		$("#fileList").find("a").removeClass( "ui-btn-active" );
 		$(this).parent().find("a").addClass( "ui-btn-active" );
+		
+		
 	});
 	$("#fileList").on('tap', ".presFileItemDelete", function(e){
 		e.preventDefault();
@@ -170,10 +179,10 @@ function loadPresentation(fullscreen)
 	else
 	{
 		var screen = $.mobile.getScreenHeight();
-		var header = $(".ui-header").outerHeight() - 1;
-		var footer = $(".ui-footer").outerHeight() - 1 ;
-		var contentCurrent = $(".ui-content").outerHeight() - $(".ui-content").height();
-		var content = screen - header - footer - contentCurrent;
-		$(".ui-content").height(content);
+	    var header = $(".ui-header").hasClass("ui-header-fixed") ? $(".ui-header").outerHeight() - 1 : $(".ui-header").outerHeight();
+	    var footer = $(".ui-footer").hasClass("ui-footer-fixed") ? $(".ui-footer").outerHeight() - 1 : $(".ui-footer").outerHeight();
+	    var contentCurrent = $(".ui-content").outerHeight() - $(".ui-content").height();
+	    var content = screen - header - footer - contentCurrent;
+	    $("presentationContent").css("min-height", content + "px");
 	}
 }

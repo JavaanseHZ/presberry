@@ -8,18 +8,20 @@
 	<link rel="stylesheet" type="text/css" href="/{{ css_dir }}/presberry.css"/>
 </head>
 <body>
-	<div data-role="header" data-position="fixed" data-theme="b" class="ui-header ui-header-fixed">
-		<h1>Upload</h1>
-		<a href="#" class="ui-btn-right ui-btn ui-btn-inline ui-icon-action ui-btn-icon-notext ui-corner-all" id="fullscreenButton">fullscreen</a>
-	</div>	
-	<div data-role="page" id="uploadPage" data-title="Upload">		
-		<div role="main" class="ui-content jqm-content jqm-fullwidth">	
-			<form id="uploadForm" action="upload" method="post" enctype="multipart/form-data" data-ajax="false">
-				<div class="ui-field-contain">
-			    	<input type="file" id="uploadFileInput" accept="application/pdf" name="presFile" />
-			    	<input type="submit" name="upload" id="uploadSubmit" value="Submit">
-			    </div>			    
-			</form>
+	<div data-role="page" id="uploadPage">	
+		<div data-role="header" data-position="fixed" data-theme="b" class="ui-header ui-header-fixed">
+			<a href="#settingsPage" class="ui-btn-left ui-btn ui-btn-inline ui-icon-bars ui-btn-icon-notext ui-corner-all" id="settingsButton" data-transition="none">settings</a>
+			<h1>Select</h1>
+		</div>	
+		<div role="main" class="ui-content jqm-content jqm-fullwidth">
+			<div class="ui-field-contain">
+				<form id="uploadForm" action="upload" method="post" enctype="multipart/form-data" data-ajax="false">
+						<fieldset>
+				    		<input type="file" id="uploadFileInput" accept="application/pdf" name="presFile" />
+				    		<input type="submit" name="upload" id="uploadSubmit" value="Submit">
+				    	</fieldset>
+				</form>
+			 </div>
 			<ul data-role="listview" data-split-icon="delete" data-split-theme="a" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow" id="fileList">
 			{% for timestamp, seperator, filename, pTimestamp in filedata %}
 				<li class="ui-li-has-alt ui-li-has-thumb">
@@ -32,10 +34,16 @@
 				</li>
 			{% endfor %}
 			</ul>
+		</div>
+		<div data-role="footer" data-position="fixed">			
 		</div>	
 	</div>
 	
-	<div data-role="page" id="settingsPage" data-title="Settings">	
+	<div data-role="page" id="settingsPage">
+		<div data-role="header" data-position="fixed" data-theme="b" class="ui-header ui-header-fixed">
+			<h1>Settings</h1>
+			<a href="#" data-rel="back" class="ui-btn-left ui-btn ui-btn-inline ui-icon-home ui-btn-icon-notext ui-corner-all" id="settingsBackButton" data-transition="none">back</a>
+			</div>
 		<div role="main" class="ui-content jqm-content jqm-fullwidth">
 			<form action="settings" method="post" id="settingsForm" data-ajax="false">
 			    <div class="ui-field-contain">
@@ -57,25 +65,26 @@
 			        <input type="radio" name="slideOrder" id="slideOrderNotes" value="notes">
 			        <label for="slideOrderNotes">notes</label>
 			    </fieldset>
-			    </div>			   
-			    <input type="submit" name="submit" id="submitSettings" value="Submit">
+			    </div>
  			</form> 
 		</div>	
-	</div>	
-	<div data-role="page" id="presentationPage" data-title="Presentation">	
-		<div role="main" class="ui-content jqm-content jqm-fullwidth">
-			<div id="presentationWrapper"><p>no presentation loaded</p></div>			 
-		</div>	
-	</div>	
-	<div data-role="footer" data-position="fixed" data-theme="b" class="ui-footer ui-footer-fixed">
-		<div data-role="navbar">
-			<ul>
-				<li><a href="#uploadPage" data-prefetch="true" data-transition="none">Upload</a></li>
-				<li><a href="#settingsPage" data-prefetch="true" data-transition="none">Settings</a></li>
-				<li><a href="#presentationPage" data-prefetch="true" data-transition="none">Presentation</a></li>
-			</ul>
+		<div data-role="footer" data-position="fixed" >
+			
 		</div>
-	</div>
+	</div>	
+	<div data-role="page" id="presentationPage">
+		<div data-role="header" data-position="fixed" data-fullscreen="true" id="presentationHeader" data-tap-toggle="false" data-theme="b" class="ui-header ui-header-fixed">
+			<a href="#" data-rel="back" class="ui-btn-left ui-btn ui-btn-inline ui-icon-home ui-btn-icon-notext ui-corner-all" id="presentationBackButton" data-transition="none">back</a>
+			<h2>Presentation</h2>
+			<a href="#" class="ui-btn-right ui-btn ui-btn-inline ui-icon-action ui-btn-icon-notext ui-corner-all" id="fullscreenButton" data-transition="none">fullscreen</a>
+		</div>	
+		<div role="main" class="ui-content jqm-content jqm-fullwidth" id="presentationContent">
+			<div id="presentationWrapper"><p>no presentation loaded</p></div>			 
+		</div>
+		<div data-role="footer" data-position="fixed">		
+		</div>
+	</div>	
+	
 	<script type="text/javascript" src="/{{ jquerymobile_dir }}/jquery-1.11.1.min.js"></script>
 	<script type="text/javascript" src="/{{ jquerymobile_dir }}/jquery.mobile-1.4.4.min.js"></script>
 	<script type="text/javascript" src="/{{ js_dir }}/slick.min.js"></script>

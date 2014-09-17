@@ -95,11 +95,7 @@ $(document).on('pageshow', '#settingsPage', function(){
 $(document).on('pagecreate', '#uploadPage', function(){
 	$("#uploadForm").submit(function(e){
 		e.preventDefault();
-		$.mobile.loading( "show", {
-			  text: "uploading file...",
-			  textVisible: true,
-			  html: ""
-			});
+		$.mobile.loading( "show");
 		$("#presentationWrapper").unslick();
 		var presFileName = new FormData(this);
 		$.ajax({
@@ -111,7 +107,6 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		    type: 'POST',
 		    success: function(data){
 		    	$("#fileList").prepend(data['fileListItem']);
-		    	var control = $("#uploadFileInput");
 		    	$.mobile.loading( "hide");		    	
 		    }
 		})
@@ -121,17 +116,13 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		e.preventDefault();
 		$("#fileList").find("a").removeClass( "ui-btn-active" );
 		$(this).parent().find("a").addClass( "ui-btn-active" );
-		$.mobile.loading( "show", {
-			  text: "loading presentation...",
-			  textVisible: true,
-			  html: ""
-			});
+		$.mobile.loading( "show");
 		var fileName = $(this).children(".presFileName:first").text();
 		var fileID = $(this).attr('id');
 		$.post('/setupPresentation', {filenameHTML:fileName, timestampID:fileID}, function(data) {
-			$("#presentationWrapper").html(data['carousel']);			
-			$.mobile.pageContainer.pagecontainer("change", $("#presentationPage"));
+			$("#presentationWrapper").html(data['carousel']);
 			$.mobile.loading( "hide");
+			$.mobile.pageContainer.pagecontainer("change", $("#presentationPage"));
 			$("#fileList").find("a").removeClass( "ui-btn-active" );
 		},'json');
 		
@@ -167,6 +158,7 @@ function getSlideIndexNotes()
 
 function loadPresentation(fullscreen)
 {
+	$.mobile.loading( "show");
 	if($('#presentationWrapper').getSlick() != undefined)
 	{
 		$('#presentationWrapper').slickUnfilter();
@@ -209,6 +201,7 @@ function loadPresentation(fullscreen)
 			$('#presentationWrapper').slickFilter(':odd');
 					
 	},'json');
+	$.mobile.loading( "hide");
 	if(fullscreen)
 	{
 		var content = $.mobile.getScreenHeight();

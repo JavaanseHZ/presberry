@@ -81,7 +81,7 @@ class PresWebsite(object):
         object.__init__(self)
         self.slideMode = "change"
         self.slideOrder = "normal"
-        self.slideTimer = "timerOn"
+        self.slideTimer = "timerOff"
         self.presInProgress = "false"
     
     @cherrypy.expose

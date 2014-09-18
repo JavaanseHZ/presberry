@@ -18,6 +18,7 @@ $(document).on('pagehide', '#presentationPage', function(){
 	$("#presentationHeader").css({ opacity: 0.9 });
 	presTimer.stop();
 	presTimer.reset();
+	$("#presentationTimer").text("00:00");
 	timerRun = false;
 });
 
@@ -44,7 +45,8 @@ $(document).on(screenfull.raw.fullscreenchange, function (e) {
 		$(".fullscreenButton").show();
 });
 
-$("#presentationTimer").on('tap', function(){
+$("#presentationTimer").on('tap', function(e){
+	e.preventDefault();
 	if(timerRun)
 	{
 		presTimer.pause();		
@@ -194,13 +196,7 @@ function loadPresentation(fullscreen)
 		var timer = data['timer'];
 		
 		if(timer == "timerOn")
-		{
-			presTimer.start();
-			presTimer.stop();
-			presTimer.reset();
-			timerRun = false;
 			$("#presentationTimer").show();
-		}
 		else
 			$("#presentationTimer").hide();
 		if(order == "normal")

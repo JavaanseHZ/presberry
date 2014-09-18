@@ -81,6 +81,7 @@ class PresWebsite(object):
         object.__init__(self)
         self.slideMode = "change"
         self.slideOrder = "normal"
+        self.slideTimer = "timerOn"
         self.presInProgress = "false"
     
     @cherrypy.expose
@@ -154,7 +155,7 @@ class PresWebsite(object):
     def startPresentation(self, **kwargs):
         cherrypy.response.headers['Content-Type'] = 'application/json'
         pub.Publisher.sendMessage('presStart')
-        return simplejson.dumps(dict(mode=self.slideMode, order=self.slideOrder))
+        return simplejson.dumps(dict(mode=self.slideMode, order=self.slideOrder, timer=self.slideTimer))
     
     @cherrypy.expose
     def quitPresentation(self, **kwargs):
@@ -163,16 +164,17 @@ class PresWebsite(object):
         return simplejson.dumps(dict())
     
     @cherrypy.expose
-    def setSettings(self, slideMode, slideOrder):
-        self.slideMode = slideMode;
-        self.slideOrder = slideOrder;
+    def setSettings(self, slideMode, slideOrder, slideTimer):
+        self.slideMode = slideMode
+        self.slideOrder = slideOrder        
+        self.slideTimer = slideTimer
         cherrypy.response.headers['Content-Type'] = 'application/json'       
         return simplejson.dumps(dict())
     
     @cherrypy.expose
     def getSettings(self, **kwargs):
-        cherrypy.response.headers['Content-Type'] = 'application/json'       
-        return simplejson.dumps(dict(mode=self.slideMode, order=self.slideOrder))
+        cherrypy.response.headers['Content-Type'] = 'application/json'
+        return simplejson.dumps(dict(mode=self.slideMode, order=self.slideOrder, timer=self.slideTimer))
     
     @cherrypy.expose
     def setPage(self, pageNr):

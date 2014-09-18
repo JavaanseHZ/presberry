@@ -10,14 +10,13 @@ var presTimer = new Tock({
 var timerRun = false;
 
 $(document).on('pageshow', '#presentationPage', function(){
-	loadPresentation(false);
-	presTimer.reset();
-	timerRun = false;
+	loadPresentation(false);	
 });
 
 $(document).on('pagehide', '#presentationPage', function(){
 	$.get('/quitPresentation', function(data) {},'json');
 	$("#presentationHeader").css({ opacity: 0.9 });
+	presTimer.stop();
 	presTimer.reset();
 	timerRun = false;
 });
@@ -43,14 +42,6 @@ $(document).on(screenfull.raw.fullscreenchange, function (e) {
 		$(".fullscreenButton").hide();
 	else
 		$(".fullscreenButton").show();
-});
-
-$(document).on('pagecreate', '#settingsPage', function(){
-	$("#settingsForm").submit(function(e){		
-		e.preventDefault();		
-		var postdata = $("#settingsForm").serializeArray();
-		$.post('/setSettings', postdata, function(data) {},'json');
-	});
 });
 
 $("#presentationTimer").on('tap', function(){
@@ -89,16 +80,26 @@ $("[name=slideOrder]").change(function(){
 	$.post('/setSettings', postdata, function(data) {},'json');
 });
 
+$("[name=slideTimer]").change(function(){
+	var postdata = $("#settingsForm").serializeArray();
+	$.post('/setSettings', postdata, function(data) {},'json');
+});
+
 $(document).on('pageshow', '#settingsPage', function(){
 	$.get('/getSettings', function(data) {
 		$( 'input:radio[name="slideMode"]' ).prop( 'checked', false ).checkboxradio( 'refresh' );
-		$( 'input:radio[name="slideOrder"]' ).prop( 'checked', false ).checkboxradio( 'refresh' );		
+		$( 'input:radio[name="slideOrder"]' ).prop( 'checked', false ).checkboxradio( 'refresh' );
+		$( 'input:radio[name="slideTimer"]' ).prop( 'checked', false ).checkboxradio( 'refresh' );
 		$( 'input:radio[name="slideMode"]' )
 			.filter( '[value="' + data['mode'] + '"]' )
 			.prop( 'checked', true )
 			.checkboxradio( 'refresh' );
 		$( 'input:radio[name="slideOrder"]' )
 			.filter( '[value="' + data['order'] + '"]' )
+			.prop( 'checked', true )
+			.checkboxradio( 'refresh' );
+		$( 'input:radio[name="slideTimer"]' )
+			.filter( '[value="' + data['timer'] + '"]' )
 			.prop( 'checked', true )
 			.checkboxradio( 'refresh' );
 		},'json');
@@ -180,13 +181,6 @@ function getSlideIndexNotes()
 	return $("#presentationWrapper").slickCurrentSlide() * 2;
 }
 
-
-
-$(document).on('pagecreate', '#presentationPage', function(){
-	
-});
-
-
 function loadPresentation(fullscreen)
 {
 	if($('#presentationWrapper').getSlick() != undefined)
@@ -194,10 +188,21 @@ function loadPresentation(fullscreen)
 		$('#presentationWrapper').slickUnfilter();
 		$("#presentationWrapper").unslick();
 	}	
-	$(".ui-content").height(content);
 	$.get('/startPresentation', function(data) {
 		var mode = data['mode'];
-		var order = data['order'];		
+		var order = data['order'];	
+		var timer = data['timer'];
+		
+		if(timer == "timerOn")
+		{
+			presTimer.start();
+			presTimer.stop();
+			presTimer.reset();
+			timerRun = false;
+			$("#presentationTimer").show();
+		}
+		else
+			$("#presentationTimer").hide();
 		if(order == "normal")
 			cbFunction = getSlideIndexNormal;
 		else if(order == "preview")

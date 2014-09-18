@@ -1,10 +1,25 @@
+var presTimer = new Tock({
+	  countdown: false,
+	  interval: 1000,
+	  callback: function () {
+		    var current_time = presTimer.msToTime(presTimer.lap());
+		    $('#presentationTimer').text(current_time);
+		}
+	});
+
+var timerRun = false;
+
 $(document).on('pageshow', '#presentationPage', function(){
 	loadPresentation(false);
+	presTimer.reset();
+	timerRun = false;
 });
 
 $(document).on('pagehide', '#presentationPage', function(){
 	$.get('/quitPresentation', function(data) {},'json');
 	$("#presentationHeader").css({ opacity: 0.9 });
+	presTimer.reset();
+	timerRun = false;
 });
 
 $(function(){
@@ -38,12 +53,30 @@ $(document).on('pagecreate', '#settingsPage', function(){
 	});
 });
 
-$("#presentationHeader").on('tap', function(){
-	
-	if ($(this).css("opacity").valueOf() > 0.2)
-		$(this).css({ opacity: 0.1 });
+$("#presentationTimer").on('tap', function(){
+	if(timerRun)
+	{
+		presTimer.pause();		
+	}
 	else
-		$(this).css({ opacity: 0.9 });
+	{
+		presTimer.start();
+		timerRun = true;
+	}	
+});
+
+$("#presentationTitle").on('tap', function(){
+	
+	if ($("#presentationHeader").css("opacity").valueOf() > 0.2)
+	{
+		$("#presentationHeader").css({ opacity: 0.1 });
+		$("#presentationFooter").hide();
+	}
+	else
+	{
+		$("#presentationHeader").css({ opacity: 0.9 });
+		$("#presentationFooter").show();
+	}
 });
 
 $("[name=slideMode]").change(function(){
@@ -100,8 +133,7 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		    }
 		})
 	});
-	$("#fileList").on('tap', ".presFileItem", function(e){
-		
+	$("#fileList").on('tap', ".presFileItem", function(e){		
 		e.preventDefault();
 		$("#fileList").find("a").removeClass( "ui-btn-active" );
 		$(this).parent().find("a").addClass( "ui-btn-active" );
@@ -118,10 +150,8 @@ $(document).on('pagecreate', '#uploadPage', function(){
 			$.mobile.loading( "hide");
 			$.mobile.pageContainer.pagecontainer("change", $("#presentationPage"));
 			$("#fileList").find("a").removeClass( "ui-btn-active" );
-		},'json');
-		
-		
-		
+			$("#presentationTitle").find("a").removeClass( "ui-btn-active" );
+		},'json');		
 	});
 	$("#fileList").on('tap', ".presFileItemDelete", function(e){
 		e.preventDefault();
@@ -149,6 +179,13 @@ function getSlideIndexNotes()
 {
 	return $("#presentationWrapper").slickCurrentSlide() * 2;
 }
+
+
+
+$(document).on('pagecreate', '#presentationPage', function(){
+	
+});
+
 
 function loadPresentation(fullscreen)
 {

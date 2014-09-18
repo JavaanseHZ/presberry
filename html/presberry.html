@@ -78,13 +78,20 @@
 	<div data-role="page" id="presentationPage">
 		<div data-role="header" data-position="fixed" data-fullscreen="true" id="presentationHeader" data-tap-toggle="false" data-theme="b" class="ui-header ui-header-fixed">
 			<a href="#" data-rel="back" class="ui-btn-left ui-btn ui-btn-inline ui-icon-home ui-btn-icon-notext ui-corner-all" id="presentationBackButton" data-transition="none">back</a>
-			<h2>Presentation</h2>
+			<h2 id="presentationTitle">Presentation</h2>
 			<a href="#" class="ui-btn-right ui-btn ui-btn-inline ui-icon-action ui-btn-icon-notext ui-corner-all fullscreenButton" data-transition="none">fullscreen</a>
 		</div>	
 		<div role="main" class="ui-content jqm-content jqm-fullwidth" id="presentationContent">
 			<div id="presentationWrapper"><p>no presentation loaded</p></div>			 
 		</div>
-		<div data-role="footer" data-position="fixed">		
+		<div data-role="footer" data-position="fixed" data-fullscreen="true" id="presentationFooter" data-tap-toggle="false" data-theme="b" class="ui-footer ui-footer-fixed">
+			<div class="ui-grid-b">
+                <div class="ui-block-a" style="text-align: left;"></div>
+                <div class="ui-block-b" style="text-align: center;">
+                	<div id="presentationTimer" data-role="button" class="ui-btn ui-btn-inline ui-corner-all">00:00</div>
+                </div>
+                <div class="ui-block-c" style="text-align: right;"></div>                
+            </div>
 		</div>
 	</div>
 	<div data-role="page" data-dialog="true" id="presentationInProgess">
@@ -99,6 +106,7 @@
 	<script type="text/javascript" src="/{{ jquerymobile_dir }}/jquery.mobile-1.4.4.min.js"></script>
 	<script type="text/javascript" src="/{{ js_dir }}/slick.min.js"></script>
 	<script type="text/javascript" src="/{{ js_dir }}/screenfull.min.js"></script>
+	<script type="text/javascript" src="/{{ js_dir }}/tock.min.altered.js"></script>
 	<script type="text/javascript" src="/{{ js_dir }}/presberry.js"></script>
 </body>
 </html>

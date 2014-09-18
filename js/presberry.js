@@ -1,19 +1,3 @@
-//$( document ).on( "pagecontainerchange", function() {
-//    var current = $( ".ui-page-active" ).jqmData( "title" );
-//    if (current === "Presentation") {
-//    	$("#fullscreenButton").show();    	
-//	} else {
-//		$("#fullscreenButton").hide();
-//    }
-//    $( "[data-role='header'] h1" ).text( current );
-//    $( "[data-role='navbar'] a.ui-btn-active" ).removeClass( "ui-btn-active" );
-//    $( "[data-role='navbar'] a" ).each(function() {
-//        if ( $( this ).text() === current ) {
-//            $( this ).addClass( "ui-btn-active" );
-//        }
-//    });
-//});
-
 $(document).on('pageshow', '#presentationPage', function(){
 	loadPresentation(false);
 });
@@ -98,6 +82,7 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		$.mobile.loading( "show", {
 			  text: "uploading file...",
 			  textVisible: true,
+			  theme: "b",
 			  html: ""
 			});
 		$("#presentationWrapper").unslick();
@@ -123,6 +108,7 @@ $(document).on('pagecreate', '#uploadPage', function(){
 		$.mobile.loading( "show", {
 			  text: "loading presentation...",
 			  textVisible: true,
+			  theme: "b",
 			  html: ""
 			});
 		var fileName = $(this).children(".presFileName:first").text();

@@ -196,9 +196,9 @@ function loadPresentation(fullscreen)
 		var timer = data['timer'];
 		
 		if(timer == "timerOn")
-			$("#presentationTimer").show();
+			$("#presentationFooter").show();
 		else
-			$("#presentationTimer").hide();
+			$("#presentationFooter").hide();
 		if(order == "normal")
 			cbFunction = getSlideIndexNormal;
 		else if(order == "preview")

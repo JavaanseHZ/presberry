@@ -55,6 +55,11 @@ class PresStartPanel(gtk.Table):
     def __init__(self, h, w, rows=3, columns=4, homogenous=False):
         gtk.Table.__init__(self, rows, columns, homogenous)
         
+        if w/4 > h - (w/3):
+            d =  h - (w/3)
+        else:
+            d = w/4        
+        
         titlesvg = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/labeltitle.svg'
         titlepixbuf = gtk.gdk.pixbuf_new_from_file_at_size(titlesvg, width= int(w), height=-1)
         titleImage = gtk.Image()
@@ -90,14 +95,14 @@ class PresStartPanel(gtk.Table):
         startAlign = gtk.Alignment(0.5, 1, 0, 0)
         startAlign.add(startImage)
          
-        wifiQR = qrencode.encode_scaled('WIFI:T:WPA;S:' + PRES_CONFIG.NW_AP + ';P:' + PRES_CONFIG.NW_PW + ';;', int(w/4)-80)
+        wifiQR = qrencode.encode_scaled('WIFI:T:WPA;S:' + PRES_CONFIG.NW_AP + ';P:' + PRES_CONFIG.NW_PW + ';;', int(d)-80)
         wifiQR[2].save(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/wifiQR.png')
         wifiQRImage = gtk.Image()
         wifiQRImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/wifiQR.png')
         wifiQRAlign = gtk.Alignment(0.5, 0.5, 0, 0)
         wifiQRAlign.add(wifiQRImage)        
          
-        connectQR = qrencode.encode_scaled('http://' + PRES_CONFIG.NW_IP + ':' + PRES_CONFIG.NW_PORT, int(w/4)-80)
+        connectQR = qrencode.encode_scaled('http://' + PRES_CONFIG.NW_IP + ':' + PRES_CONFIG.NW_PORT, int(d)-80)
         connectQR[2].save(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/httpQR.png')
         connectQRImage = gtk.Image()
         connectQRImage.set_from_file(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/httpQR.png')
@@ -105,14 +110,14 @@ class PresStartPanel(gtk.Table):
         connectQRAlign.add(connectQRImage)
          
         uploadimagesvg = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/imageupload.svg'
-        uploadimagepixbuf = gtk.gdk.pixbuf_new_from_file_at_size(uploadimagesvg, width= int(w/4)-80, height=-1)
+        uploadimagepixbuf = gtk.gdk.pixbuf_new_from_file_at_size(uploadimagesvg, width= int(d)-80, height=-1)
         uploadimageImage = gtk.Image()
         uploadimageImage.set_from_pixbuf(uploadimagepixbuf) 
         uploadimageAlign = gtk.Alignment(0.5, 0.5, 0, 0)
         uploadimageAlign.add(uploadimageImage)
          
         startimagesvg = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_GUI) + '/imagestart.svg'
-        startimagepixbuf = gtk.gdk.pixbuf_new_from_file_at_size(startimagesvg, width= int(w/4)-80, height=-1)
+        startimagepixbuf = gtk.gdk.pixbuf_new_from_file_at_size(startimagesvg, width= int(d)-80, height=-1)
         startimageImage = gtk.Image()
         startimageImage.set_from_pixbuf(startimagepixbuf) 
         startimageAlign = gtk.Alignment(0.5, 0.5, 0, 0)

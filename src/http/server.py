@@ -121,8 +121,8 @@ class PresWebsite(object):
                 saved_file.close()
                 svgGeneratorPreview = SVGGeneratorPreview(uload_path)
                 svgGeneratorPreview.start()
-                #pngGeneratorPreview = PNGGeneratorPreview(uload_path)
-                #pngGeneratorPreview.start()
+                pngGeneratorPreview = PNGGeneratorPreview(uload_path)
+                pngGeneratorPreview.start()
                 
                 timestampHTML = presString.getTimestampHTML(timestampID)
                 fileListItemHTML =  htmlGenerator.generateHTML('previewElement.html',

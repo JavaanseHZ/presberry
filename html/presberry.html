@@ -28,7 +28,7 @@
 			{% for timestamp, seperator, filename, pTimestamp in filedata %}
 				<li class="ui-li-has-alt ui-li-has-thumb">
 					<a href="#" class="ui-btn presFileItem" id="{{ timestamp }}{{seperator}}">
-						<img src="/{{ pres_dir }}/{{ timestamp }}{{seperator}}{{ filename }}0.svg" class="hoverZoomLink">
+						<img src="/{{ pres_dir }}/{{ timestamp }}{{seperator}}{{ filename }}0.svg" alt="/{{ pres_dir }}/{{ timestamp }}{{seperator}}{{ filename }}0.png" class="hoverZoomLink">
 				   		<h2 class="presFileName">{{ filename }}</h2>
 						<p >{{ pTimestamp }}</p>
 					</a>

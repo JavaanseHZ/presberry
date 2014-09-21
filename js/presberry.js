@@ -110,7 +110,6 @@ $(document).on('pageshow', '#settingsPage', function(){
 			.filter( '[value="' + data['timer'] + '"]' )
 			.prop( 'checked', true )
 			.checkboxradio( 'refresh' );
-		},'json');
 		$( 'input:radio[name="slideImage"]' )
 			.filter( '[value="' + data['image'] + '"]' )
 			.prop( 'checked', true )

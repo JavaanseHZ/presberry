@@ -87,11 +87,17 @@ $("[name=slideTimer]").change(function(){
 	$.post('/setSettings', postdata, function(data) {},'json');
 });
 
+$("[name=slideImage]").change(function(){
+	var postdata = $("#settingsForm").serializeArray();
+	$.post('/setSettings', postdata, function(data) {},'json');
+});
+
 $(document).on('pageshow', '#settingsPage', function(){
 	$.get('/getSettings', function(data) {
 		$( 'input:radio[name="slideMode"]' ).prop( 'checked', false ).checkboxradio( 'refresh' );
 		$( 'input:radio[name="slideOrder"]' ).prop( 'checked', false ).checkboxradio( 'refresh' );
 		$( 'input:radio[name="slideTimer"]' ).prop( 'checked', false ).checkboxradio( 'refresh' );
+		$( 'input:radio[name="slideImage"]' ).prop( 'checked', false ).checkboxradio( 'refresh' );
 		$( 'input:radio[name="slideMode"]' )
 			.filter( '[value="' + data['mode'] + '"]' )
 			.prop( 'checked', true )
@@ -102,6 +108,11 @@ $(document).on('pageshow', '#settingsPage', function(){
 			.checkboxradio( 'refresh' );
 		$( 'input:radio[name="slideTimer"]' )
 			.filter( '[value="' + data['timer'] + '"]' )
+			.prop( 'checked', true )
+			.checkboxradio( 'refresh' );
+		},'json');
+		$( 'input:radio[name="slideImage"]' )
+			.filter( '[value="' + data['image'] + '"]' )
 			.prop( 'checked', true )
 			.checkboxradio( 'refresh' );
 		},'json');

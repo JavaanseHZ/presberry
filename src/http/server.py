@@ -13,6 +13,7 @@ import simplejson
 from datetime import datetime
 
 from http.svggenerator import SVGGenerator, SVGGeneratorPreview
+from http.pnggenerator import PNGGenerator, PNGGeneratorPreview
 from document.pdfdocument import PDFdocument
 from http import htmlGenerator
 import util.config as PRES_CONFIG
@@ -82,6 +83,7 @@ class PresWebsite(object):
         self.slideMode = "change"
         self.slideOrder = "normal"
         self.slideTimer = "timerOff"
+        self.slideImage = "svg"
         self.presInProgress = "false"
     
     @cherrypy.expose
@@ -119,6 +121,8 @@ class PresWebsite(object):
                 saved_file.close()
                 svgGeneratorPreview = SVGGeneratorPreview(uload_path)
                 svgGeneratorPreview.start()
+                #pngGeneratorPreview = PNGGeneratorPreview(uload_path)
+                #pngGeneratorPreview.start()
                 
                 timestampHTML = presString.getTimestampHTML(timestampID)
                 fileListItemHTML =  htmlGenerator.generateHTML('previewElement.html',
@@ -138,8 +142,12 @@ class PresWebsite(object):
         presFile.resetTempFolder()
         uload_path = PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_MEDIA_PRESENTATION) + os.path.sep + timestampID + filenameHTML;
         self.pdfDocument = PDFdocument('file://' + uload_path, filenameHTML, timestampID)
-        svgGenerator = SVGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
-        svgGenerator.start()
+        if(self.slideImage == 'svg'):
+            svgGenerator = SVGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
+            svgGenerator.start()
+        else:
+            pngGenerator = PNGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
+            pngGenerator.start()
         pub.Publisher.sendMessage('presSetup', data=self.pdfDocument)               
         carouselHTML = htmlGenerator.generateHTML('carousel.html',
                                               temp_dir= PRES_CONFIG.DIR_MEDIA_TEMP,
@@ -148,7 +156,8 @@ class PresWebsite(object):
                                               timestamp = timestampID,
                                               width="100%",
                                               height="100%",
-                                              order=self.slideOrder)
+                                              order=self.slideOrder,
+                                              imagetype=self.slideImage)
         return simplejson.dumps(dict(carousel=carouselHTML))
     
     @cherrypy.expose
@@ -164,17 +173,18 @@ class PresWebsite(object):
         return simplejson.dumps(dict())
     
     @cherrypy.expose
-    def setSettings(self, slideMode, slideOrder, slideTimer):
+    def setSettings(self, slideMode, slideOrder, slideTimer, slideImage):
         self.slideMode = slideMode
         self.slideOrder = slideOrder        
         self.slideTimer = slideTimer
+        self.slideImage = slideImage
         cherrypy.response.headers['Content-Type'] = 'application/json'       
         return simplejson.dumps(dict())
     
     @cherrypy.expose
     def getSettings(self, **kwargs):
         cherrypy.response.headers['Content-Type'] = 'application/json'
-        return simplejson.dumps(dict(mode=self.slideMode, order=self.slideOrder, timer=self.slideTimer))
+        return simplejson.dumps(dict(mode=self.slideMode, order=self.slideOrder, timer=self.slideTimer, image=self.slideImage))
     
     @cherrypy.expose
     def setPage(self, pageNr):

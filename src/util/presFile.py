@@ -21,5 +21,6 @@ def deletePresFile(presFilename):
     try:
         os.unlink(filepath)
         os.unlink(filepath + '0.svg')
+        os.unlink(filepath + '0.png')
     except Exception, e:
         print e

@@ -10,6 +10,7 @@ configParser = ConfigParser.ConfigParser()
 configParser.read('config.ini')
 
 SVG_WIDTH = configParser.getint('SVG', 'width')
+PNG_WIDTH = configParser.getint('PNG', 'width')
 
 NW_WIFIMODE = configParser.get('NETWORK', 'wifimode')#not implemented yet
 NW_AP = configParser.get('NETWORK', 'ap')

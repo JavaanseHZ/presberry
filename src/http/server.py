@@ -146,7 +146,7 @@ class PresWebsite(object):
             svgGenerator = SVGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
             svgGenerator.start()
         else:
-            pngGenerator = PNGGenerator(self.pdfDocument, PRES_CONFIG.SVG_WIDTH)
+            pngGenerator = PNGGenerator(self.pdfDocument, PRES_CONFIG.PNG_WIDTH)
             pngGenerator.start()
         pub.Publisher.sendMessage('presSetup', data=self.pdfDocument)               
         carouselHTML = htmlGenerator.generateHTML('carousel.html',

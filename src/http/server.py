@@ -82,7 +82,7 @@ class PresWebsite(object):
         object.__init__(self)
         self.slideMode = "change"
         self.slideOrder = "normal"
-        self.slideTimer = "timerOff"
+        self.slideTimer = "timerOn"
         self.slideImage = "svg"
         self.presInProgress = "false"
     
@@ -198,50 +198,3 @@ class PresWebsite(object):
         presFile.deletePresFile(delTimestampID[3:] + filenameHTML);
         cherrypy.response.headers['Content-Type'] = 'application/json'
         return simplejson.dumps(dict(delFileID=delTimestampID))
-    
-   
-        
-    
-#     @cherrypy.expose
-#     def loadPresentation(self):
-#         htmlTemplate = htmlGenerator.generateHTML('carousel.html',
-#                                                       pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
-#                                                       numPages=self.pdfDocument.n_pgs,
-#                                                       width="100%",
-#                                                       height="100%",
-#                                                       order=self.slideOrder)
-#         return simplejson.dumps(dict(html=htmlTemplate))
-#        
-#     @cherrypy.expose
-#     def quitPresentation(self):
-#         pub.Publisher.sendMessage('presQuit')
-#         return open(os.path.join(PRES_CONFIG.ABS_PATH(PRES_CONFIG.DIR_HTML), u'finished.html'))
-#     
-#     @cherrypy.expose
-#     def startPresentation(self, slideMode, slideOrder):
-#         pub.Publisher.sendMessage('presStart')
-#         presHTMLTemplate = htmlGenerator.generateHTML('presentation.html',
-#                                                       html_dir= PRES_CONFIG.DIR_HTML,
-#                                                       css_dir= PRES_CONFIG.DIR_CSS,
-#                                                       js_dir= PRES_CONFIG.DIR_JS,
-#                                                       jquerymobile_dir= PRES_CONFIG.DIR_JQUERYMOBILE,
-#                                                       pres_dir= PRES_CONFIG.DIR_MEDIA_PRESENTATION,
-#                                                       numPages=self.pdfDocument.n_pgs,
-#                                                       width=self.browserWidth,
-#                                                       height=self.browserHeight,
-#                                                       mode=slideMode,
-#                                                       order=slideOrder)
-#         return presHTMLTemplate
-    
-    
-        
-      
-   
-    
-#     @cherrypy.expose
-#     def setSize(self, browserWidth, browserHeight):
-#         self.browserWidth = int(browserWidth)
-#         self.browserHeight = int(browserHeight)
-#         print self.browserHeight
-#         cherrypy.response.headers['Content-Type'] = 'application/json'
-#         return simplejson.dumps(dict())

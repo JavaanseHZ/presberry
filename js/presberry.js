@@ -10,7 +10,11 @@ var presTimer = new Tock({
 var timerRun = false;
 
 $(document).on('pageshow', '#presentationPage', function(){
-	loadPresentation(false);	
+	loadPresentation(false);
+	presTimer.stop();
+	presTimer.reset();
+	$("#presentationTimer").text("00:00");
+	timerRun = false;
 });
 
 $(document).on('pagehide', '#presentationPage', function(){
